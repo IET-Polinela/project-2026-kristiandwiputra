@@ -1,29 +1,271 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Daftar Laporan</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart City Issue Reports</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                linear-gradient(rgba(5, 10, 20, 0.88), rgba(10, 15, 25, 0.95)),
+                url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat fixed;
+            color: #f4f7fb;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .header {
+            background: rgba(10, 16, 28, 0.82);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.35);
+            backdrop-filter: blur(10px);
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0 0 10px;
+            font-size: 40px;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            margin: 0;
+            color: #b8c2d1;
+            line-height: 1.6;
+        }
+
+        .top-action {
+            margin-top: 18px;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: 0.25s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: white;
+            box-shadow: 0 8px 18px rgba(0, 114, 255, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 22px;
+        }
+
+        .report-card {
+            background: rgba(13, 20, 34, 0.88);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+            backdrop-filter: blur(8px);
+            transition: 0.25s ease;
+        }
+
+        .report-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 34px rgba(0,0,0,0.45);
+        }
+
+        .report-title {
+            margin: 0 0 14px;
+            font-size: 28px;
+            color: #ffffff;
+        }
+
+        .report-meta {
+            margin: 8px 0;
+            color: #d7dfeb;
+            line-height: 1.6;
+        }
+
+        .report-meta strong {
+            color: #8cc8ff;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 7px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .reported {
+            background: rgba(255, 99, 71, 0.16);
+            color: #ff8b78;
+            border: 1px solid rgba(255, 99, 71, 0.35);
+        }
+
+        .verified {
+            background: rgba(255, 193, 7, 0.15);
+            color: #ffd861;
+            border: 1px solid rgba(255, 193, 7, 0.35);
+        }
+
+        .progress {
+            background: rgba(0, 198, 255, 0.15);
+            color: #6fe4ff;
+            border: 1px solid rgba(0, 198, 255, 0.35);
+        }
+
+        .resolved {
+            background: rgba(46, 204, 113, 0.15);
+            color: #7df7b2;
+            border: 1px solid rgba(46, 204, 113, 0.35);
+        }
+
+        .link-group {
+            margin-top: 18px;
+            margin-bottom: 18px;
+        }
+
+        .link-group a {
+            text-decoration: none;
+            color: #8cc8ff;
+            font-weight: 600;
+            margin-right: 14px;
+        }
+
+        .link-group a:hover {
+            color: white;
+        }
+
+        .workflow-box {
+            margin-top: 10px;
+            padding: 14px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .workflow-box p {
+            margin: 0;
+            color: #c9d2df;
+            font-style: italic;
+        }
+
+        .btn-status {
+            background: linear-gradient(135deg, #ff512f, #dd2476);
+            color: white;
+            box-shadow: 0 8px 18px rgba(221, 36, 118, 0.28);
+        }
+
+        .btn-status:hover {
+            transform: translateY(-2px);
+        }
+
+        .empty-box {
+            background: rgba(13, 20, 34, 0.88);
+            border-radius: 18px;
+            padding: 30px;
+            text-align: center;
+            color: #dbe5f2;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+    </style>
 </head>
 <body>
-    <h1>Daftar Laporan Masalah Kota di Bandar Lampung</h1>
-
-    <a href="{% url 'add_report' %}">Tambah Laporan</a>
-    <hr>
-
-    {% for report in reports %}
-        <div>
-            <h3>{{ report.title }}</h3>
-            <p><strong>Kategori:</strong> {{ report.category }}</p>
-            <p><strong>Deskripsi:</strong> {{ report.description }}</p>
-            <p><strong>Lokasi:</strong> {{ report.location }}</p>
-            <p><strong>Status:</strong> {{ report.status }}</p>
-            <p><strong>Dibuat:</strong> {{ report.created_at }}</p>
-
-            <a href="{% url 'edit_report' report.id %}">Edit</a>
-            <a href="{% url 'delete_report' report.id %}">Hapus</a>
+    <div class="container">
+        <div class="header">
+            <h1>Bandar Lampung Smart Monitor</h1>
+            <p>
+                Dashboard laporan kerusakan kota untuk memantau fasilitas, infrastruktur,
+                dan permasalahan lingkungan perkotaan secara real-time.
+            </p>
+            <div class="top-action">
+                <a href="{% url 'add_report' %}" class="btn btn-primary">+ Tambah Laporan Baru</a>
+            </div>
         </div>
-        <hr>
-    {% empty %}
-        <p>Belum ada laporan.</p>
-    {% endfor %}
+
+        {% if reports %}
+            <div class="report-grid">
+                {% for report in reports %}
+                    <div class="report-card">
+                        <h2 class="report-title">{{ report.title }}</h2>
+
+                        <p class="report-meta"><strong>Kategori:</strong> {{ report.category }}</p>
+                        <p class="report-meta"><strong>Lokasi:</strong> {{ report.location }}</p>
+                        <p class="report-meta">
+                            <strong>Status:</strong>
+                            {% if report.status == 'REPORTED' %}
+                                <span class="badge reported">{{ report.get_status_display }}</span>
+                            {% elif report.status == 'VERIFIED' %}
+                                <span class="badge verified">{{ report.get_status_display }}</span>
+                            {% elif report.status == 'IN_PROGRESS' %}
+                                <span class="badge progress">{{ report.get_status_display }}</span>
+                            {% else %}
+                                <span class="badge resolved">{{ report.get_status_display }}</span>
+                            {% endif %}
+                        </p>
+                        <p class="report-meta"><strong>Dibuat:</strong> {{ report.created_at }}</p>
+
+                        <div class="link-group">
+                            <a href="{% url 'report_detail' report.pk %}">Detail</a>
+                            <a href="{% url 'edit_report' report.pk %}">Edit</a>
+                            <a href="{% url 'delete_report' report.pk %}">Hapus</a>
+                        </div>
+
+                        <div class="workflow-box">
+                            {% if report.status == 'REPORTED' %}
+                                <form method="post" action="{% url 'update_status' report.pk %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="VERIFIED">
+                                    <button type="submit" class="btn btn-status">Verifikasi Laporan</button>
+                                </form>
+                            {% elif report.status == 'VERIFIED' %}
+                                <form method="post" action="{% url 'update_status' report.pk %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="IN_PROGRESS">
+                                    <button type="submit" class="btn btn-status">Proses Penanganan</button>
+                                </form>
+                            {% elif report.status == 'IN_PROGRESS' %}
+                                <form method="post" action="{% url 'update_status' report.pk %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="RESOLVED">
+                                    <button type="submit" class="btn btn-status">Tandai Selesai</button>
+                                </form>
+                            {% else %}
+                                <p>Laporan sudah selesai ditangani.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-box">
+                <h3>Belum ada laporan</h3>
+                <p>Tambahkan laporan baru untuk mulai memantau kerusakan kota.</p>
+            </div>
+        {% endif %}
+    </div>
 </body>
 </html>

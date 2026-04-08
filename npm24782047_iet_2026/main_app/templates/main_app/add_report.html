@@ -1,18 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Tambah Laporan</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Report</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(rgba(8,12,20,0.92), rgba(8,12,20,0.94)),
+                        url('https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat fixed;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .form-box {
+            width: 100%;
+            max-width: 700px;
+            background: rgba(14, 22, 36, 0.92);
+            padding: 30px;
+            border-radius: 22px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        form p {
+            margin-bottom: 16px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
+            color: white;
+        }
+
+        button, a {
+            display: inline-block;
+            margin-top: 10px;
+            text-decoration: none;
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: white;
+        }
+
+        a {
+            background: rgba(255,255,255,0.08);
+            color: white;
+            margin-left: 8px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Tambah Laporan</h1>
-
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Simpan</button>
-    </form>
-
-    <br>
-    <a href="{% url 'report_list' %}">Kembali ke Daftar Laporan</a>
+    <div class="form-box">
+        <h1>Tambah Laporan Kerusakan Kota</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Simpan</button>
+            <a href="{% url 'report_list' %}">Kembali</a>
+        </form>
+    </div>
 </body>
 </html>

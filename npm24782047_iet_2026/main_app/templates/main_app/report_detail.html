@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Report</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                linear-gradient(rgba(5, 10, 20, 0.88), rgba(10, 15, 25, 0.95)),
+                url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat fixed;
+            color: #f4f7fb;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .card {
+            background: rgba(13, 20, 34, 0.9);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 22px;
+            padding: 28px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 36px;
+        }
+
+        p {
+            line-height: 1.8;
+            color: #dbe4ef;
+        }
+
+        strong {
+            color: #8cc8ff;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 7px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .reported { background: rgba(255, 99, 71, 0.16); color: #ff8b78; }
+        .verified { background: rgba(255, 193, 7, 0.15); color: #ffd861; }
+        .progress { background: rgba(0, 198, 255, 0.15); color: #6fe4ff; }
+        .resolved { background: rgba(46, 204, 113, 0.15); color: #7df7b2; }
+
+        .actions {
+            margin-top: 22px;
+        }
+
+        .actions a {
+            display: inline-block;
+            margin-right: 10px;
+            text-decoration: none;
+            padding: 11px 16px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: white;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>{{ report.title }}</h1>
+
+            <p><strong>Kategori:</strong> {{ report.category }}</p>
+            <p><strong>Deskripsi:</strong> {{ report.description }}</p>
+            <p><strong>Lokasi:</strong> {{ report.location }}</p>
+            <p>
+                <strong>Status:</strong>
+                {% if report.status == 'REPORTED' %}
+                    <span class="badge reported">{{ report.get_status_display }}</span>
+                {% elif report.status == 'VERIFIED' %}
+                    <span class="badge verified">{{ report.get_status_display }}</span>
+                {% elif report.status == 'IN_PROGRESS' %}
+                    <span class="badge progress">{{ report.get_status_display }}</span>
+                {% else %}
+                    <span class="badge resolved">{{ report.get_status_display }}</span>
+                {% endif %}
+            </p>
+            <p><strong>Dibuat:</strong> {{ report.created_at }}</p>
+
+            <div class="actions">
+                <a href="{% url 'report_list' %}">Kembali</a>
+                <a href="{% url 'edit_report' report.pk %}">Edit</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

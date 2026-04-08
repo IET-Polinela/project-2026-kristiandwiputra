@@ -4,13 +4,7 @@
     <title>Home</title>
 </head>
 <body>
-    <h1>Selamat Datang di Kota Bandung</h1>
-    <p>Halo, perkenalkan saya Kristian. Selamat datang di website sederhana yang saya buat menggunakan Django.</p>
-    <p>Di website ini, kalian bisa melihat halaman Home, About, dan Contacts yang berisi informasi singkat tentang diri saya.</p>
-
-    <a href="/about/">Lihat About</a><br>
-    <a href="/contacts/">Lihat Contacts</a>
-
-    <p>Terima kasih sudah mampir ke website saya.</p>
+    <h1>Home</h1>
+    <a href="{% url 'report_list' %}">Lihat Daftar Report</a>
 </body>
 </html>

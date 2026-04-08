@@ -1,19 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Hapus Laporan</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Report</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(rgba(20,8,8,0.93), rgba(20,8,8,0.96)),
+                        url('https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat fixed;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .box {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(26, 14, 14, 0.92);
+            padding: 30px;
+            border-radius: 22px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.45);
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #ffb3b3;
+        }
+
+        p {
+            line-height: 1.8;
+            color: #f1d8d8;
+        }
+
+        button, a {
+            display: inline-block;
+            margin-top: 12px;
+            text-decoration: none;
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+        }
+
+        a {
+            background: rgba(255,255,255,0.08);
+            color: white;
+            margin-left: 8px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Hapus Laporan</h1>
+    <div class="box">
+        <h1>Hapus Laporan</h1>
+        <p>Apakah yakin ingin menghapus laporan berikut?</p>
+        <p><strong>{{ object.title }}</strong></p>
 
-    <p>Apakah kamu yakin ingin menghapus laporan: <strong>{{ report.title }}</strong>?</p>
-
-    <form method="POST">
-        {% csrf_token %}
-        <button type="submit">Ya, Hapus</button>
-    </form>
-
-    <br>
-    <a href="{% url 'report_list' %}">Batal</a>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit">Ya, Hapus</button>
+            <a href="{% url 'report_list' %}">Batal</a>
+        </form>
+    </div>
 </body>
 </html>
