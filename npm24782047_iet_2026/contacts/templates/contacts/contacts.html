@@ -1,15 +1,55 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Contacts</title>
-</head>
-<body>
-    <h1>Halaman Kontak</h1>
-    <p>Hubungi email saya di bawah ini.</p>
-    <p>Email: kristianpemula2026@gmail.com
-    <p>Kalau belum sempat dibalas, mungkin saya sedang mancing atau sedang sibuk membayangkan hidup tanpa deadline.</p>
+{% extends 'base.html' %}
 
-    <a href="/">Kembali ke Home</a><br>
-    <a href="/about/">Lihat About</a>
-</body>
-</html>
+{% block title %}Contacts{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-3">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Contacts</li>
+    </ol>
+</nav>
+
+<div class="card card-custom">
+    <div class="soft-header">
+        <h3 class="mb-0"><i class="bi bi-envelope-paper-fill me-2"></i>Halaman Kontak</h3>
+    </div>
+    <div class="card-body p-4">
+        <div class="row g-4 align-items-center">
+            <div class="col-md-4 text-center">
+                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center"
+                     style="width: 140px; height: 140px;">
+                    <i class="bi bi-envelope-fill text-danger" style="font-size: 65px;"></i>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <h4 class="fw-bold mb-3">Hubungi Saya</h4>
+                <p class="mb-2">Silakan hubungi saya melalui email berikut:</p>
+                <div class="alert alert-light border">
+                    <i class="bi bi-at me-2 text-primary"></i>
+                    <strong>Email:</strong> kristianpemula2026@gmail.com
+                </div>
+                <p class="text-muted mb-0">
+                    Jika belum sempat dibalas, mungkin saya sedang sibuk mengerjakan tugas
+                    atau sedang fokus pada aktivitas lainnya.
+                </p>
+            </div>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="d-flex flex-wrap gap-2">
+            <a href="/" class="btn btn-primary">
+                <i class="bi bi-house-door-fill me-1"></i> Kembali ke Home
+            </a>
+            <a href="/about/" class="btn btn-outline-success">
+                <i class="bi bi-person-badge-fill me-1"></i> Lihat About
+            </a>
+            <a href="{% url 'report_list' %}" class="btn btn-outline-primary">
+                <i class="bi bi-clipboard-data-fill me-1"></i> Lihat Daftar Laporan
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

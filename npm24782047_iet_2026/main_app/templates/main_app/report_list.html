@@ -1,271 +1,133 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart City Issue Reports</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+{% extends 'base.html' %}
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background:
-                linear-gradient(rgba(5, 10, 20, 0.88), rgba(10, 15, 25, 0.95)),
-                url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat fixed;
-            color: #f4f7fb;
-            padding: 40px 20px;
-        }
+{% block title %}Daftar Laporan{% endblock %}
 
-        .container {
-            max-width: 1100px;
-            margin: auto;
-        }
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-3">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Reports</li>
+    </ol>
+</nav>
 
-        .header {
-            background: rgba(10, 16, 28, 0.82);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 20px;
-            padding: 28px;
-            box-shadow: 0 0 25px rgba(0,0,0,0.35);
-            backdrop-filter: blur(10px);
-            margin-bottom: 25px;
-        }
-
-        .header h1 {
-            margin: 0 0 10px;
-            font-size: 40px;
-            color: #ffffff;
-            letter-spacing: 1px;
-        }
-
-        .header p {
-            margin: 0;
-            color: #b8c2d1;
-            line-height: 1.6;
-        }
-
-        .top-action {
-            margin-top: 18px;
-        }
-
-        .btn {
-            display: inline-block;
-            text-decoration: none;
-            padding: 12px 18px;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: 0.25s ease;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #00c6ff, #0072ff);
-            color: white;
-            box-shadow: 0 8px 18px rgba(0, 114, 255, 0.35);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-        }
-
-        .report-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 22px;
-        }
-
-        .report-card {
-            background: rgba(13, 20, 34, 0.88);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 20px;
-            padding: 22px;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.35);
-            backdrop-filter: blur(8px);
-            transition: 0.25s ease;
-        }
-
-        .report-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 34px rgba(0,0,0,0.45);
-        }
-
-        .report-title {
-            margin: 0 0 14px;
-            font-size: 28px;
-            color: #ffffff;
-        }
-
-        .report-meta {
-            margin: 8px 0;
-            color: #d7dfeb;
-            line-height: 1.6;
-        }
-
-        .report-meta strong {
-            color: #8cc8ff;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 7px 14px;
-            border-radius: 999px;
-            font-size: 13px;
-            font-weight: 700;
-            margin-top: 4px;
-        }
-
-        .reported {
-            background: rgba(255, 99, 71, 0.16);
-            color: #ff8b78;
-            border: 1px solid rgba(255, 99, 71, 0.35);
-        }
-
-        .verified {
-            background: rgba(255, 193, 7, 0.15);
-            color: #ffd861;
-            border: 1px solid rgba(255, 193, 7, 0.35);
-        }
-
-        .progress {
-            background: rgba(0, 198, 255, 0.15);
-            color: #6fe4ff;
-            border: 1px solid rgba(0, 198, 255, 0.35);
-        }
-
-        .resolved {
-            background: rgba(46, 204, 113, 0.15);
-            color: #7df7b2;
-            border: 1px solid rgba(46, 204, 113, 0.35);
-        }
-
-        .link-group {
-            margin-top: 18px;
-            margin-bottom: 18px;
-        }
-
-        .link-group a {
-            text-decoration: none;
-            color: #8cc8ff;
-            font-weight: 600;
-            margin-right: 14px;
-        }
-
-        .link-group a:hover {
-            color: white;
-        }
-
-        .workflow-box {
-            margin-top: 10px;
-            padding: 14px;
-            border-radius: 14px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .workflow-box p {
-            margin: 0;
-            color: #c9d2df;
-            font-style: italic;
-        }
-
-        .btn-status {
-            background: linear-gradient(135deg, #ff512f, #dd2476);
-            color: white;
-            box-shadow: 0 8px 18px rgba(221, 36, 118, 0.28);
-        }
-
-        .btn-status:hover {
-            transform: translateY(-2px);
-        }
-
-        .empty-box {
-            background: rgba(13, 20, 34, 0.88);
-            border-radius: 18px;
-            padding: 30px;
-            text-align: center;
-            color: #dbe5f2;
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Bandar Lampung Smart Monitor</h1>
-            <p>
-                Dashboard laporan kerusakan kota untuk memantau fasilitas, infrastruktur,
-                dan permasalahan lingkungan perkotaan secara real-time.
-            </p>
-            <div class="top-action">
-                <a href="{% url 'add_report' %}" class="btn btn-primary">+ Tambah Laporan Baru</a>
-            </div>
+<div class="hero-box">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div>
+            <h2 class="page-title mb-1">
+                <i class="bi bi-clipboard-data-fill me-2 text-primary"></i>Daftar Laporan Smart City
+            </h2>
+            <p class="subtitle">Kelola laporan dengan tampilan yang rapi, konsisten, dan mudah dipahami.</p>
         </div>
 
         {% if reports %}
-            <div class="report-grid">
-                {% for report in reports %}
-                    <div class="report-card">
-                        <h2 class="report-title">{{ report.title }}</h2>
-
-                        <p class="report-meta"><strong>Kategori:</strong> {{ report.category }}</p>
-                        <p class="report-meta"><strong>Lokasi:</strong> {{ report.location }}</p>
-                        <p class="report-meta">
-                            <strong>Status:</strong>
-                            {% if report.status == 'REPORTED' %}
-                                <span class="badge reported">{{ report.get_status_display }}</span>
-                            {% elif report.status == 'VERIFIED' %}
-                                <span class="badge verified">{{ report.get_status_display }}</span>
-                            {% elif report.status == 'IN_PROGRESS' %}
-                                <span class="badge progress">{{ report.get_status_display }}</span>
-                            {% else %}
-                                <span class="badge resolved">{{ report.get_status_display }}</span>
-                            {% endif %}
-                        </p>
-                        <p class="report-meta"><strong>Dibuat:</strong> {{ report.created_at }}</p>
-
-                        <div class="link-group">
-                            <a href="{% url 'report_detail' report.pk %}">Detail</a>
-                            <a href="{% url 'edit_report' report.pk %}">Edit</a>
-                            <a href="{% url 'delete_report' report.pk %}">Hapus</a>
-                        </div>
-
-                        <div class="workflow-box">
-                            {% if report.status == 'REPORTED' %}
-                                <form method="post" action="{% url 'update_status' report.pk %}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="status" value="VERIFIED">
-                                    <button type="submit" class="btn btn-status">Verifikasi Laporan</button>
-                                </form>
-                            {% elif report.status == 'VERIFIED' %}
-                                <form method="post" action="{% url 'update_status' report.pk %}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="status" value="IN_PROGRESS">
-                                    <button type="submit" class="btn btn-status">Proses Penanganan</button>
-                                </form>
-                            {% elif report.status == 'IN_PROGRESS' %}
-                                <form method="post" action="{% url 'update_status' report.pk %}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="status" value="RESOLVED">
-                                    <button type="submit" class="btn btn-status">Tandai Selesai</button>
-                                </form>
-                            {% else %}
-                                <p>Laporan sudah selesai ditangani.</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="empty-box">
-                <h3>Belum ada laporan</h3>
-                <p>Tambahkan laporan baru untuk mulai memantau kerusakan kota.</p>
-            </div>
+        <div class="mt-3 mt-md-0">
+            <a href="{% url 'add_report' %}" class="btn btn-primary px-4">
+                <i class="bi bi-plus-circle me-1"></i> Tambah Laporan
+            </a>
+        </div>
         {% endif %}
     </div>
-</body>
-</html>
+</div>
+
+{% if reports %}
+<div class="card card-custom">
+    <div class="soft-header">
+        <h5 class="mb-0"><i class="bi bi-table me-2"></i>Data Laporan</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Judul</th>
+                        <th>Kategori</th>
+                        <th>Lokasi</th>
+                        <th>Status</th>
+                        <th style="min-width: 290px;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">{{ report.title }}</div>
+                            <small class="text-muted">ID Laporan #{{ report.id }}</small>
+                        </td>
+                        <td>{{ report.category }}</td>
+                        <td><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ report.location }}</td>
+                        <td>
+                            {% if report.status == 'REPORTED' %}
+                                <span class="badge bg-secondary">Reported</span>
+                            {% elif report.status == 'VERIFIED' %}
+                                <span class="badge bg-primary">Verified</span>
+                            {% elif report.status == 'IN_PROGRESS' %}
+                                <span class="badge bg-warning text-dark">In Progress</span>
+                            {% elif report.status == 'RESOLVED' %}
+                                <span class="badge bg-success">Resolved</span>
+                            {% endif %}
+                        </td>
+                        <td class="action-group">
+                            <a href="{% url 'report_detail' report.pk %}" class="btn btn-sm btn-info text-white">
+                                <i class="bi bi-eye-fill"></i> Detail
+                            </a>
+
+                            <a href="{% url 'edit_report' report.pk %}" class="btn btn-sm btn-warning text-dark">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+
+                            <a href="{% url 'delete_report' report.pk %}" class="btn btn-sm btn-danger"
+                               onclick="return confirm('Yakin ingin menghapus laporan ini?')">
+                                <i class="bi bi-trash-fill"></i> Hapus
+                            </a>
+
+                            {% if report.status == 'REPORTED' %}
+                                <form method="post" action="{% url 'update_status' report.pk %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="VERIFIED">
+                                    <button type="submit" class="btn btn-sm btn-primary"
+                                            onclick="return confirm('Ubah status menjadi VERIFIED?')">
+                                        <i class="bi bi-patch-check-fill"></i> Verifikasi
+                                    </button>
+                                </form>
+                            {% elif report.status == 'VERIFIED' %}
+                                <form method="post" action="{% url 'update_status' report.pk %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="IN_PROGRESS">
+                                    <button type="submit" class="btn btn-sm btn-warning text-dark"
+                                            onclick="return confirm('Ubah status menjadi IN_PROGRESS?')">
+                                        <i class="bi bi-arrow-repeat"></i> Proses
+                                    </button>
+                                </form>
+                            {% elif report.status == 'IN_PROGRESS' %}
+                                <form method="post" action="{% url 'update_status' report.pk %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="RESOLVED">
+                                    <button type="submit" class="btn btn-sm btn-success"
+                                            onclick="return confirm('Ubah status menjadi RESOLVED?')">
+                                        <i class="bi bi-check2-circle"></i> Selesai
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card card-custom text-center">
+    <div class="card-body empty-box">
+        <div class="empty-icon mb-3">
+            <i class="bi bi-inbox"></i>
+        </div>
+        <h4 class="fw-bold">Belum ada laporan</h4>
+        <p class="text-muted">Saat ini data laporan masih kosong. Tambahkan laporan baru untuk mulai mengelola data.</p>
+        <a href="{% url 'add_report' %}" class="btn btn-primary px-4">
+            <i class="bi bi-plus-circle me-1"></i> Tambah Laporan
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

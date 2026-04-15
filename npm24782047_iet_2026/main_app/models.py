@@ -7,6 +7,7 @@ STATUS_CHOICES = [
     ('RESOLVED', 'Resolved'),
 ]
 
+
 class Report(models.Model):
     title = models.CharField(max_length=200)
     category = models.CharField(max_length=100)

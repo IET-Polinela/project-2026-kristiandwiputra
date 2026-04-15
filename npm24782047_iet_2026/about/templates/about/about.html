@@ -1,17 +1,58 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>About</title>
-</head>
-<body>
-    <h1>Tentang Saya</h1>
-    <p>Halo, nama saya <b>Kristian Dwi Putra</b>. Saya berasal dari <b>Bandung</b> dan saat ini berusia <b>21 tahun</b>.</p>
-    <p>Saya berasal dari keluarga <b>TAJIR MELINTIR</b>. Dalam kehidupan sehari-hari, saya punya hobi <b>mancing</b> saya Owner PT.MENCARI CINTA SEJATI</p>
-    <p>Saya juga suka <b>menghayal</b></p>
+{% extends 'base.html' %}
 
-    <p>Website ini saya buat sebagai latihan dasar menggunakan Django, sekaligus untuk menampilkan informasi singkat tentang diri saya.</p>
+{% block title %}About{% endblock %}
 
-    <a href="/">Kembali ke Home</a><br>
-    <a href="/contacts/">Lihat Contacts</a>
-</body>
-</html>
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-3">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">About</li>
+    </ol>
+</nav>
+
+<div class="card card-custom">
+    <div class="soft-header">
+        <h3 class="mb-0"><i class="bi bi-person-badge-fill me-2"></i>Tentang Saya</h3>
+    </div>
+    <div class="card-body p-4">
+        <div class="row g-4 align-items-center">
+            <div class="col-md-4 text-center">
+                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center"
+                     style="width: 140px; height: 140px;">
+                    <i class="bi bi-person-fill text-primary" style="font-size: 70px;"></i>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <h4 class="fw-bold mb-3">Kristian Dwi Putra</h4>
+                <p class="mb-2">
+                    Halo, nama saya <strong>Kristian Dwi Putra</strong>. Saya berasal dari
+                    <strong>Bandung</strong> dan saat ini berusia <strong>21 tahun</strong>.
+                </p>
+                <p class="mb-2">
+                    Saya suka mempelajari hal baru, mengembangkan website sederhana,
+                    dan menjadikan proyek Django ini sebagai latihan dasar dalam membangun aplikasi web.
+                </p>
+                <p class="mb-0 text-muted">
+                    Halaman ini dibuat untuk menampilkan profil singkat saya dengan tampilan
+                    yang lebih rapi, modern, dan nyaman dibaca.
+                </p>
+            </div>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="d-flex flex-wrap gap-2">
+            <a href="/" class="btn btn-primary">
+                <i class="bi bi-house-door-fill me-1"></i> Kembali ke Home
+            </a>
+            <a href="/contacts/" class="btn btn-outline-dark">
+                <i class="bi bi-envelope-fill me-1"></i> Lihat Contacts
+            </a>
+            <a href="{% url 'report_list' %}" class="btn btn-outline-primary">
+                <i class="bi bi-clipboard-data-fill me-1"></i> Lihat Daftar Laporan
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
