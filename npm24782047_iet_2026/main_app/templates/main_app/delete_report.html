@@ -4,7 +4,7 @@
 
 {% block content %}
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
+    <ol class="breadcrumb mb-3">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
         <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Reports</a></li>
         <li class="breadcrumb-item active" aria-current="page">Hapus Laporan</li>
@@ -12,17 +12,30 @@
 </nav>
 
 <div class="card card-custom">
-    <div class="card-body">
-        <h2 class="mb-3 text-danger">Konfirmasi Hapus</h2>
-        <p>
-            Apakah Anda yakin ingin menghapus laporan
-            <strong>"{{ object.title }}"</strong>?
-        </p>
+    <div class="soft-header">
+        <h4 class="mb-0"><i class="bi bi-trash-fill me-2"></i>Konfirmasi Hapus Laporan</h4>
+    </div>
+    <div class="card-body p-4">
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            Anda yakin ingin menghapus laporan berikut?
+        </div>
+
+        <div class="mb-4">
+            <p class="mb-2"><strong>Judul:</strong> {{ object.title }}</p>
+            <p class="mb-2"><strong>Kategori:</strong> {{ object.category }}</p>
+            <p class="mb-2"><strong>Lokasi:</strong> {{ object.location }}</p>
+            <p class="mb-0"><strong>Status:</strong> {{ object.get_status_display }}</p>
+        </div>
 
         <form method="post">
             {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Ya, Hapus</button>
-            <a href="{% url 'report_list' %}" class="btn btn-secondary">Batal</a>
+            <button type="submit" class="btn btn-danger px-4">
+                <i class="bi bi-trash-fill me-1"></i> Ya, Hapus
+            </button>
+            <a href="{% url 'report_list' %}" class="btn btn-secondary px-4">
+                <i class="bi bi-arrow-left-circle me-1"></i> Batal
+            </a>
         </form>
     </div>
 </div>

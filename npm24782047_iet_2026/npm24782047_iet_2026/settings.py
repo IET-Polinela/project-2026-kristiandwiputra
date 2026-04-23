@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'main_app',
     'about',
     'contacts',
+    'usermanagement_24782047',
 ]
 
 MIDDLEWARE = [
@@ -100,3 +101,5 @@ STATICFILES_DIRS = [
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'usermanagement_24782047.CustomUser'

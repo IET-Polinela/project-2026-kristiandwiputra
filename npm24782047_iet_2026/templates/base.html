@@ -5,185 +5,170 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}IET City{% endblock %}</title>
 
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
-<style>
-    body {
-        background: linear-gradient(135deg, #eef4ff, #f8f9fa);
-        min-height: 100vh;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    <style>
+        body {
+            background: linear-gradient(135deg, #eef4ff, #f8f9fa);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    .navbar {
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-    }
-
-    .navbar-brand {
-        font-weight: 700;
-        letter-spacing: 0.5px;
-    }
-
-    .page-title {
-        font-weight: 700;
-        color: #1f2d3d;
-    }
-
-    .subtitle {
-        color: #6c757d;
-        margin-bottom: 0;
-    }
-
-    .card-custom {
-        border: none;
-        border-radius: 18px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-        overflow: hidden;
-    }
-
-    .soft-header {
-        background: linear-gradient(135deg, #0d6efd, #4f8cff);
-        color: white;
-        padding: 18px 22px;
-    }
-
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-        background-color: white;
-    }
-
-    .table thead th {
-        border: 2px solid black;
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-        background-color: #f8f9fa;
-        color: black;
-        padding: 12px;
-    }
-
-    .table tbody td {
-        border: 2px solid black;
-        padding: 12px;
-    }
-
-    .table td,
-    .table th {
-        vertical-align: middle;
-    }
-
-    .badge {
-        font-size: 0.85rem;
-        padding: 8px 12px;
-        border-radius: 999px;
-    }
-
-    .btn {
-        border-radius: 10px;
-        font-weight: 500;
-    }
-
-    .btn-sm {
-        border-radius: 8px;
-    }
-
-    .empty-box {
-        padding: 50px 20px;
-    }
-
-    .empty-icon {
-        font-size: 60px;
-        color: #adb5bd;
-    }
-
-    .breadcrumb {
-        background-color: transparent;
-        padding: 0;
-    }
-
-    .hero-box {
-        background: linear-gradient(135deg, #ffffff, #f1f6ff);
-        border-radius: 18px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-        padding: 24px;
-        margin-bottom: 24px;
-    }
-
-    .action-group .btn,
-    .action-group form {
-        margin-bottom: 6px;
-        margin-right: 4px;
-    }
-</style>
+        .navbar { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08); }
+        .navbar-brand { font-weight: 700; letter-spacing: 0.5px; }
+        .page-title { font-weight: 700; color: #1f2d3d; }
+        .subtitle { color: #6c757d; margin-bottom: 0; }
+        .card-custom {
+            border: none;
+            border-radius: 18px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        .soft-header {
+            background: linear-gradient(135deg, #0d6efd, #4f8cff);
+            color: white;
+            padding: 18px 22px;
+        }
+        .table thead th {
+            border: none;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .table td, .table th { vertical-align: middle; }
+        .badge {
+            font-size: 0.85rem;
+            padding: 8px 12px;
+            border-radius: 999px;
+        }
+        .btn { border-radius: 10px; font-weight: 500; }
+        .btn-sm { border-radius: 8px; }
+        .empty-box { padding: 50px 20px; }
+        .empty-icon { font-size: 60px; color: #adb5bd; }
+        .breadcrumb { background-color: transparent; padding: 0; }
+        .hero-box {
+            background: linear-gradient(135deg, #ffffff, #f1f6ff);
+            border-radius: 18px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .action-group .btn,
+        .action-group form {
+            margin-bottom: 6px;
+            margin-right: 4px;
+        }
+        .role-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-left: 8px;
+            margin-right: 6px;
+            margin-top: 2px;
+        }
+        .role-admin {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .role-user {
+            background-color: rgba(255,255,255,0.2);
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.25);
+        }
+        .logout-btn {
+            border: none;
+            background: none;
+            color: rgba(255,255,255,.85);
+            padding: 8px 12px;
+            text-decoration: none;
+        }
+        .logout-btn:hover {
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="bi bi-buildings-fill me-2"></i>PROVINSI LAMPUNG
-            </a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/"><i class="bi bi-buildings-fill"></i> Smart City Lampung </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/reports/">Reports</a></li>
+                <li class="nav-item"><a class="nav-link" href="/about/">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contacts/">Contact</a></li>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/reports/">Reports</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/about/">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/contacts/">Contact</a></li>
-                </ul>
-            </div>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        {% if user.is_admin %}
+                            <span class="role-badge role-admin">Admin: {{ user.username }}</span>
+                        {% else %}
+                            <span class="role-badge role-user">User: {{ user.username }}</span>
+                        {% endif %}
+                    </li>
+                    <li class="nav-item">
+                        <form action="{% url 'logout' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="logout-btn">Logout</button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+                {% endif %}
+            </ul>
         </div>
-    </nav>
-
-    <!-- ALERT MESSAGES -->
-    <div class="container mt-4">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                    <i class="bi bi-check-circle-fill me-2"></i>{{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
     </div>
+</nav>
 
-    <!-- MAIN CONTENT -->
-    <div class="container mt-3 mb-5">
-        {% block content %}
-        {% endblock %}
-    </div>
+<div class="container mt-4">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'error' %}
+                    alert-danger
+                {% elif message.tags == 'warning' %}
+                    alert-warning
+                {% elif message.tags == 'info' %}
+                    alert-info
+                {% else %}
+                    alert-success
+                {% endif %}
+                alert-dismissible fade show shadow-sm" role="alert">
+                <i class="bi bi-info-circle-fill me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
 
-    <!-- Loading feedback 3 detik -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const form = document.getElementById("reportForm");
-            const submitBtn = document.getElementById("submitBtn");
+<div class="container mt-3 mb-5">
+    {% block content %}
+    {% endblock %}
+</div>
 
-            if (form && submitBtn) {
-                form.addEventListener("submit", function (e) {
-                    e.preventDefault();
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("reportForm");
+        const submitBtn = document.getElementById("submitBtn");
 
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
+        if (form && submitBtn) {
+            form.addEventListener("submit", function () {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
+            });
+        }
+    });
+</script>
 
-                    setTimeout(function () {
-                        form.submit();
-                    }, 3000);
-                });
-            }
-        });
-    </script>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -63,13 +63,19 @@
                         <hr>
 
                         <div class="d-grid gap-2">
-                            <a href="{% url 'edit_report' report.pk %}" class="btn btn-warning text-dark">
-                                <i class="bi bi-pencil-square me-1"></i> Edit Laporan
-                            </a>
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'edit_report' report.pk %}"
+                                   class="btn btn-warning text-dark"
+                                   onclick="return confirm('Yakin ingin mengedit laporan ini?');">
+                                    <i class="bi bi-pencil-square me-1"></i> Edit Laporan
+                                </a>
 
-                            <a href="{% url 'delete_report' report.pk %}" class="btn btn-danger">
-                                <i class="bi bi-trash-fill me-1"></i> Hapus Laporan
-                            </a>
+                                <a href="{% url 'delete_report' report.pk %}"
+                                   class="btn btn-danger"
+                                   onclick="return confirm('Yakin ingin menghapus laporan ini?');">
+                                    <i class="bi bi-trash-fill me-1"></i> Hapus Laporan
+                                </a>
+                            {% endif %}
 
                             <a href="{% url 'report_list' %}" class="btn btn-secondary">
                                 <i class="bi bi-arrow-left-circle me-1"></i> Kembali ke Daftar

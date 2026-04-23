@@ -12,6 +12,19 @@ def home(request):
     return render(request, 'main_app/home.html')
 
 
+class AdminRequiredMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.error(request, 'Silakan login terlebih dahulu.')
+            return redirect('login')
+
+        if not request.user.is_admin:
+            messages.error(request, 'Akses Ditolak. Hanya admin yang dapat mengakses fitur ini.')
+            return redirect('report_list')
+
+        return super().dispatch(request, *args, **kwargs)
+
+
 class ReportListView(ListView):
     model = Report
     template_name = 'main_app/report_list.html'
@@ -25,7 +38,7 @@ class ReportDetailView(DetailView):
     context_object_name = 'report'
 
 
-class ReportCreateView(CreateView):
+class ReportCreateView(AdminRequiredMixin, CreateView):
     model = Report
     form_class = ReportForm
     template_name = 'main_app/add_report.html'
@@ -36,7 +49,7 @@ class ReportCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ReportUpdateView(UpdateView):
+class ReportUpdateView(AdminRequiredMixin, UpdateView):
     model = Report
     form_class = ReportForm
     template_name = 'main_app/edit_report.html'
@@ -47,7 +60,7 @@ class ReportUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-class ReportDeleteView(DeleteView):
+class ReportDeleteView(AdminRequiredMixin, DeleteView):
     model = Report
     template_name = 'main_app/delete_report.html'
     success_url = reverse_lazy('report_list')
@@ -57,7 +70,7 @@ class ReportDeleteView(DeleteView):
         return super().form_valid(form)
 
 
-class ReportUpdateStatusView(View):
+class ReportUpdateStatusView(AdminRequiredMixin, View):
     def post(self, request, pk):
         report = get_object_or_404(Report, pk=pk)
         new_status = request.POST.get('status')
