@@ -21,11 +21,9 @@
                 <a href="{% url 'report_list' %}" class="btn btn-primary">
                     <i class="bi bi-clipboard-data-fill me-1"></i> Lihat Daftar Laporan
                 </a>
-
                 <a href="/about/" class="btn btn-outline-primary">
                     <i class="bi bi-person-badge-fill me-1"></i> Lihat About
                 </a>
-
                 <a href="/contacts/" class="btn btn-outline-dark">
                     <i class="bi bi-envelope-fill me-1"></i> Lihat Contacts
                 </a>
@@ -39,10 +37,8 @@
                     </a>
                 {% endif %}
 
-                {% if user.is_authenticated %}
-                    <a href="{% url 'add_report' %}"
-                       class="btn btn-warning text-dark"
-                       onclick="return confirm('Yakin ingin membuka fitur tambah laporan?');">
+                {% if user.is_authenticated and user.is_admin %}
+                    <a href="{% url 'add_report' %}" class="btn btn-warning text-dark">
                         <i class="bi bi-plus-square-fill me-1"></i> Tambah Laporan
                     </a>
                 {% endif %}
