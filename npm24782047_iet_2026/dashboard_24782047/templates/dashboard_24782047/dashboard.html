@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-3">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+    </ol>
+</nav>
+
+<style>
+    .summary-card {
+        border: none;
+        border-radius: 18px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .summary-title {
+        color: #6c757d;
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .summary-number {
+        font-size: 42px;
+        font-weight: 800;
+        line-height: 1;
+        color: #1f2d3d;
+        margin: 0;
+    }
+
+    .chart-wrapper {
+        position: relative;
+        height: 260px;
+        max-width: 100%;
+    }
+</style>
+
+<div class="hero-box">
+    <h1 class="page-title mb-2">
+        <i class="bi bi-bar-chart-fill text-primary me-2"></i>Dashboard Statistik
+    </h1>
+    <p class="subtitle">Ringkasan visual data laporan Smart City.</p>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card summary-card h-100">
+            <div class="card-body p-4">
+                <div class="summary-title">Total Laporan</div>
+                <h2 class="summary-number">{{ total_reports }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card summary-card h-100">
+            <div class="card-body p-4">
+                <div class="summary-title">Status Reported</div>
+                <h2 class="summary-number">{{ reported_count }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card summary-card h-100">
+            <div class="card-body p-4">
+                <div class="summary-title">Status Resolved</div>
+                <h2 class="summary-number">{{ resolved_count }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="card card-custom h-100">
+            <div class="soft-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-pie-chart-fill me-2"></i>Distribusi Status Laporan
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-wrapper">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card card-custom h-100">
+            <div class="soft-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-bar-chart-line-fill me-2"></i>Distribusi Kategori Laporan
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-wrapper">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card card-custom h-100">
+            <div class="soft-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-clock-history me-2"></i>5 Laporan REPORTED
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Judul</th>
+                                <th>Kategori</th>
+                                <th>Lokasi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in latest_reported %}
+                            <tr>
+                                <td>{{ report.title }}</td>
+                                <td>{{ report.category }}</td>
+                                <td>{{ report.location }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">Belum ada data REPORTED.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card card-custom h-100">
+            <div class="soft-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-check2-circle me-2"></i>5 Laporan RESOLVED
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Judul</th>
+                                <th>Kategori</th>
+                                <th>Lokasi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in latest_resolved %}
+                            <tr>
+                                <td>{{ report.title }}</td>
+                                <td>{{ report.category }}</td>
+                                <td>{{ report.location }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">Belum ada data RESOLVED.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/dashboard/api/stats/')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Data JSON dashboard:', data);
+
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.status_labels,
+                    datasets: [{
+                        data: data.status_totals
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            new Chart(categoryCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.category_labels,
+                    datasets: [{
+                        label: 'Jumlah Laporan',
+                        data: data.category_totals
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Gagal mengambil data dashboard:', error);
+        });
+});
+</script>
+{% endblock %}

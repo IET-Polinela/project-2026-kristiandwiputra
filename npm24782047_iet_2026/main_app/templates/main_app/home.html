@@ -13,7 +13,7 @@
                 yang saya kembangkan untuk latihan dan pengelolaan laporan Smart City.
             </p>
             <p class="subtitle">
-                Di website ini, kamu bisa mengakses halaman Home, About, Contact,
+                Di website ini, kamu bisa mengakses halaman Home, Dashboard, About, Contact,
                 serta melihat daftar laporan dengan tampilan yang lebih rapi dan terstruktur.
             </p>
 
@@ -21,9 +21,15 @@
                 <a href="{% url 'report_list' %}" class="btn btn-primary">
                     <i class="bi bi-clipboard-data-fill me-1"></i> Lihat Daftar Laporan
                 </a>
+
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-bar-chart-fill me-1"></i> Lihat Dashboard
+                </a>
+
                 <a href="/about/" class="btn btn-outline-primary">
                     <i class="bi bi-person-badge-fill me-1"></i> Lihat About
                 </a>
+
                 <a href="/contacts/" class="btn btn-outline-dark">
                     <i class="bi bi-envelope-fill me-1"></i> Lihat Contacts
                 </a>
