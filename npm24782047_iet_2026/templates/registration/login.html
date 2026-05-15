@@ -1,92 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #eef4ff, #f8f9fa);
-            min-height: 100vh;
-        }
-        .login-card {
-            border: none;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
-        .login-header {
-            background: linear-gradient(135deg, #0d6efd, #4f8cff);
-            color: white;
-            padding: 22px;
-            text-align: center;
-        }
-        .form-control {
-            border-radius: 12px;
-            padding: 10px 12px;
-        }
-        .btn-primary {
-            border-radius: 12px;
-            padding: 10px 14px;
-            font-weight: 600;
-        }
-        ul.errorlist {
-            margin: 0 0 10px 0;
-            padding-left: 18px;
-            color: #dc3545;
-            font-size: 0.9rem;
-        }
-    </style>
-</head>
-<body>
+{% extends 'base.html' %}
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card login-card">
-                <div class="login-header">
-                    <h2 class="mb-1">Login</h2>
-                    <p class="mb-0 small">Masuk ke sistem laporan Smart City</p>
+{% block title %}AUTHENTICATE - Smart City Lampung{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-5">
+        <!-- Login Card with Techy Style -->
+        <div class="card-custom border-0 shadow-lg overflow-hidden">
+            <!-- Header bergaya Terminal Gelap -->
+            <div class="p-4 text-center" style="background: #0f172a; border-bottom: 2px solid #38bdf8;">
+                <div class="mb-2">
+                    <i class="bi bi-shield-lock-fill text-info" style="font-size: 3rem;"></i>
                 </div>
+                <h3 class="text-white fw-bold mb-1" style="font-family: 'JetBrains Mono', monospace; letter-spacing: -1px;">
+                    ACCESS_GRANT_REQUIRED
+                </h3>
+                <p class="text-info opacity-75 small mb-0" style="font-family: 'JetBrains Mono', monospace;">
+                    SYSTEM_ID: SMART_CITY_LP_2.0
+                </p>
+            </div>
 
-                <div class="card-body p-4">
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-info">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
+            <div class="card-body p-5 bg-white">
+                <form method="post" id="reportForm">
+                    {% csrf_token %}
 
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            {{ form.non_field_errors }}
+                    <!-- Username Field -->
+                    <div class="mb-4">
+                        <label for="id_username" class="form-label fw-bold text-muted small" style="font-family: 'JetBrains Mono', monospace;">
+                            <i class="bi bi-person-fill me-1"></i> USER_IDENTITY
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-at text-primary"></i></span>
+                            <input type="text" name="username" id="id_username" class="form-control bg-light border-start-0" placeholder="Username" required>
                         </div>
-                    {% endif %}
+                    </div>
 
-                    <form method="post">
-                        {% csrf_token %}
-
-                        <div class="mb-3">
-                            <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">Username</label>
-                            <input type="text" name="username" id="{{ form.username.id_for_label }}" class="form-control" value="{{ form.username.value|default:'' }}">
+                    <!-- Password Field -->
+                    <div class="mb-4">
+                        <label for="id_password" class="form-label fw-bold text-muted small" style="font-family: 'JetBrains Mono', monospace;">
+                            <i class="bi bi-key-fill me-1"></i> ACCESS_ENCRYPTION_KEY
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-primary"></i></span>
+                            <input type="password" name="password" id="id_password" class="form-control bg-light border-start-0" placeholder="••••••••" required>
                         </div>
+                    </div>
 
-                        <div class="mb-4">
-                            <label for="{{ form.password.id_for_label }}" class="form-label fw-semibold">Password</label>
-                            <input type="password" name="password" id="{{ form.password.id_for_label }}" class="form-control">
-                        </div>
+                    <!-- Submit Button bergaya Executor -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" id="submitBtn" class="btn btn-primary py-3 fw-bold">
+                            <i class="bi bi-unlock-fill me-2"></i> EXECUTE_LOGIN
+                        </button>
+                    </div>
 
-                        <button type="submit" class="btn btn-primary w-100">Login</button>
-
-                        <div class="text-center mt-3">
-                            <a href="{% url 'register' %}">Belum punya akun? Registrasi</a>
-                        </div>
-                    </form>
-                </div>
+                    <!-- Link Registrasi -->
+                    <div class="text-center mt-4">
+                        <p class="text-muted small">
+                            New user? 
+                            <a href="{% url 'register' %}" class="text-info fw-bold text-decoration-none">Create_System_Account</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Footer Aksen Garis -->
+            <div class="py-2 bg-light text-center border-top">
+                <span class="text-muted" style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">
+                    SECURE_CONNECTION_ESTABLISHED // {{ now|date:"Y" }}
+                </span>
             </div>
         </div>
     </div>
 </div>
-
-</body>
-</html>
+{% endblock %}

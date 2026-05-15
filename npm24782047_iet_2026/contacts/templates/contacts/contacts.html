@@ -1,55 +1,95 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Contacts{% endblock %}
+{% block title %}CONTACT_CORE - Smart City Lampung{% endblock %}
 
 {% block content %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb mb-3">
-        <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Contacts</li>
+<!-- Navigation Breadcrumb -->
+<nav aria-label="breadcrumb" class="d-flex justify-content-center">
+    <ol class="breadcrumb mb-4" style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">
+        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">root@system</a></li>
+        <li class="breadcrumb-item active text-info" aria-current="page">./contacts</li>
     </ol>
 </nav>
 
-<div class="card card-custom">
-    <div class="soft-header">
-        <h3 class="mb-0"><i class="bi bi-envelope-paper-fill me-2"></i>Halaman Kontak</h3>
-    </div>
-    <div class="card-body p-4">
-        <div class="row g-4 align-items-center">
-            <div class="col-md-4 text-center">
-                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center"
-                     style="width: 140px; height: 140px;">
-                    <i class="bi bi-envelope-fill text-danger" style="font-size: 65px;"></i>
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8 col-sm-11">
+        
+        <!-- CARD KONTAK UTAMA -->
+        <div class="card-custom p-4 p-md-5 shadow-sm mb-4 border-top border-primary border-4 text-center">
+            
+            <!-- Foto Profil Bulat: Ukuran Tetap -->
+            <div class="rounded-circle border border-3 border-primary-subtle shadow-sm overflow-hidden d-inline-block mb-4"
+                 style="width: 130px; height: 130px;">
+                <img src="{% static 'img/kristian.jpg' %}" 
+                     alt="Kristian Dwi Putra"
+                     class="w-100 h-100"
+                     style="object-fit: cover; object-position: center 20%;">
+            </div>
+
+            <h3 class="fw-bold text-dark mb-1" style="font-family: 'JetBrains Mono', monospace;">HUBUNGI_SAYA</h3>
+            <p class="text-muted small mb-4 px-2">Silakan hubungi saya melalui jalur komunikasi berikut untuk kolaborasi.</p>
+
+            <div class="row g-3 justify-content-center">
+                <!-- Card Email: Perbaikan Layout Flex -->
+                <div class="col-12">
+                    <div class="p-3 bg-light rounded-3 border d-flex align-items-center text-start">
+                        <!-- Ikon dengan ukuran tetap agar tidak gepeng -->
+                        <div class="flex-shrink-0 bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center border" 
+                             style="width: 48px; height: 48px;">
+                            <i class="bi bi-envelope-at-fill text-primary fs-5"></i>
+                        </div>
+                        <!-- Kontainer Teks dengan margin -->
+                        <div class="ms-3 overflow-hidden">
+                            <div class="text-muted fw-bold" style="font-family: 'JetBrains Mono', monospace; font-size: 10px;">EMAIL_ADDRESS</div>
+                            <div class="fw-bold text-dark text-break" style="font-size: 13px;">kristianpemula2026@gmail.com</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Lokasi: Perbaikan Layout Flex -->
+                <div class="col-12">
+                    <div class="p-3 bg-light rounded-3 border d-flex align-items-center text-start">
+                        <div class="flex-shrink-0 bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center border" 
+                             style="width: 48px; height: 48px;">
+                            <i class="bi bi-geo-alt-fill text-danger fs-5"></i>
+                        </div>
+                        <div class="ms-3">
+                            <div class="text-muted fw-bold" style="font-family: 'JetBrains Mono', monospace; font-size: 10px;">LOCATION_CORE</div>
+                            <div class="fw-bold text-dark" style="font-size: 13px;">Bandar Lampung, Indonesia</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-8">
-                <h4 class="fw-bold mb-3">Hubungi Saya</h4>
-                <p class="mb-2">Silakan hubungi saya melalui email berikut:</p>
-                <div class="alert alert-light border">
-                    <i class="bi bi-at me-2 text-primary"></i>
-                    <strong>Email:</strong> kristianpemula2026@gmail.com
-                </div>
-                <p class="text-muted mb-0">
-                    Jika belum sempat dibalas, mungkin saya sedang sibuk mengerjakan tugas
-                    atau sedang fokus pada aktivitas lainnya.
-                </p>
-            </div>
+            <hr class="my-4 opacity-25">
+
+            <p class="text-muted small px-2 mb-0" style="font-style: italic;">
+                "Burung Merpati Burung Cendrawasih, Cukup Sekian Terima Kasih."
+            </p>
         </div>
 
-        <hr class="my-4">
-
-        <div class="d-flex flex-wrap gap-2">
-            <a href="/" class="btn btn-primary">
-                <i class="bi bi-house-door-fill me-1"></i> Kembali ke Home
+        <!-- Navigasi Bawah -->
+        <div class="d-flex justify-content-center gap-2">
+            <a href="/" class="btn btn-primary px-4 shadow-sm btn-sm">
+                <i class="bi bi-house-door-fill"></i> Home
             </a>
-            <a href="/about/" class="btn btn-outline-success">
-                <i class="bi bi-person-badge-fill me-1"></i> Lihat About
-            </a>
-            <a href="{% url 'report_list' %}" class="btn btn-outline-primary">
-                <i class="bi bi-clipboard-data-fill me-1"></i> Lihat Daftar Laporan
+            <a href="{% url 'report_list' %}" class="btn btn-outline-primary px-4 btn-sm">
+                <i class="bi bi-clipboard-data-fill"></i> Reports
             </a>
         </div>
+
     </div>
 </div>
+
+<style>
+    .card-custom { 
+        background: #ffffff; 
+        border-radius: 20px; 
+        border: 1px solid #e2e8f0; 
+    }
+    .btn { border-radius: 10px; font-weight: 600; }
+    /* Memastikan teks email panjang tidak merusak layout */
+    .text-break { word-wrap: break-word !important; word-break: break-all !important; }
+</style>
 {% endblock %}

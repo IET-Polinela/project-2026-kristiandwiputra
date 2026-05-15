@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'contacts',
     'usermanagement_24782047',
     'dashboard_24782047',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -63,7 +64,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'smartcity_db',
         'USER': 'postgres',
-        'PASSWORD': '135790',
+        'PASSWORD': '12345678',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -99,6 +100,11 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
+]
+
+import os
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

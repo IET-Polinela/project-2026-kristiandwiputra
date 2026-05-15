@@ -1,252 +1,233 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Daftar Laporan{% endblock %}
+{% block title %}DATABASE_REPORT_QUERY - Smart City Lampung{% endblock %}
 
 {% block content %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb mb-3">
-        <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Reports</li>
-    </ol>
-</nav>
+<style>
+    :root {
+        --primary-cyan: #0ea5e9;
+        --bg-deep: #020617;
+        --card-glass: rgba(15, 23, 42, 0.95);
+        --text-muted: #94a3b8;
+    }
 
-<div class="hero-box">
+    body {
+        background-color: var(--bg-deep);
+        /* Pola Tapis Digital Halus */
+        background-image: linear-gradient(rgba(14, 165, 233, 0.03) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(14, 165, 233, 0.03) 1px, transparent 1px);
+        background-size: 30px 30px;
+        color: #f1f5f9;
+    }
+
+    .glass-panel {
+        background: var(--card-glass);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+    }
+
+    /* --- HEADER TABEL SEJAJAR --- */
+    .table thead th {
+        font-family: 'JetBrains Mono', monospace;
+        color: var(--primary-cyan);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        vertical-align: middle !important;
+        height: 60px;
+        line-height: 60px;
+        padding: 0 15px !important;
+        border: none !important;
+    }
+
+    /* --- JUDUL LAPORAN (DESCRIPTION) --- */
+    .report-title-text {
+        color: #ffffff !important;
+        font-weight: 800;
+        font-size: 16px;
+        display: block;
+        margin-bottom: 4px;
+        cursor: pointer;
+    }
+    
+    .title-clicked {
+        color: #000000 !important;
+        background: var(--primary-cyan) !important;
+        padding: 2px 10px;
+        border-radius: 6px;
+    }
+
+    .metadata-small {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        color: var(--text-muted);
+        display: block;
+    }
+
+    /* --- TABLE RESET --- */
+    .table, .table td, .table th, .table tr {
+        border: none !important;
+        background-color: transparent !important;
+    }
+
+    .hover-row:hover { background: rgba(14, 165, 233, 0.05) !important; }
+
+    /* --- BUTTONS & BADGES --- */
+    .btn-square-sys {
+        width: 38px; height: 38px;
+        display: flex; align-items: center; justify-content: center;
+        border-radius: 10px; border: none; color: white;
+    }
+
+    .btn-status-pill {
+        min-width: 110px;
+        padding: 6px 12px;
+        font-size: 10px;
+        font-weight: 800;
+        border-radius: 50px;
+        text-transform: uppercase;
+        border: none;
+    }
+
+    .st-draft { background: #334155; color: #cbd5e1; }
+    .st-verified { background: #4338ca; color: #e0e7ff; }
+    .st-progress { background: #b45309; color: #ffedd5; }
+    .st-resolved { background: #047857; color: #d1fae5; }
+
+    /* RESPONSIF HP */
+    @media (max-width: 768px) {
+        .table thead { display: none; }
+        .table, .table tbody, .table tr, .table td { display: block; width: 100%; }
+        .table tr { margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 15px; }
+        .table td { padding: 8px 0 !important; }
+        .table td:before { content: attr(data-label); font-family: 'JetBrains Mono'; font-size: 9px; color: var(--primary-cyan); display: block; margin-bottom: 2px; text-transform: uppercase; }
+        .d-flex.justify-content-center { justify-content: flex-start !important; flex-wrap: wrap; }
+    }
+</style>
+
+<div class="glass-panel border-start border-4 border-info">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
         <div>
-            <h2 class="page-title mb-1">
-                <i class="bi bi-clipboard-data-fill me-2 text-primary"></i>Daftar Laporan Smart City
+            <h2 class="fw-bold text-white mb-0" style="font-family: 'JetBrains Mono';">
+                <i class="bi bi-cpu-fill text-info me-2"></i>QUERY_DATABASE.CORE
             </h2>
-            <p class="subtitle">Kelola laporan dengan tampilan yang rapi, konsisten, dan mudah dipahami.</p>
+            <p class="metadata-small mb-0">TOTAL_ENTRIES: {{ reports.count }} | SYNC_OK</p>
         </div>
-
-        <div class="d-flex flex-column flex-md-row gap-2">
-            <input
-                type="text"
-                id="liveSearchInput"
-                class="form-control"
-                placeholder="Cari judul, kategori, lokasi, atau status..."
-                style="min-width: 320px;"
-            >
-
-            {% if user.is_authenticated %}
-            <a href="{% url 'add_report' %}" class="btn btn-primary px-4">
-                <i class="bi bi-plus-circle me-1"></i> Tambah Laporan
-            </a>
+        <div class="d-flex gap-2 w-100 w-md-auto">
+            <input type="text" id="liveSearchInput" class="form-control bg-dark text-white border-secondary" placeholder="Search CID..." style="border-radius: 10px;">
+            {% if user.is_superuser %}
+            <a href="{% url 'add_report' %}" class="btn btn-info px-4 fw-bold shadow-sm" style="min-width: 110px; border-radius: 10px;">ADD_NEW</a>
             {% endif %}
         </div>
     </div>
 </div>
 
-<div class="card card-custom">
-    <div class="soft-header">
-        <h5 class="mb-0"><i class="bi bi-table me-2"></i>Data Laporan</h5>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Judul</th>
-                        <th>Kategori</th>
-                        <th>Lokasi</th>
-                        <th>Status</th>
-                        <th style="min-width: 250px;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="reportTableBody">
-                    {% for report in reports %}
-                    <tr>
-                        <td>
-                            <div class="fw-semibold">{{ report.title }}</div>
-                            <small class="text-muted">ID Laporan #{{ report.id }}</small>
-                        </td>
-                        <td>{{ report.category }}</td>
-                        <td><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ report.location }}</td>
-                        <td>
-                            {% if report.status == 'REPORTED' %}
-                                <span class="badge bg-secondary">Reported</span>
-                            {% elif report.status == 'VERIFIED' %}
-                                <span class="badge bg-primary">Verified</span>
-                            {% elif report.status == 'IN_PROGRESS' %}
-                                <span class="badge bg-warning text-dark">In Progress</span>
-                            {% elif report.status == 'RESOLVED' %}
-                                <span class="badge bg-success">Resolved</span>
+<div class="glass-panel p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table align-middle text-white mb-0">
+            <thead class="bg-dark bg-opacity-50">
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1) !important;">
+                    <th class="ps-4">#CID_UID</th>
+                    <th>DESCRIPTION_LOG</th>
+                    <th>CATEGORY</th>
+                    <th>STATE</th>
+                    <th class="text-center">ACTION</th>
+                </tr>
+            </thead>
+            <tbody id="reportTableBody">
+                {% for report in reports %}
+                <tr class="hover-row">
+                    <td class="ps-4 fw-bold text-info" data-label="ID">#{{ report.id }}</td>
+                    <td class="py-4" data-label="Description">
+                        <span class="report-title-text" onclick="this.classList.toggle('title-clicked')">{{ report.title }}</span>
+                        <span class="metadata-small">TS: {{ report.created_at|date:"Y.m.d // H:i" }}</span>
+                    </td>
+                    <td data-label="Category"><span class="text-info small fw-bold">{{ report.category|upper }}</span></td>
+                    <td data-label="State">
+                        <span class="btn-status-pill st-{% if report.status == 'VERIFIED' %}verified{% elif report.status == 'IN_PROGRESS' %}progress{% elif report.status == 'RESOLVED' %}resolved{% else %}draft{% endif %}">
+                            {{ report.status|default:"DRAFT" }}
+                        </span>
+                    </td>
+                    <td class="text-center" data-label="Action">
+                        <div class="d-flex justify-content-center gap-2">
+                            <button class="btn btn-square-sys bg-info detail-btn" data-id="{{ report.id }}"><i class="bi bi-terminal-fill"></i></button>
+                            {% if user.is_superuser %}
+                                <a href="{% url 'edit_report' report.pk %}" class="btn btn-square-sys bg-warning text-dark"><i class="bi bi-pencil-square"></i></a>
+                                <a href="{% url 'verify_report' report.pk %}" class="btn btn-square-sys {% if report.status == 'IN_PROGRESS' %}bg-primary{% elif report.status == 'VERIFIED' %}bg-warning text-dark{% else %}bg-success{% endif %}"><i class="bi bi-arrow-right-short fs-4"></i></a>
+                                <a href="{% url 'delete_report' report.pk %}" class="btn btn-square-sys bg-danger" onclick="return confirm('Wipe?')"><i class="bi bi-trash3-fill"></i></a>
                             {% endif %}
-                        </td>
-                        <td class="action-group">
-                            <button
-                                type="button"
-                                class="btn btn-sm btn-info text-white detail-btn"
-                                data-id="{{ report.id }}"
-                            >
-                                <i class="bi bi-eye-fill"></i> Detail
-                            </button>
-
-                            {% if user.is_authenticated and user.is_admin %}
-                                <a href="{% url 'edit_report' report.pk %}" class="btn btn-sm btn-warning text-dark">
-                                    <i class="bi bi-pencil-square"></i> Edit
-                                </a>
-
-                                <a href="{% url 'delete_report' report.pk %}" class="btn btn-sm btn-danger"
-                                   onclick="return confirm('Yakin ingin menghapus laporan ini?')">
-                                    <i class="bi bi-trash-fill"></i> Hapus
-                                </a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="5" class="text-center text-muted">Belum ada laporan.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 
-<div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="detailModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="soft-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 text-white">
-                    <i class="bi bi-file-earmark-text-fill me-2"></i>Detail Laporan
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4">
-                <h3 id="modalTitle" class="fw-bold mb-3"></h3>
-
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Kategori</label>
-                    <div id="modalCategory" class="form-control bg-light"></div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Deskripsi</label>
-                    <div id="modalDescription" class="form-control bg-light" style="min-height: 120px;"></div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Lokasi</label>
-                    <div id="modalLocation" class="form-control bg-light"></div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Status</label>
-                    <div id="modalStatus"></div>
-                </div>
-
-                <div class="mb-0">
-                    <label class="form-label fw-bold">Dibuat</label>
-                    <div id="modalCreatedAt" class="form-control bg-light"></div>
-                </div>
-            </div>
+        <div class="modal-content" style="background: #0f172a; border: 1px solid var(--primary-cyan); border-radius: 20px; color: #fff;">
+            <div id="modalContentTarget"></div>
         </div>
     </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('liveSearchInput');
-    const tableBody = document.getElementById('reportTableBody');
-    const detailModalEl = document.getElementById('detailModal');
-    const detailModal = new bootstrap.Modal(detailModalEl);
-    let debounceTimer;
+    function toggleTitleColor(element) { element.classList.toggle('title-clicked'); }
 
-    function getStatusBadge(status) {
-        if (status === 'REPORTED') {
-            return '<span class="badge bg-secondary">Reported</span>';
-        } else if (status === 'VERIFIED') {
-            return '<span class="badge bg-primary">Verified</span>';
-        } else if (status === 'IN_PROGRESS') {
-            return '<span class="badge bg-warning text-dark">In Progress</span>';
-        } else if (status === 'RESOLVED') {
-            return '<span class="badge bg-success">Resolved</span>';
-        }
-        return `<span class="badge bg-dark">${status}</span>`;
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const isSuperUser = {% if user.is_superuser %}true{% else %}false{% endif %};
+        const tableBody = document.getElementById('reportTableBody');
+        const searchInput = document.getElementById('liveSearchInput');
+        const detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
 
-    function renderReports(reports) {
-        if (!reports.length) {
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="5" class="text-center text-muted">Data tidak ditemukan.</td>
-                </tr>
-            `;
-            return;
+        function getBadgeHtml(status) {
+            const s = status || 'DRAFT';
+            const classes = { 'VERIFIED': 'st-verified', 'IN_PROGRESS': 'st-progress', 'RESOLVED': 'st-resolved', 'REPORTED': 'st-reported', 'DRAFT': 'st-draft' };
+            return `<span class="btn-status-pill ${classes[s]}">${s}</span>`;
         }
 
-        let html = '';
+        function renderRow(report) {
+            const statusClass = (report.status || 'DRAFT').toLowerCase().replace(' ', '');
+            let adminBtns = isSuperUser ? `<a href="/reports/${report.id}/edit/" class="btn btn-square-sys bg-warning text-dark"><i class="bi bi-pencil-square"></i></a><a href="/reports/${report.id}/verify/" class="btn btn-square-sys bg-primary"><i class="bi bi-arrow-right-short fs-4"></i></a><a href="/reports/${report.id}/delete/" class="btn btn-square-sys bg-danger"><i class="bi bi-trash3-fill"></i></a>` : '';
+            return `<tr class="hover-row">
+                <td class="ps-4 fw-bold text-info" data-label="ID">#${report.id}</td>
+                <td class="py-4" data-label="Description"><span class="report-title-text" onclick="this.classList.toggle('title-clicked')">${report.title}</span><span class="metadata-small">TS: ${report.created_at || ''}</span></td>
+                <td data-label="Category"><span class="text-info small fw-bold">${report.category.toUpperCase()}</span></td>
+                <td data-label="State"><span class="btn-status-pill st-${statusClass}">${report.status || 'DRAFT'}</span></td>
+                <td class="text-center" data-label="Action"><div class="d-flex justify-content-center gap-2"><button class="btn btn-square-sys bg-info detail-btn" data-id="${report.id}"><i class="bi bi-terminal-fill"></i></button>${adminBtns}</div></td>
+            </tr>`;
+        }
 
-        reports.forEach(report => {
-            html += `
-                <tr>
-                    <td>
-                        <div class="fw-semibold">${report.title}</div>
-                        <small class="text-muted">ID Laporan #${report.id}</small>
-                    </td>
-                    <td>${report.category}</td>
-                    <td><i class="bi bi-geo-alt-fill text-danger me-1"></i>${report.location}</td>
-                    <td>${getStatusBadge(report.status)}</td>
-                    <td class="action-group">
-                        <button type="button" class="btn btn-sm btn-info text-white detail-btn" data-id="${report.id}">
-                            <i class="bi bi-eye-fill"></i> Detail
-                        </button>
-                    </td>
-                </tr>
-            `;
+        searchInput.addEventListener('input', function() {
+            fetch(`/reports/api/search/?q=${encodeURIComponent(this.value)}`).then(res => res.json()).then(data => { tableBody.innerHTML = data.reports.map(renderRow).join(''); });
         });
 
-        tableBody.innerHTML = html;
-    }
-
-    function fetchReports(keyword) {
-        fetch(`/reports/api/search/?q=${encodeURIComponent(keyword)}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log('Live search JSON:', data);
-                renderReports(data.reports);
-            })
-            .catch(error => {
-                console.error('Gagal mengambil data pencarian:', error);
-            });
-    }
-
-    function loadDetail(id) {
-        fetch(`/reports/api/${id}/detail/`)
-            .then(response => response.json())
-            .then(data => {
-                console.log('Detail JSON:', data);
-
-                document.getElementById('modalTitle').textContent = data.title;
-                document.getElementById('modalCategory').textContent = data.category;
-                document.getElementById('modalDescription').textContent = data.description;
-                document.getElementById('modalLocation').textContent = data.location;
-                document.getElementById('modalStatus').innerHTML = getStatusBadge(data.status);
-                document.getElementById('modalCreatedAt').textContent = data.created_at;
-
-                detailModal.show();
-            })
-            .catch(error => {
-                console.error('Gagal mengambil detail laporan:', error);
-            });
-    }
-
-    searchInput.addEventListener('input', function () {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            fetchReports(searchInput.value);
-        }, 300);
+        tableBody.addEventListener('click', function(e) {
+            const btn = e.target.closest('.detail-btn');
+            if (btn) {
+                fetch(`/reports/api/${btn.dataset.id}/detail/`).then(res => res.json()).then(data => {
+                    document.getElementById('modalContentTarget').innerHTML = `
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div><h3 class="text-white fw-bold mb-1">${data.title}</h3><span class="metadata-small">UID: #${data.id}</span></div>
+                                ${getBadgeHtml(data.status)}
+                            </div>
+                            <div class="row g-3 mb-4">
+                                <div class="col-6"><small class="text-info d-block fw-bold">CATEGORY</small><span class="text-white">${data.category.toUpperCase()}</span></div>
+                                <div class="col-6"><small class="text-info d-block fw-bold">LOCATION</small><span class="text-white">${data.location}</span></div>
+                            </div>
+                            <small class="text-info d-block fw-bold mb-2">LOG_DESCRIPTION</small>
+                            <div class="p-3 bg-dark bg-opacity-50 rounded border border-secondary text-muted small">${data.description}</div>
+                            <button class="btn btn-outline-info mt-4 w-100 fw-bold" style="border-radius: 10px;" data-bs-dismiss="modal">CLOSE_SESSION</button>
+                        </div>`;
+                    detailModal.show();
+                });
+            }
+        });
     });
-
-    tableBody.addEventListener('click', function (event) {
-        const button = event.target.closest('.detail-btn');
-        if (button) {
-            const reportId = button.dataset.id;
-            loadDetail(reportId);
-        }
-    });
-});
 </script>
 {% endblock %}

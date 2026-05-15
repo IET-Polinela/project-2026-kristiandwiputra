@@ -3,126 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}IET City{% endblock %}</title>
+    <title>{% block title %}Smart City Lampung{% endblock %}</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
     <style>
-        body {
-            background: linear-gradient(135deg, #eef4ff, #f8f9fa);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            /* Palette: Deep Space & Cyber Blue */
+            --primary-bg: #020617; 
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent-blue: #38bdf8; 
+            --accent-indigo: #6366f1; 
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
         }
 
-        .navbar { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08); }
-        .navbar-brand { font-weight: 700; letter-spacing: 0.5px; }
-        .page-title { font-weight: 700; color: #1f2d3d; }
-        .subtitle { color: #6c757d; margin-bottom: 0; }
+        body {
+            /* Background Futuristik dengan Grid Pattern */
+            background-color: var(--primary-bg);
+            background-image: 
+                linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: var(--text-main);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: -0.01em;
+            overflow-x: hidden;
+        }
+
+        /* Navbar: Glassmorphism Effect */
+        .navbar {
+            background: rgba(15, 23, 42, 0.8) !important;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.8rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--accent-blue) !important;
+            font-family: 'JetBrains Mono', monospace;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--text-muted) !important;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover { 
+            color: var(--accent-blue) !important; 
+            transform: translateY(-1px);
+        }
+
+        /* Modern Glass Cards */
         .card-custom {
-            border: none;
-            border-radius: 18px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-main);
         }
+
+        .card-custom:hover {
+            transform: translateY(-5px);
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
         .soft-header {
-            background: linear-gradient(135deg, #0d6efd, #4f8cff);
-            color: white;
-            padding: 18px 22px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid var(--border-color);
+            color: var(--accent-blue);
+            padding: 15px 20px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
         }
-        .table thead th {
-            border: none;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-        }
-        .table td, .table th { vertical-align: middle; }
-        .badge {
-            font-size: 0.85rem;
-            padding: 8px 12px;
-            border-radius: 999px;
-        }
-        .btn { border-radius: 10px; font-weight: 500; }
-        .btn-sm { border-radius: 8px; }
-        .empty-box { padding: 50px 20px; }
-        .empty-icon { font-size: 60px; color: #adb5bd; }
-        .breadcrumb { background-color: transparent; padding: 0; }
-        .hero-box {
-            background: linear-gradient(135deg, #ffffff, #f1f6ff);
-            border-radius: 18px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-        .action-group .btn,
-        .action-group form {
-            margin-bottom: 6px;
-            margin-right: 4px;
-        }
+
+        /* Terminal Style Badges */
         .role-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 999px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-left: 8px;
-            margin-right: 6px;
-            margin-top: 2px;
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
         }
+
         .role-admin {
-            background-color: #ffc107;
-            color: #212529;
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-blue);
+            border: 1px solid var(--accent-blue);
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
         }
+
         .role-user {
-            background-color: rgba(255,255,255,0.2);
-            color: #ffffff;
-            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent-indigo);
+            border: 1px solid var(--accent-indigo);
         }
-        .logout-btn {
+
+        /* Typography */
+        .display-4 { 
+            font-weight: 800; 
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .text-muted { color: var(--text-muted) !important; }
+
+        /* Buttons */
+        .btn {
+            border-radius: 10px;
+            padding: 10px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent-indigo);
             border: none;
-            background: none;
-            color: rgba(255,255,255,.85);
-            padding: 8px 12px;
-            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
         }
-        .logout-btn:hover {
-            color: #fff;
+
+        .btn-primary:hover {
+            background: #4f46e5;
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Custom Scrollbar for Dark Theme */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--primary-bg); }
+        ::-webkit-scrollbar-thumb { 
+            background: #334155; 
+            border-radius: 10px; 
+            border: 2px solid var(--primary-bg);
+        }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        @media (max-width: 768px) {
+            .navbar-collapse {
+                background: rgba(15, 23, 42, 0.95);
+                padding: 1rem;
+                border-radius: 12px;
+                margin-top: 1rem;
+                border: 1px solid var(--border-color);
+            }
         }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg sticky-top">
     <div class="container">
-        <a class="navbar-brand" href="/"><i class="bi bi-buildings-fill"></i> Smart City Lampung </a>
+        <a class="navbar-brand" href="/">
+            <i class="bi bi-cpu-fill me-2"></i>SMART_CITY.LAMPUNG
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
+            <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto align-items-lg-center">
+            <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/dashboard/">Dashboard</a></li>
                 <li class="nav-item"><a class="nav-link" href="/reports/">Reports</a></li>
                 <li class="nav-item"><a class="nav-link" href="/about/">About</a></li>
-                <li class="nav-item"><a class="nav-link" href="/contacts/">Contact</a></li>
-
+                <li class="nav-item"><a class="nav-link" href="/contacts/">Contacts</a></li>
+                
                 {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        {% if user.is_admin %}
-                            <span class="role-badge role-admin">Admin: {{ user.username }}</span>
+                    <li class="nav-item ms-lg-3">
+                        {% if user.is_superuser %}
+                            <span class="role-badge role-admin">
+                                <i class="bi bi-terminal-fill me-2"></i>ROOT: {{ user.username }}
+                            </span>
                         {% else %}
-                            <span class="role-badge role-user">User: {{ user.username }}</span>
+                            <span class="role-badge role-user">
+                                <i class="bi bi-person-fill me-2"></i>USER: {{ user.username }}
+                            </span>
                         {% endif %}
                     </li>
                     <li class="nav-item">
                         <form action="{% url 'logout' %}" method="post" class="d-inline">
                             {% csrf_token %}
-                            <button type="submit" class="logout-btn">Logout</button>
+                            <button type="submit" class="btn text-danger ms-lg-2 p-2">
+                                <i class="bi bi-power fs-5"></i>
+                            </button>
                         </form>
                     </li>
                 {% else %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+                    <li class="nav-item ms-lg-2"><a class="btn btn-sm btn-outline-info px-4" href="{% url 'login' %}">LOGIN_SYS</a></li>
                 {% endif %}
             </ul>
         </div>
@@ -132,29 +215,22 @@
 <div class="container mt-4">
     {% if messages %}
         {% for message in messages %}
-            <div class="alert 
-                {% if message.tags == 'error' %}
-                    alert-danger
-                {% elif message.tags == 'warning' %}
-                    alert-warning
-                {% elif message.tags == 'info' %}
-                    alert-info
-                {% else %}
-                    alert-success
-                {% endif %}
-                alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>{{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <div class="alert alert-dismissible fade show shadow-lg border-0 bg-dark text-white border-start border-4 {% if message.tags == 'error' %}border-danger{% else %}border-info{% endif %}" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi {% if message.tags == 'error' %}bi-exclamation-triangle-fill text-danger{% else %}bi-info-circle-fill text-info{% endif %} me-3 fs-5"></i>
+                    <span class="fw-medium">{{ message }}</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
             </div>
         {% endfor %}
     {% endif %}
 </div>
 
-<div class="container mt-3 mb-5">
-    {% block content %}
-    {% endblock %}
-</div>
+<main class="container mt-2 mb-5">
+    {% block content %}{% endblock %}
+</main>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const form = document.getElementById("reportForm");
@@ -163,12 +239,10 @@
         if (form && submitBtn) {
             form.addEventListener("submit", function () {
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>EXECUTING_QUERY...';
             });
         }
     });
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
