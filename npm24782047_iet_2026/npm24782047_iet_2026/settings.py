@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -5,6 +6,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/stable/howto/deployment/checklist/
+
 SECRET_KEY = 'django-insecure-hgg=9q)gm%&1lnxv2e#b5a0h6s9=k5b5qsp28ep2v@a0h%9zyu'
 
 DEBUG = True
@@ -20,12 +23,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # Core Apps
     'main_app',
     'about',
     'contacts',
     'usermanagement_24782047',
     'dashboard_24782047',
+    
+    # Third Party Packages
     'rest_framework',
+    'rest_framework_simplejwt', # Core JWT Authentication Engine
 ]
 
 MIDDLEWARE = [
@@ -58,7 +66,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'npm24782047_iet_2026.wsgi.application'
 
 
-# Database
+# Database Configuration (PostgreSQL Connection)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -95,18 +103,25 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# Static files Configuration (Cleaned & Optimized)
 STATIC_URL = 'static/'
-
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-import os
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Custom User Model
 AUTH_USER_MODEL = 'usermanagement_24782047.CustomUser'
+
+
+# Django REST Framework & SimpleJWT Authentication Setup
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}

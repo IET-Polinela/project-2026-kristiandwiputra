@@ -1,74 +1,150 @@
 {% extends 'base.html' %}
 
-{% block title %}AUTHENTICATE - Smart City Lampung{% endblock %}
+{% block title %}LOGIN - Smart City Lampung{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
-    <div class="col-md-5">
-        <!-- Login Card with Techy Style -->
-        <div class="card-custom border-0 shadow-lg overflow-hidden">
-            <!-- Header bergaya Terminal Gelap -->
-            <div class="p-4 text-center" style="background: #0f172a; border-bottom: 2px solid #38bdf8;">
-                <div class="mb-2">
-                    <i class="bi bi-shield-lock-fill text-info" style="font-size: 3rem;"></i>
+<style>
+    /* Mengamankan Card agar benar-benar Glassmorphism tingkat tinggi */
+    .auth-card {
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        border-top: 3px solid #38bdf8; /* Aksen neon cyan di atas */
+        border-radius: 16px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(56, 189, 248, 0.05);
+    }
+
+    /* MEMBUNUH WARNA PUTIH PADA INPUT BROWSER */
+    .auth-input {
+        background-color: rgba(2, 6, 23, 0.6) !important; /* Warna dasar navy sangat gelap */
+        border: 1px solid rgba(56, 189, 248, 0.3) !important;
+        color: #38bdf8 !important; /* Teks yang diketik berwarna cyan */
+        padding: 14px 16px !important;
+        min-height: 52px;
+        font-size: 1rem;
+        font-family: 'JetBrains Mono', monospace;
+        border-left: none !important; /* Agar menyatu dengan kotak icon */
+        border-top-right-radius: 8px !important;
+        border-bottom-right-radius: 8px !important;
+    }
+
+    .auth-input::placeholder {
+        color: rgba(56, 189, 248, 0.3) !important; /* Placeholder redup */
+    }
+
+    .auth-input:focus {
+        background-color: rgba(2, 6, 23, 0.95) !important;
+        border-color: #38bdf8 !important;
+        box-shadow: none !important; /* Menghilangkan shadow bawaan bootstrap */
+        border-right: 1px solid #38bdf8 !important;
+        border-top: 1px solid #38bdf8 !important;
+        border-bottom: 1px solid #38bdf8 !important;
+    }
+
+    /* Fix autofill browser (Mencegah Chrome mengubah form jadi putih/kuning) */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px #020617 inset !important;
+        -webkit-text-fill-color: #38bdf8 !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
+    /* Box Icon di sebelah kiri Input */
+    .auth-icon-box {
+        background-color: rgba(2, 6, 23, 0.6) !important;
+        border: 1px solid rgba(56, 189, 248, 0.3) !important;
+        border-right: none !important;
+        color: #38bdf8 !important;
+        min-height: 52px;
+        border-top-left-radius: 8px !important;
+        border-bottom-left-radius: 8px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 45px;
+    }
+
+    /* Tombol Eksekusi bergaya Cyber */
+    .btn-cyber {
+        background: rgba(56, 189, 248, 0.1);
+        color: #38bdf8;
+        border: 1px solid #38bdf8;
+        border-radius: 8px;
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-cyber:hover {
+        box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
+        color: #020617;
+        background: #38bdf8;
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="row justify-content-center align-items-center" style="min-height: 75vh;">
+    <div class="col-12 col-md-6 col-lg-5 animate-enter">
+        <div class="auth-card overflow-hidden">
+            
+            <div class="p-4 text-center border-bottom" style="border-color: rgba(255,255,255,0.05) !important;">
+                <div class="mb-3">
+                    <div class="d-inline-flex p-3 rounded-circle" style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.4);">
+                        <i class="bi bi-shield-lock-fill text-info" style="font-size: 2.2rem; filter: drop-shadow(0 0 10px #38bdf8);"></i>
+                    </div>
                 </div>
-                <h3 class="text-white fw-bold mb-1" style="font-family: 'JetBrains Mono', monospace; letter-spacing: -1px;">
-                    ACCESS_GRANT_REQUIRED
-                </h3>
-                <p class="text-info opacity-75 small mb-0" style="font-family: 'JetBrains Mono', monospace;">
-                    SYSTEM_ID: SMART_CITY_LP_2.0
+                <h3 class="text-white fw-bold mb-1" style="font-family: 'JetBrains Mono', monospace; letter-spacing: 1px;">SYSTEM_AUTH</h3>
+                <p class="small mb-0" style="color: #94a3b8; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px;">
+                    NODE: <span class="text-info">SMART_CITY_LP_2.0</span>
                 </p>
             </div>
 
-            <div class="card-body p-5 bg-white">
-                <form method="post" id="reportForm">
+            <div class="card-body p-4 p-md-5">
+                <form method="post" autocomplete="off">
                     {% csrf_token %}
 
-                    <!-- Username Field -->
                     <div class="mb-4">
-                        <label for="id_username" class="form-label fw-bold text-muted small" style="font-family: 'JetBrains Mono', monospace;">
-                            <i class="bi bi-person-fill me-1"></i> USER_IDENTITY
+                        <label for="id_username" class="form-label text-info small fw-bold" style="font-family: 'JetBrains Mono', monospace; letter-spacing: 1px;">
+                            USERNAME
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-at text-primary"></i></span>
-                            <input type="text" name="username" id="id_username" class="form-control bg-light border-start-0" placeholder="Username" required>
+                            <span class="input-group-text auth-icon-box"><i class="bi bi-person"></i></span>
+                            <input type="text" name="username" id="id_username" class="form-control auth-input" placeholder="Masukkan ID akses..." required autocomplete="off">
                         </div>
                     </div>
 
-                    <!-- Password Field -->
-                    <div class="mb-4">
-                        <label for="id_password" class="form-label fw-bold text-muted small" style="font-family: 'JetBrains Mono', monospace;">
-                            <i class="bi bi-key-fill me-1"></i> ACCESS_ENCRYPTION_KEY
+                    <div class="mb-5">
+                        <label for="id_password" class="form-label text-info small fw-bold" style="font-family: 'JetBrains Mono', monospace; letter-spacing: 1px;">
+                            PASSWORD
                         </label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-primary"></i></span>
-                            <input type="password" name="password" id="id_password" class="form-control bg-light border-start-0" placeholder="••••••••" required>
+                            <span class="input-group-text auth-icon-box"><i class="bi bi-key"></i></span>
+                            <input type="password" name="password" id="id_password" class="form-control auth-input" placeholder="••••••••" required autocomplete="new-password">
                         </div>
                     </div>
 
-                    <!-- Submit Button bergaya Executor -->
-                    <div class="d-grid gap-2">
-                        <button type="submit" id="submitBtn" class="btn btn-primary py-3 fw-bold">
-                            <i class="bi bi-unlock-fill me-2"></i> EXECUTE_LOGIN
-                        </button>
-                    </div>
+                    <button type="submit" id="submitBtn" class="btn btn-cyber w-100 py-3 mb-4">
+                        <i class="bi bi-box-arrow-in-right me-2"></i> EXECUTE_LOGIN
+                    </button>
 
-                    <!-- Link Registrasi -->
-                    <div class="text-center mt-4">
+                    <div class="text-center">
                         <p class="text-muted small">
-                            New user? 
-                            <a href="{% url 'register' %}" class="text-info fw-bold text-decoration-none">Create_System_Account</a>
+                            Belum memiliki akses? <br>
+                            <a href="{% url 'register' %}" class="text-warning fw-bold text-decoration-none mt-1 d-inline-block" style="letter-spacing: 0.5px; transition: color 0.2s;">
+                                Registrasi Citizen Baru
+                            </a>
                         </p>
                     </div>
                 </form>
             </div>
             
-            <!-- Footer Aksen Garis -->
-            <div class="py-2 bg-light text-center border-top">
-                <span class="text-muted" style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">
-                    SECURE_CONNECTION_ESTABLISHED // {{ now|date:"Y" }}
-                </span>
-            </div>
         </div>
     </div>
 </div>

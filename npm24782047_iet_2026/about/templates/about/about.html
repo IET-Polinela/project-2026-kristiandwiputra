@@ -4,7 +4,106 @@
 {% block title %}ABOUT_ME - Smart City Lampung{% endblock %}
 
 {% block content %}
-<!-- Navigation Breadcrumb: Center Aligned -->
+<style>
+    /* --- GLASS PANEL CONTAINER --- */
+    .glass-panel {
+        background: rgba(15, 23, 42, 0.65);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(14, 165, 233, 0.2);
+        border-radius: 24px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(14, 165, 233, 0.05);
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* Efek cahaya ambient */
+    .glass-panel::before {
+        content: '';
+        position: absolute;
+        top: -50%; left: -50%; width: 200%; height: 200%;
+        background: radial-gradient(circle, rgba(14,165,233,0.05) 0%, transparent 60%);
+        z-index: -1; pointer-events: none;
+    }
+
+    /* --- HOLOGRAPHIC AVATAR --- */
+    .profile-glow {
+        border: 2px solid var(--primary-cyan, #0ea5e9);
+        padding: 4px;
+        background: rgba(0,0,0,0.5);
+        animation: pulse-avatar 3s ease-in-out infinite;
+        transition: all 0.3s ease;
+    }
+    .profile-glow:hover { transform: scale(1.05); }
+    .profile-glow img {
+        border-radius: 50%; width: 100%; height: 100%;
+        object-fit: cover; object-position: center 20%;
+    }
+
+    @keyframes pulse-avatar {
+        0% { box-shadow: 0 0 15px rgba(14, 165, 233, 0.3), inset 0 0 10px rgba(14, 165, 233, 0.2); }
+        50% { box-shadow: 0 0 30px rgba(14, 165, 233, 0.6), inset 0 0 20px rgba(14, 165, 233, 0.4); border-color: #38bdf8; }
+        100% { box-shadow: 0 0 15px rgba(14, 165, 233, 0.3), inset 0 0 10px rgba(14, 165, 233, 0.2); }
+    }
+
+    /* --- TECH BADGES --- */
+    .badge-sys {
+        font-family: 'JetBrains Mono', monospace;
+        letter-spacing: 1px;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    .badge-primary-sys { background: rgba(14, 165, 233, 0.2); color: #38bdf8; border-color: #0ea5e9; }
+    .badge-dark-sys { background: rgba(0, 0, 0, 0.6); color: #94a3b8; }
+
+    /* --- FAMILY FRAME (HOLOGRAPHIC) --- */
+    .family-frame {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(14, 165, 233, 0.3);
+        border-radius: 16px;
+        padding: 8px;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+    .family-frame::after {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        border: 1px solid rgba(14, 165, 233, 0.5);
+        border-radius: 16px;
+        box-shadow: inset 0 0 20px rgba(14, 165, 233, 0.2);
+        pointer-events: none;
+    }
+    .family-frame:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 20px rgba(14, 165, 233, 0.3);
+    }
+
+    /* --- DATA LIST --- */
+    .data-list-box {
+        background: rgba(0,0,0,0.4);
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 12px;
+    }
+
+    /* --- BUTTONS --- */
+    .btn-cyber {
+        font-family: 'JetBrains Mono', monospace;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        font-size: 13px;
+    }
+    .btn-cyber-primary { background: rgba(14, 165, 233, 0.1); color: #0ea5e9; border: 1px solid #0ea5e9; }
+    .btn-cyber-primary:hover { background: #0ea5e9; color: #020617; box-shadow: 0 0 20px rgba(14, 165, 233, 0.5); transform: translateY(-2px); }
+
+    .btn-cyber-outline { background: transparent; color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); }
+    .btn-cyber-outline:hover { background: rgba(148, 163, 184, 0.1); border-color: #94a3b8; color: white; transform: translateY(-2px); }
+
+    .leading-relaxed { line-height: 1.8; }
+</style>
+
 <nav aria-label="breadcrumb" class="d-flex justify-content-center">
     <ol class="breadcrumb mb-4" style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">
         <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">root@system</a></li>
@@ -12,98 +111,76 @@
     </ol>
 </nav>
 
-<div class="row justify-content-center">
+<div class="row justify-content-center pb-5">
     <div class="col-lg-8">
         
-        <!-- CARD 1: PROFIL PERSONAL (RATA TENGAH) -->
-        <div class="card-custom p-5 shadow-sm mb-4 border-top border-primary border-4 text-center">
-            <!-- Foto Profil -->
-            <div class="rounded-circle border border-3 border-primary-subtle shadow-sm overflow-hidden d-inline-block mb-4"
-                 style="width: 180px; height: 180px;">
-                <img src="{% static 'img/kristian.jpg' %}" 
-                     alt="Kristian Dwi Putra"
-                     class="w-100 h-100"
-                     style="object-fit: cover; object-position: center 20%;">
+        <div class="glass-panel p-4 p-md-5 mb-5 text-center">
+            <div class="position-absolute top-0 start-0 w-100 p-3 d-flex justify-content-between align-items-center opacity-50" style="pointer-events: none;">
+                <div class="d-flex gap-2">
+                    <div style="width: 10px; height: 10px; background: #ff5f56; border-radius: 50%;"></div>
+                    <div style="width: 10px; height: 10px; background: #ffbd2e; border-radius: 50%;"></div>
+                    <div style="width: 10px; height: 10px; background: #27c93f; border-radius: 50%;"></div>
+                </div>
+                <div style="font-family: 'JetBrains Mono'; font-size: 10px; color: #94a3b8;">SYS_PROFILE_DATA</div>
             </div>
 
-            <!-- Nama & Badge -->
-            <h2 class="fw-bold text-dark mb-2" style="font-family: 'JetBrains Mono', monospace;">Kristian Dwi Putra</h2>
+            <div class="rounded-circle profile-glow d-inline-block mt-3 mb-4" style="width: 160px; height: 160px;">
+                <img src="{% static 'img/kristian.jpg' %}" alt="Kristian Dwi Putra">
+            </div>
+
+            <h2 class="fw-bold text-white mb-2" style="font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 10px rgba(255,255,255,0.2);">KRISTIAN_DWI_PUTRA</h2>
             <div class="mb-4 d-flex justify-content-center gap-2">
-                <span class="badge bg-primary px-3 py-2">IT_STUDENT</span>
-                <span class="badge bg-dark px-3 py-2" style="font-family: 'JetBrains Mono', monospace;">VER: 2.0.26</span>
+                <span class="badge badge-sys badge-primary-sys px-3 py-2">IT_STUDENT</span>
+                <span class="badge badge-sys badge-dark-sys px-3 py-2">VER: 2.0.26</span>
             </div>
 
-            <!-- Deskripsi -->
-            <p class="text-muted leading-relaxed px-md-5">
-                Halo, nama saya <strong>Kristian Dwi Putra</strong>. Saya berasal dari <strong>Lampung</strong> dan saat ini menetap di Lampung untuk menempuh pendidikan di bidang Teknologi Rekayasa Internet. Di usia <strong>20 tahun</strong> ini, saya fokus mendalami infrastruktur jaringan dan pengembangan aplikasi web.
-            </p>
+            <div class="bg-dark bg-opacity-50 border border-secondary border-opacity-25 rounded-3 p-4 mx-md-4 text-start">
+                 <span class="text-warning small d-block mb-2" style="font-family: 'JetBrains Mono'; font-size: 11px;">> whoami</span>
+                 <p class="text-light leading-relaxed mb-0" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">
+                    Halo, nama saya <span class="text-info fw-bold">Kristian Dwi Putra</span>. Saya berasal dari <span class="text-info fw-bold">Lampung</span> dan saat ini menetap di kota tersebut untuk menempuh pendidikan di bidang <span class="text-info fw-bold">Teknologi Rekayasa Internet</span>. Di usia <span class="text-warning fw-bold">20 tahun</span> ini, saya memfokuskan diri pada pengembangan infrastruktur jaringan dan rekayasa perangkat lunak berbasis web.
+                </p>
+            </div>
         </div>
 
-        <!-- CARD 2: KELUARGA (RATA TENGAH) -->
-        <div class="card-custom p-5 shadow-sm mb-4 border-top border-info border-4 text-center">
-            <h5 class="fw-bold text-dark mb-4" style="font-family: 'JetBrains Mono', monospace;">
-                <i class="bi bi-people-fill text-info me-2"></i>MY_SUPPORT_SYSTEM
+        <div class="glass-panel p-4 p-md-5 text-center border-top border-4 border-info">
+            <h5 class="fw-bold text-white mb-4" style="font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 10px rgba(14, 165, 233, 0.5);">
+                <i class="bi bi-diagram-3-fill text-info me-2"></i>MY_SUPPORT_SYSTEM
             </h5>
             
-            <!-- Foto Keluarga -->
-            <div class="family-frame p-2 bg-white border rounded-3 shadow-sm mx-auto mb-4" style="max-width: 500px;">
+            <div class="family-frame mx-auto mb-4" style="max-width: 500px;">
                 <img src="{% static 'img/family.jpeg' %}" 
-                     class="img-fluid rounded-2 w-100" 
+                     class="img-fluid rounded-3 w-100" 
                      alt="Keluarga Kristian"
                      style="object-fit: cover;">
             </div>
 
-            <!-- Teks Keluarga -->
-            <p class="text-muted mb-4 px-md-5">
-                Dibalik setiap baris kode dan tugas kuliah yang saya kerjakan, ada doa dan dukungan penuh dari keluarga kecil saya. Mereka adalah sumber inspirasi dan energi utama yang memotivasi saya untuk terus belajar dan berkontribusi di dunia teknologi.
+            <p class="text-light mb-4 px-md-5 leading-relaxed" style="font-size: 14px;">
+                Dibalik setiap baris kode yang berhasil dieksekusi, terdapat <em>core power source</em> yang tidak pernah padam: keluarga kecil saya. Dukungan dan doa mereka adalah arsitektur dasar yang memotivasi saya untuk terus berinovasi.
             </p>
             
-            <div class="d-inline-block p-3 bg-light rounded-3 border text-start">
-                <ul class="list-unstyled mb-0 small">
-                    <li class="mb-2 d-flex align-items-center">
-                        <i class="bi bi-heart-fill text-danger me-3"></i>
-                        <span><strong>Orang Tua:</strong> Kekuatan dan pembimbing utama.</span>
+            <div class="data-list-box p-3 p-md-4 d-inline-block text-start">
+                <ul class="list-unstyled mb-0 small text-light" style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">
+                    <li class="mb-3 d-flex align-items-center">
+                        <i class="bi bi-shield-fill-check text-danger me-3 fs-5" style="filter: drop-shadow(0 0 5px #ef4444);"></i>
+                        <span><span class="text-danger fw-bold">ORANG_TUA:</span> Firewall utama dan sumber inspirasi kehidupan.</span>
                     </li>
                     <li class="d-flex align-items-center">
-                        <i class="bi bi-stars text-warning me-3"></i>
-                        <span><strong>Keluarga:</strong> Alasan terbesar untuk sukses.</span>
+                        <i class="bi bi-hdd-network-fill text-warning me-3 fs-5" style="filter: drop-shadow(0 0 5px #fbbf24);"></i>
+                        <span><span class="text-warning fw-bold">KELUARGA:</span> Jaringan pendukung yang menjaga integritas sistem.</span>
                     </li>
                 </ul>
             </div>
         </div>
 
-        <!-- Tombol Aksi -->
         <div class="d-flex flex-wrap gap-3 mt-5 justify-content-center">
-            <a href="/" class="btn btn-primary px-5 shadow-sm py-2">
-                <i class="bi bi-house-door-fill me-2"></i> Dashboard
+            <a href="/" class="btn btn-cyber btn-cyber-primary px-5 py-3">
+                <i class="bi bi-house-door-fill me-2"></i> RETURN_HOME
             </a>
-            <a href="/contacts/" class="btn btn-outline-dark px-4 py-2">
-                <i class="bi bi-envelope-fill me-2"></i> Hubungi Saya
+            <a href="/contacts/" class="btn btn-cyber btn-cyber-outline px-4 py-3">
+                <i class="bi bi-terminal me-2"></i> INITIATE_CONTACT
             </a>
         </div>
+
     </div>
 </div>
-
-<style>
-    .card-custom { 
-        background: #ffffff; 
-        border-radius: 20px; 
-        border: 1px solid #e2e8f0; 
-    }
-    .family-frame:hover {
-        transform: translateY(-5px);
-        transition: all 0.3s ease;
-    }
-    .btn {
-        border-radius: 12px;
-        font-weight: 600;
-        transition: all 0.2s;
-    }
-    .btn:hover {
-        transform: scale(1.05);
-    }
-    .leading-relaxed {
-        line-height: 1.8;
-    }
-</style>
 {% endblock %}

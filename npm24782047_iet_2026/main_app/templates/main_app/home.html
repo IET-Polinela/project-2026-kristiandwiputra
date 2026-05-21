@@ -1,139 +1,209 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}TERMINAL_CORE - Smart City Lampung{% endblock %}
+{% block title %}TERMINAL_CORE - Smart Kota Lampung{% endblock %}
 
 {% block content %}
 <style>
-    .hero-glass {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(56, 189, 248, 0.3);
-        border-radius: 24px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    .dashboard-bg {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+        background: linear-gradient(-45deg, #020617, #0f172a, #1a1505);
+        background-size: 400% 400%; animation: gradientMove 15s ease infinite;
     }
+    @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+    .hero-glass {
+        background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 193, 7, 0.25); border-radius: 24px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(255, 193, 7, 0.05);
+        animation: floatHolo 6s ease-in-out infinite;
+    }
+    @keyframes floatHolo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
     .feature-card {
-        background: rgba(30, 41, 59, 0.4);
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 20px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex; flex-direction: column; justify-content: space-between;
     }
-
     .feature-card:hover {
-        transform: translateY(-10px);
-        border-color: var(--accent-blue);
-        background: rgba(56, 189, 248, 0.05);
-        box-shadow: 0 10px 30px rgba(56, 189, 248, 0.1);
+        transform: translateY(-8px); border-color: #ffc107;
+        box-shadow: 0 15px 35px rgba(255, 193, 7, 0.15), inset 0 0 15px rgba(255, 193, 7, 0.05);
     }
 
-    .icon-glow {
-        filter: drop-shadow(0 0 8px currentColor);
+    .icon-glow { filter: drop-shadow(0 0 12px currentColor); }
+    .status-terminal { font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 1px; }
+    .metric-value { font-size: 2.5rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: #f8fafc; margin: 10px 0; }
+
+    .btn-massive-gold {
+        padding: 12px 25px; font-family: 'JetBrains Mono', monospace; font-weight: 700;
+        border-radius: 10px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; 
+        background: rgba(255, 193, 7, 0.1); color: #ffc107; border: 1px solid #ffc107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.2);
+        position: relative; overflow: hidden; text-decoration: none; display: inline-block;
+    }
+    .btn-massive-gold:hover { background: #ffc107; color: #020617; transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 193, 7, 0.6); }
+    
+    .btn-massive-cyan {
+        padding: 12px 25px; font-family: 'JetBrains Mono', monospace; font-weight: 700;
+        border-radius: 10px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; 
+        background: transparent; color: #38bdf8; border: 1px solid #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        position: relative; overflow: hidden; text-decoration: none; display: inline-block;
+    }
+    .btn-massive-cyan:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(56, 189, 248, 0.5); background: rgba(56, 189, 248, 0.1); color: #ffffff; }
+
+    .animate-enter { opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(40px); } 100% { opacity: 1; transform: translateY(0); } }
+    
+    .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; } .delay-5 { animation-delay: 0.5s; }
+
+    .text-gold { color: #ffc107 !important; }
+    .dark-map { filter: invert(90%) hue-rotate(180deg) brightness(85%) contrast(100%); border-radius: 16px; transition: all 0.5s; }
+    .dark-map:hover { filter: invert(90%) hue-rotate(180deg) brightness(100%) contrast(110%); }
+
+    /* =========================================
+       ANIMASI CYBER MICRO-INTERACTIONS (BARU)
+       ========================================= */
+       
+    /* 1. Efek Mengetik Terminal */
+    .typewriter-text {
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+        border-right: 2px solid #ffc107;
+        animation: typing 2.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        max-width: fit-content;
+    }
+    @keyframes typing {
+        from { width: 0; opacity: 0; }
+        1% { opacity: 1; }
+        to { width: 100%; opacity: 1; }
+    }
+    @keyframes blink-caret {
+        from, to { border-color: transparent; }
+        50% { border-color: #ffc107; }
     }
 
-    .status-terminal {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 13px;
-        letter-spacing: 1px;
+    /* 2. Efek Detak Jantung (Pulse) */
+    .status-pulse {
+        animation: heartbeat 1.5s infinite;
+        display: inline-block;
+    }
+    @keyframes heartbeat {
+        0% { transform: scale(1); opacity: 1; text-shadow: 0 0 8px #198754; }
+        50% { transform: scale(1.05); opacity: 0.7; text-shadow: 0 0 15px #198754, 0 0 20px #198754; }
+        100% { transform: scale(1); opacity: 1; text-shadow: 0 0 8px #198754; }
     }
 
-    .btn-massive {
-        padding: 15px 30px;
-        font-family: 'JetBrains Mono', monospace;
-        font-weight: 700;
-        border-radius: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        transition: all 0.3s;
+    /* 3. Efek Glitch Hover */
+    .glitch-hover {
+        position: relative;
+        transition: all 0.2s ease;
+        cursor: crosshair;
     }
-
-    .btn-massive:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+    .glitch-hover:hover {
+        animation: glitch-anim 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+        color: #38bdf8 !important; 
+        text-shadow: 2px 2px 0px #ff5f56, -2px -2px 0px #ffc107;
+    }
+    @keyframes glitch-anim {
+        0% { transform: translate(0) skew(0deg); }
+        20% { transform: translate(-2px, 2px) skew(2deg); }
+        40% { transform: translate(-2px, -2px) skew(-2deg); }
+        60% { transform: translate(2px, 2px) skew(2deg); }
+        80% { transform: translate(2px, -2px) skew(-2deg); }
+        100% { transform: translate(0) skew(0deg); }
     }
 </style>
 
-<div class="row g-4 justify-content-center py-4">
-    <div class="col-12">
-        <div class="hero-glass p-4 p-md-5 position-relative overflow-hidden text-center">
-            
-            <div class="position-absolute top-0 start-0 p-4 d-none d-md-flex gap-2">
-                <div style="width: 12px; height: 12px; background: #ff5f56; border-radius: 50%; box-shadow: 0 0 10px rgba(255,95,86,0.5);"></div>
-                <div style="width: 12px; height: 12px; background: #ffbd2e; border-radius: 50%; box-shadow: 0 0 10px rgba(255,189,46,0.5);"></div>
-                <div style="width: 12px; height: 12px; background: #27c93f; border-radius: 50%; box-shadow: 0 0 10px rgba(39,201,63,0.5);"></div>
-            </div>
-            
-            <div class="py-3">
-                <div class="mb-4 status-terminal text-info animate-pulse">
-                    <i class="bi bi-terminal-fill me-2"></i> > SYSTEM.INIT_SUCCESS: READY_FOR_INPUT
-                </div>
-                
-                <h1 class="display-3 fw-bold text-white mb-3" style="font-family: 'JetBrains Mono', monospace; letter-spacing: -2px;">
-                    CITY<span class="text-info">.</span>LAMPUNG
-                </h1>
-                
-                <p class="lead text-muted mb-5 mx-auto status-terminal" style="max-width: 600px;">
-                    [NODE]: MAIN_SERVER | [STATUS]: <span class="text-success">ONLINE</span> | [VER]: 2.0.4-STABLE
-                </p>
+<div class="dashboard-bg"></div>
 
-                <div class="d-grid d-md-flex gap-3 justify-content-md-center">
-                    <a href="{% url 'report_list' %}" class="btn btn-primary btn-massive">
-                        <i class="bi bi-database-fill-gear me-2"></i>AKSES_DATABASE
-                    </a>
-                    <a href="/dashboard/" class="btn btn-outline-info btn-massive">
-                        <i class="bi bi-cpu me-2"></i>MONITOR_STATISTIK
-                    </a>
+<div class="row g-4 justify-content-center py-4 position-relative" style="z-index: 1;">
+    
+    <div class="col-12 animate-enter delay-1">
+        <div class="hero-glass p-4 position-relative overflow-hidden d-flex flex-column flex-md-row align-items-center justify-content-between">
+            <div class="text-center text-md-start mb-4 mb-md-0">
+                
+                <div class="mb-2 status-terminal text-gold typewriter-text">
+                    <i class="bi bi-terminal-fill me-2"></i> > SYSTEM.INIT_SUCCESS: SECURE_CORE_CONNECTED
                 </div>
+                
+                <h2 class="display-6 fw-bold text-white mb-2 glitch-hover" style="font-family: 'JetBrains Mono', monospace; letter-spacing: -1px;">
+                    BANDAR<span class="text-gold">-</span>LAMPUNG 
+                    <span class="fs-4 text-info fw-normal ms-1" style="text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);">SmartGrid</span>
+                </h2>
+                
+                <div class="status-terminal opacity-75 text-light">
+                    [NODE]: MAIN_SERVER | [STATUS]: 
+                    <span class="text-success fw-bold status-pulse">ONLINE</span> 
+                    | [VER]: 2.0.4-STABLE
+                </div>
+            </div>
+
+            <div class="d-flex gap-3">
+                <a href="/reports/" class="btn-massive-gold"><i class="bi bi-database-fill-gear me-2"></i>Database</a>
+                <a href="/dashboard/" class="btn-massive-cyan"><i class="bi bi-activity me-2"></i>Statistik</a>
             </div>
         </div>
     </div>
 
-    <div class="col-12 col-md-4">
+    <div class="col-12 col-md-4 animate-enter delay-2">
         <div class="feature-card p-4 h-100 border-start border-4 border-info">
-            <div class="d-flex align-items-center mb-3">
-                <div class="bg-info bg-opacity-10 p-3 rounded-3 text-info icon-glow">
-                    <i class="bi bi-shield-check fs-2"></i>
-                </div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="text-white fw-bold mb-0" style="font-family: 'JetBrains Mono', monospace;">_Active_Nodes</h5>
+                <div class="bg-info bg-opacity-10 p-3 rounded-3 text-info icon-glow"><i class="bi bi-cpu fs-3"></i></div>
             </div>
-            <h4 class="text-white fw-bold" style="font-family: 'JetBrains Mono', monospace;">_Security_Auth</h4>
-            <p class="text-muted small">Protokol enkripsi SHA-256 untuk perlindungan data laporan integritas tinggi warga Lampung.</p>
+            <div class="metric-value text-info">2,408</div>
+            <p class="text-light opacity-75 small mb-0"><i class="bi bi-arrow-up-right-circle text-success me-1"></i> ESP32 & Sensor Terhubung</p>
         </div>
     </div>
     
-    <div class="col-12 col-md-4">
+    <div class="col-12 col-md-4 animate-enter delay-3">
         <div class="feature-card p-4 h-100 border-start border-4 border-warning">
-            <div class="d-flex align-items-center mb-3">
-                <div class="bg-warning bg-opacity-10 p-3 rounded-3 text-warning icon-glow">
-                    <i class="bi bi-lightning-charge-fill fs-2"></i>
-                </div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="text-white fw-bold mb-0" style="font-family: 'JetBrains Mono', monospace;">_MQTT_Traffic</h5>
+                <div class="bg-warning bg-opacity-10 p-3 rounded-3 text-warning icon-glow"><i class="bi bi-router fs-3"></i></div>
             </div>
-            <h4 class="text-white fw-bold" style="font-family: 'JetBrains Mono', monospace;">_Fast_Response</h4>
-            <p class="text-muted small">Pencarian asinkronous berbasis Fetch API. Filter database instan tanpa perlu memuat ulang halaman.</p>
+            <div class="metric-value text-warning">84.2<span class="fs-5 text-light opacity-75 ms-1">MB/s</span></div>
+            <p class="text-light opacity-75 small mb-0"><i class="bi bi-activity text-warning me-1"></i> Beban broker data *real-time*</p>
         </div>
     </div>
     
-    <div class="col-12 col-md-4">
-        <div class="feature-card p-4 h-100 border-start border-4 border-primary">
-            <div class="d-flex align-items-center mb-3">
-                <div class="bg-primary bg-opacity-10 p-3 rounded-3 text-primary icon-glow">
-                    <i class="bi bi-git fs-2"></i>
-                </div>
+    <div class="col-12 col-md-4 animate-enter delay-4">
+        <div class="feature-card p-4 h-100 border-start border-4 border-success">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="text-white fw-bold mb-0" style="font-family: 'JetBrains Mono', monospace;">_Sec_Gateway</h5>
+                <div class="bg-success bg-opacity-10 p-3 rounded-3 text-success icon-glow"><i class="bi bi-shield-check fs-3"></i></div>
             </div>
-            <h4 class="text-white fw-bold" style="font-family: 'JetBrains Mono', monospace;">_Open_Source</h4>
-            <p class="text-muted small">Dibangun di atas Django Framework yang scalable, siap untuk pengembangan Smart City masa depan.</p>
+            <div class="metric-value text-success">Secure</div>
+            <p class="text-light opacity-75 small mb-0"><i class="bi bi-check-circle text-success me-1"></i> 0 Anomali Jaringan (24 Jam)</p>
+        </div>
+    </div>
+
+    <div class="col-12 mt-3 animate-enter delay-5">
+        <div class="feature-card p-4 border-start border-4 border-secondary">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="text-white fw-bold mb-0" style="font-family: 'JetBrains Mono', monospace;">
+                    <i class="bi bi-geo-alt-fill text-danger me-2 icon-glow"></i>_Live_Map_Monitoring
+                </h4>
+                <span class="badge bg-danger bg-opacity-25 text-danger border border-danger" style="font-family: 'JetBrains Mono', monospace; filter: drop-shadow(0 0 5px #dc3545);">
+                    <span class="spinner-grow spinner-grow-sm me-1" role="status" aria-hidden="true" style="animation-duration: 2s;"></span>LIVE_TRACKING
+                </span>
+            </div>
+            
+            <div class="map-container overflow-hidden rounded-4" style="height: 450px; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127173.0805561147!2d105.16335194462102!3d-5.397139599999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e40da433f00a5d9%3A0x3039d80b220cc70!2sBandar%20Lampung%2C%20Bandar%20Lampung%20City%2C%20Lampung!5e0!3m2!1sen!2sid!4v1684680000000!5m2!1sen!2sid" 
+                    width="100%" 
+                    height="100%" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade"
+                    class="dark-map">
+                </iframe>
+            </div>
         </div>
     </div>
 </div>
-
-<style>
-    @keyframes pulse-soft {
-        0% { opacity: 0.6; }
-        50% { opacity: 1; }
-        100% { opacity: 0.6; }
-    }
-    .animate-pulse {
-        animation: pulse-soft 2s infinite;
-    }
-</style>
 {% endblock %}

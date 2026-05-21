@@ -1,245 +1,334 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Smart City Lampung{% endblock %}</title>
+    <title>{% block title %}Smart City Node | Lampung{% endblock %}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    
+    <script src="https://unpkg.com/htmx.org"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
-            /* Palette: Deep Space & Cyber Blue */
-            --primary-bg: #020617; 
-            --card-bg: rgba(30, 41, 59, 0.7);
+            --primary-bg: #0f172a; 
+            --sidebar-bg: rgba(15, 23, 42, 0.75); 
+            --card-bg: rgba(30, 41, 59, 0.85);
             --accent-blue: #38bdf8; 
             --accent-indigo: #6366f1; 
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.1);
+            --accent-gold: #ffc107;
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1; 
+            --border-color: rgba(255, 255, 255, 0.08);
+            --sidebar-width: 260px;
         }
 
         body {
-            /* Background Futuristik dengan Grid Pattern */
             background-color: var(--primary-bg);
-            background-image: 
-                linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
             color: var(--text-main);
             min-height: 100vh;
             font-family: 'Inter', sans-serif;
             letter-spacing: -0.01em;
             overflow-x: hidden;
+            overflow-y: scroll !important; 
+            display: flex;
         }
 
-        /* Navbar: Glassmorphism Effect */
-        .navbar {
-            background: rgba(15, 23, 42, 0.8) !important;
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-color);
-            padding: 0.8rem 0;
+        /* =========================================
+           LAYER ANIMASI PARTIKEL (NETWORK NODES)
+           ========================================= */
+        #particles-js {
+            position: fixed;
+            width: 100%; height: 100%; top: 0; left: 0;
+            z-index: 0;
         }
 
-        .navbar-brand {
-            font-weight: 700;
-            color: var(--accent-blue) !important;
+        .bg-overlay {
+            position: fixed; width: 100%; height: 100%; top: 0; left: 0;
+            z-index: 0; pointer-events: none;
+            background: radial-gradient(circle at center, transparent 0%, rgba(2, 6, 23, 0.85) 100%),
+                        linear-gradient(rgba(56, 189, 248, 0.02) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(56, 189, 248, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+        }
+
+        /* =========================================
+           SIDEBAR BERGAYA CYBERPUNK & GLASSMORPHISM
+           ========================================= */
+        .sidebar {
+            width: var(--sidebar-width); 
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(2, 6, 23, 0.95) 100%);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(56, 189, 248, 0.15);
+            position: fixed; top: 0; left: 0; height: 100vh;
+            display: flex; flex-direction: column;
+            z-index: 1030; transition: transform 0.3s ease;
+            box-shadow: 5px 0 30px rgba(0, 0, 0, 0.5); 
+        }
+
+        .sidebar-brand {
+            padding: 1.5rem; font-weight: 700; color: var(--text-main) !important;
             font-family: 'JetBrains Mono', monospace;
-            text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+            border-bottom: 1px solid var(--border-color);
+            text-decoration: none; display: flex; align-items: center;
+            transition: all 0.3s ease;
+        }
+        .sidebar-brand:hover {
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.8);
         }
 
+        .sidebar-nav { padding: 1.5rem 1rem; flex-grow: 1; overflow-y: auto; }
+
+        /* ANIMASI MENU NAVIGASI (SWEEPING GLOW) */
         .nav-link {
-            font-weight: 500;
-            color: var(--text-muted) !important;
-            transition: all 0.3s ease;
-        }
-
-        .nav-link:hover { 
-            color: var(--accent-blue) !important; 
-            transform: translateY(-1px);
-        }
-
-        /* Modern Glass Cards */
-        .card-custom {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            font-weight: 500; color: var(--text-muted) !important;
+            padding: 12px 16px; margin-bottom: 8px; border-radius: 8px;
+            display: flex; align-items: center; font-size: 0.95rem;
+            border-left: 3px solid transparent;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            color: var(--text-main);
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .nav-link::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 0; height: 100%;
+            background: linear-gradient(90deg, rgba(56, 189, 248, 0.15) 0%, transparent 100%);
+            transition: width 0.4s ease; z-index: -1;
         }
 
-        .card-custom:hover {
-            transform: translateY(-5px);
-            border-color: rgba(56, 189, 248, 0.4);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        .nav-link i { margin-right: 12px; font-size: 1.1rem; transition: all 0.3s ease; }
+
+        .nav-link:hover, .nav-link.active { 
+            color: #ffffff !important; 
+            border-left: 3px solid var(--accent-blue); 
+            padding-left: 22px; 
+            background-color: rgba(56, 189, 248, 0.05);
+        }
+        
+        .nav-link:hover::before, .nav-link.active::before { width: 100%; }
+        
+        .nav-link:hover i, .nav-link.active i { 
+            color: var(--accent-blue); 
+            filter: drop-shadow(0 0 8px var(--accent-blue)); 
         }
 
-        .soft-header {
-            background: rgba(255, 255, 255, 0.03);
-            border-bottom: 1px solid var(--border-color);
-            color: var(--accent-blue);
-            padding: 15px 20px;
-            font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
+        .sidebar-footer { 
+            padding: 1.5rem; 
+            border-top: 1px solid rgba(56, 189, 248, 0.15); 
+            background: rgba(0,0,0,0.3); 
         }
 
-        /* Terminal Style Badges */
+        /* MAIN CONTENT CONTAINER */
+        .main-content {
+            margin-left: var(--sidebar-width); flex-grow: 1;
+            padding: 2rem; min-height: 100vh; width: calc(100% - var(--sidebar-width));
+            position: relative; z-index: 1;
+        }
+        .htmx-swapping { opacity: 0; transition: opacity 0.3s ease-out; }
+        
+        .mobile-toggler {
+            display: none; position: fixed; top: 1rem; left: 1rem; z-index: 1040; 
+            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px);
+            border: 1px solid var(--accent-blue); color: var(--accent-blue); 
+            border-radius: 8px; padding: 8px 12px; box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+
+        /* ROLE BADGES & FOOTER INTERACTION */
         .role-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 5px 12px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .role-admin {
-            background: rgba(56, 189, 248, 0.15);
-            color: var(--accent-blue);
-            border: 1px solid var(--accent-blue);
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
-        }
-
-        .role-user {
-            background: rgba(99, 102, 241, 0.15);
-            color: var(--accent-indigo);
-            border: 1px solid var(--accent-indigo);
-        }
-
-        /* Typography */
-        .display-4 { 
-            font-weight: 800; 
-            color: white;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-
-        .text-muted { color: var(--text-muted) !important; }
-
-        /* Buttons */
-        .btn {
-            border-radius: 10px;
-            padding: 10px 24px;
-            font-weight: 600;
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: 700;
+            text-transform: uppercase; font-family: 'JetBrains Mono', monospace;
+            width: 100%; margin-bottom: 12px; letter-spacing: 0.5px;
             transition: all 0.3s ease;
         }
+        .role-admin { background: rgba(56, 189, 248, 0.1); color: var(--accent-blue); border: 1px solid rgba(56, 189, 248, 0.3); }
+        .role-user { background: rgba(99, 102, 241, 0.1); color: var(--accent-indigo); border: 1px solid rgba(99, 102, 241, 0.3); }
+        .role-badge:hover { box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); transform: translateY(-2px); }
 
-        .btn-primary {
-            background: var(--accent-indigo);
-            border: none;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        .btn-logout {
+            width: 100%; border-radius: 6px; padding: 10px; font-size: 0.9rem; font-weight: 600; 
+            border: 1px solid rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.1); 
+            color: #fca5a5; transition: all 0.3s ease; font-family: 'JetBrains Mono', monospace;
+        }
+        .btn-logout:hover { 
+            background: rgba(239, 68, 68, 0.2); color: #fff; 
+            border-color: #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); 
+            transform: translateY(-2px);
         }
 
-        .btn-primary:hover {
-            background: #4f46e5;
-            transform: scale(1.02);
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        .btn-login {
+            width: 100%; border-radius: 6px; padding: 10px; font-size: 0.9rem; font-weight: 600; 
+            border: 1px solid rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.1); 
+            color: var(--accent-blue); text-decoration: none; transition: all 0.3s ease;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .btn-login:hover { 
+            background: var(--accent-blue); color: #020617; 
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.6); transform: translateY(-2px); 
         }
 
-        /* Custom Scrollbar for Dark Theme */
-        ::-webkit-scrollbar { width: 8px; }
+        /* CUSTOM SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--primary-bg); }
-        ::-webkit-scrollbar-thumb { 
-            background: #334155; 
-            border-radius: 10px; 
-            border: 2px solid var(--primary-bg);
-        }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-blue); }
 
-        @media (max-width: 768px) {
-            .navbar-collapse {
-                background: rgba(15, 23, 42, 0.95);
-                padding: 1rem;
-                border-radius: 12px;
-                margin-top: 1rem;
-                border: 1px solid var(--border-color);
-            }
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); } 
+            .sidebar.show { transform: translateX(0); box-shadow: 10px 0 30px rgba(0,0,0,0.8); } 
+            .main-content { margin-left: 0; width: 100%; padding: 4rem 1rem 1rem 1rem; }
+            .mobile-toggler { display: block; }
         }
+
+        /* FLOATING MUSIC BUTTON */
+        .btn-music-float {
+            position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; border-radius: 50%; 
+            background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(56, 189, 248, 0.3); color: var(--text-muted); 
+            font-size: 20px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 9999; backdrop-filter: blur(10px); transition: all 0.3s ease;
+        }
+        .btn-music-float:hover { border-color: var(--accent-blue); color: var(--accent-blue); transform: scale(1.1); }
+        .btn-music-float.playing { border-color: var(--accent-blue); color: var(--accent-blue); box-shadow: 0 0 20px rgba(56, 189, 248, 0.4); }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg sticky-top">
-    <div class="container">
-        <a class="navbar-brand" href="/">
-            <i class="bi bi-cpu-fill me-2"></i>SMART_CITY.LAMPUNG
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
-        </button>
+<div id="particles-js"></div>
+<div class="bg-overlay"></div>
 
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="/dashboard/">Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="/reports/">Reports</a></li>
-                <li class="nav-item"><a class="nav-link" href="/about/">About</a></li>
-                <li class="nav-item"><a class="nav-link" href="/contacts/">Contacts</a></li>
-                
-                {% if user.is_authenticated %}
-                    <li class="nav-item ms-lg-3">
-                        {% if user.is_superuser %}
-                            <span class="role-badge role-admin">
-                                <i class="bi bi-terminal-fill me-2"></i>ROOT: {{ user.username }}
-                            </span>
-                        {% else %}
-                            <span class="role-badge role-user">
-                                <i class="bi bi-person-fill me-2"></i>USER: {{ user.username }}
-                            </span>
-                        {% endif %}
-                    </li>
-                    <li class="nav-item">
-                        <form action="{% url 'logout' %}" method="post" class="d-inline">
-                            {% csrf_token %}
-                            <button type="submit" class="btn text-danger ms-lg-2 p-2">
-                                <i class="bi bi-power fs-5"></i>
-                            </button>
-                        </form>
-                    </li>
-                {% else %}
-                    <li class="nav-item ms-lg-2"><a class="btn btn-sm btn-outline-info px-4" href="{% url 'login' %}">LOGIN_SYS</a></li>
-                {% endif %}
-            </ul>
-        </div>
+<button class="mobile-toggler d-lg-none" type="button" onclick="toggleSidebar()">
+    <i class="bi bi-list fs-4"></i>
+</button>
+
+<aside class="sidebar" id="sidebar">
+    <a class="sidebar-brand" href="/">
+        <img src="{% static 'img/logo.png' %}" alt="Logo Bandar Lampung" style="width: 38px; height: 38px; margin-right: 12px; filter: drop-shadow(0 0 8px rgba(255, 193, 7, 0.8));">
+        <span class="fs-5" style="letter-spacing: 1px;">KOTA.LAMPUNG</span>
+    </a>
+
+    <nav class="sidebar-nav flex-column" hx-boost="true" hx-select="#main-content" hx-target="#main-content" hx-swap="outerHTML show:window:top">
+        <a class="nav-link" href="/"><i class="bi bi-terminal"></i> Terminal Utama</a>
+        <a class="nav-link" href="/dashboard/"><i class="bi bi-cpu"></i> Metrik Sistem</a>
+        <a class="nav-link" href="/reports/"><i class="bi bi-shield-check"></i> Log Keamanan</a>
+        <hr class="border-secondary my-3 opacity-25">
+        <a class="nav-link" href="/about/"><i class="bi bi-info-circle"></i> Info Node</a>
+        <a class="nav-link" href="/contacts/"><i class="bi bi-broadcast"></i> Jaringan</a>
+    </nav>
+
+    <div class="sidebar-footer text-center">
+        {% if user.is_authenticated %}
+            {% if user.is_superuser %}
+                <div class="role-badge role-admin"><i class="bi bi-shield-lock-fill me-2"></i>ROOT: {{ user.username }}</div>
+            {% else %}
+                <div class="role-badge role-user"><i class="bi bi-person-badge-fill me-2"></i>USER: {{ user.username }}</div>
+            {% endif %}
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-logout d-flex align-items-center justify-content-center">
+                    <i class="bi bi-power me-2"></i> SYSTEM_LOGOUT
+                </button>
+            </form>
+        {% else %}
+            <a class="btn btn-login d-flex align-items-center justify-content-center" href="{% url 'login' %}">
+                <i class="bi bi-box-arrow-in-right me-2"></i> SYSTEM_LOGIN
+            </a>
+        {% endif %}
     </div>
-</nav>
+</aside>
 
-<div class="container mt-4">
+<main class="main-content" id="main-content">
     {% if messages %}
+    <div class="container-fluid mb-4">
         {% for message in messages %}
-            <div class="alert alert-dismissible fade show shadow-lg border-0 bg-dark text-white border-start border-4 {% if message.tags == 'error' %}border-danger{% else %}border-info{% endif %}" role="alert">
+            <div class="alert alert-dismissible fade show border-0 bg-dark text-white border-start border-4 {% if message.tags == 'error' %}border-danger{% else %}border-info{% endif %}" role="alert" style="background: rgba(30, 41, 59, 0.9) !important; backdrop-filter: blur(10px);">
                 <div class="d-flex align-items-center">
                     <i class="bi {% if message.tags == 'error' %}bi-exclamation-triangle-fill text-danger{% else %}bi-info-circle-fill text-info{% endif %} me-3 fs-5"></i>
                     <span class="fw-medium">{{ message }}</span>
                 </div>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                <button type="button" class="btn-close btn-close-white opacity-50" data-bs-dismiss="alert"></button>
             </div>
         {% endfor %}
+    </div>
     {% endif %}
-</div>
 
-<main class="container mt-2 mb-5">
-    {% block content %}{% endblock %}
+    <div class="container-fluid">
+        {% block content %}{% endblock %}
+    </div>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("reportForm");
-        const submitBtn = document.getElementById("submitBtn");
+<audio id="sysBgMusic" loop><source src="{% static 'audio/bgm.mp3' %}" type="audio/mpeg"></audio>
+<button id="musicToggleBtn" class="btn-music-float" title="Toggle System Audio"><i class="bi bi-music-note-beamed"></i></button>
 
-        if (form && submitBtn) {
-            form.addEventListener("submit", function () {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>EXECUTING_QUERY...';
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+<script>
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); }
+    
+    document.addEventListener("DOMContentLoaded", function () {
+        // Audio Setup
+        const bgMusic = document.getElementById("sysBgMusic");
+        const musicBtn = document.getElementById("musicToggleBtn");
+        const musicIcon = musicBtn.querySelector("i");
+        if(bgMusic) bgMusic.volume = 0.2;
+        
+        if(musicBtn && bgMusic) {
+            musicBtn.addEventListener("click", function () {
+                if (bgMusic.paused) { bgMusic.play(); musicBtn.classList.add("playing"); musicIcon.classList.replace("bi-music-note-beamed", "bi-pause-fill"); } 
+                else { bgMusic.pause(); musicBtn.classList.remove("playing"); musicIcon.classList.replace("bi-pause-fill", "bi-music-note-beamed"); }
+            });
+        }
+
+        // KONFIGURASI ANIMASI JARRINGAN BERGERAK INTERAKTIF
+        if(document.getElementById('particles-js')) {
+            particlesJS("particles-js", {
+                "particles": {
+                    "number": { "value": 75, "density": { "enable": true, "value_area": 800 } },
+                    "color": { "value": "#38bdf8" },
+                    "shape": { "type": "circle" },
+                    "opacity": { "value": 0.4, "random": false },
+                    "size": { "value": 3, "random": true },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 140,
+                        "color": "#38bdf8",
+                        "opacity": 0.18,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 1.5,
+                        "direction": "none",
+                        "random": false,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": { "enable": true, "mode": "grab" },
+                        "onclick": { "enable": true, "mode": "push" },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": { "distance": 140, "line_linked": { "opacity": 0.7 } },
+                        "push": { "particles_nb": 3 }
+                    }
+                },
+                "retina_detect": true
             });
         }
     });

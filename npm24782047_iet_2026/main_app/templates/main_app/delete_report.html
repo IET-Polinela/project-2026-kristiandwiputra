@@ -1,42 +1,159 @@
 {% extends 'base.html' %}
 
-{% block title %}Hapus Laporan{% endblock %}
+{% block title %}DELETE_ENTRY - Smart City{% endblock %}
 
 {% block content %}
+<style>
+    /* --- GLASS PANEL CONTAINER --- */
+    .glass-panel {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        overflow: hidden;
+    }
+
+    /* --- TERMINAL DATA DISPLAY --- */
+    .terminal-data-box {
+        background: rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(239, 68, 68, 0.3); /* Red border */
+        border-radius: 12px;
+        padding: 20px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        color: #cbd5e1;
+        box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.05);
+    }
+
+    .data-label { color: #94a3b8; font-weight: bold; min-width: 100px; display: inline-block; }
+    .data-value { color: #f8fafc; }
+    .data-value.title { color: #38bdf8; } /* Cyan for title */
+
+    /* --- BUTTONS --- */
+    .btn-cyber {
+        font-family: 'JetBrains Mono', monospace;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    
+    /* Tombol Batal (Safe) */
+    .btn-cyber-safe {
+        background: rgba(14, 165, 233, 0.1);
+        color: #0ea5e9;
+        border: 1px solid #0ea5e9;
+    }
+    .btn-cyber-safe:hover {
+        background: #0ea5e9;
+        color: #020617;
+        box-shadow: 0 0 20px rgba(14, 165, 233, 0.5);
+        transform: translateY(-2px);
+    }
+
+    /* Tombol Hapus (Danger) */
+    .btn-cyber-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 1px solid #ef4444;
+    }
+    .btn-cyber-danger:hover {
+        background: #ef4444;
+        color: white;
+        box-shadow: 0 0 25px rgba(239, 68, 68, 0.6);
+        transform: translateY(-2px);
+    }
+</style>
+
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb mb-3">
-        <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'report_list' %}">Reports</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Hapus Laporan</li>
+    <ol class="breadcrumb mb-4" style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">
+        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">root@system</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'report_list' %}" class="text-decoration-none text-muted">./reports</a></li>
+        <li class="breadcrumb-item active text-danger" aria-current="page">delete_object</li>
     </ol>
 </nav>
 
-<div class="card card-custom">
-    <div class="soft-header">
-        <h4 class="mb-0"><i class="bi bi-trash-fill me-2"></i>Konfirmasi Hapus Laporan</h4>
-    </div>
-    <div class="card-body p-4">
-        <div class="alert alert-danger">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            Anda yakin ingin menghapus laporan berikut?
-        </div>
+<div class="row justify-content-center pb-5">
+    <div class="col-md-8 col-lg-7">
+        <div class="glass-panel border-start border-4 border-danger">
+            
+            <div class="bg-dark bg-opacity-50 d-flex justify-content-between align-items-center p-3" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <div class="d-flex gap-2">
+                    <div style="width: 12px; height: 12px; background: #ff5f56; border-radius: 50%; box-shadow: 0 0 10px rgba(255,95,86,0.8);"></div>
+                    <div style="width: 12px; height: 12px; background: #334155; border-radius: 50%;"></div>
+                    <div style="width: 12px; height: 12px; background: #334155; border-radius: 50%;"></div>
+                </div>
+                <span class="text-danger fw-bold" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 1px; filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.5));">
+                    <i class="bi bi-trash3-fill me-2"></i>DATA_WIPE_PROTOCOL
+                </span>
+                <div style="width: 44px;"></div> </div>
 
-        <div class="mb-4">
-            <p class="mb-2"><strong>Judul:</strong> {{ object.title }}</p>
-            <p class="mb-2"><strong>Kategori:</strong> {{ object.category }}</p>
-            <p class="mb-2"><strong>Lokasi:</strong> {{ object.location }}</p>
-            <p class="mb-0"><strong>Status:</strong> {{ object.get_status_display }}</p>
-        </div>
+            <div class="card-body p-4 p-md-5">
+                
+                <div class="alert bg-danger bg-opacity-10 border border-danger text-danger rounded-3 mb-4 d-flex align-items-start" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">
+                    <i class="bi bi-exclamation-octagon-fill fs-4 me-3 mt-1" style="filter: drop-shadow(0 0 8px #ef4444);"></i> 
+                    <div>
+                        <strong>[CRITICAL_WARNING]:</strong><br> 
+                        Anda akan menghapus entri data ini secara permanen dari main server. Tindakan ini tidak dapat dibatalkan.
+                    </div>
+                </div>
 
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger px-4">
-                <i class="bi bi-trash-fill me-1"></i> Ya, Hapus
-            </button>
-            <a href="{% url 'report_list' %}" class="btn btn-secondary px-4">
-                <i class="bi bi-arrow-left-circle me-1"></i> Batal
-            </a>
-        </form>
+                <div class="terminal-data-box mb-5">
+                    <div class="mb-2">
+                        <span class="data-label">TARGET_ID</span> 
+                        <span class="data-value text-warning fw-bold">#{{ object.id }}</span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="data-label">TITLE</span> 
+                        <span class="data-value title fw-bold">"{{ object.title }}"</span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="data-label">CATEGORY</span> 
+                        <span class="data-value">[{{ object.category|upper }}]</span>
+                    </div>
+                    <div class="mb-2">
+                        <span class="data-label">LOCATION</span> 
+                        <span class="data-value"><i class="bi bi-geo-alt-fill text-danger"></i> {{ object.location }}</span>
+                    </div>
+                    <div class="mb-0">
+                        <span class="data-label">SYS_STATUS</span> 
+                        <span class="data-value">{{ object.get_status_display|upper|default:"DRAFT" }}</span>
+                    </div>
+                </div>
+
+                <form method="post" id="deleteForm">
+                    {% csrf_token %}
+                    <div class="d-flex flex-column flex-md-row gap-3 border-top border-secondary border-opacity-25 pt-4">
+                        <button type="submit" id="submitBtn" class="btn btn-cyber btn-cyber-danger w-100 py-3 fw-bold">
+                            <i class="bi bi-fire me-2"></i> CONFIRM_WIPE
+                        </button>
+                        <a href="{% url 'report_list' %}" class="btn btn-cyber btn-cyber-safe w-100 py-3 fw-bold text-center text-decoration-none d-flex align-items-center justify-content-center">
+                            <i class="bi bi-shield-check me-2"></i> ABORT_OPERATION
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    // Script loading pada tombol submit form
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("deleteForm");
+        const submitBtn = document.getElementById("submitBtn");
+
+        if (form && submitBtn) {
+            form.addEventListener("submit", function () {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>WIPING_DATA...';
+                submitBtn.classList.remove('btn-cyber-danger');
+                submitBtn.classList.add('bg-danger', 'text-white');
+            });
+        }
+    });
+</script>
 {% endblock %}

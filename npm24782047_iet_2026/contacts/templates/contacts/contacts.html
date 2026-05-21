@@ -4,7 +4,107 @@
 {% block title %}CONTACT_CORE - Smart City Lampung{% endblock %}
 
 {% block content %}
-<!-- Navigation Breadcrumb -->
+<style>
+    /* --- GLASS PANEL CONTAINER --- */
+    .glass-panel {
+        background: rgba(15, 23, 42, 0.65);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(14, 165, 233, 0.2);
+        border-radius: 24px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(14, 165, 233, 0.05);
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* Efek cahaya ambient di belakang kartu */
+    .glass-panel::before {
+        content: '';
+        position: absolute;
+        top: -50%; left: -50%; width: 200%; height: 200%;
+        background: radial-gradient(circle, rgba(14,165,233,0.05) 0%, transparent 60%);
+        z-index: -1; pointer-events: none;
+    }
+
+    /* --- HOLOGRAPHIC AVATAR --- */
+    .profile-glow {
+        border: 2px solid var(--primary-cyan, #0ea5e9);
+        padding: 4px; /* Memberi jarak antara gambar dan border neon */
+        background: rgba(0,0,0,0.5);
+        animation: pulse-avatar 3s ease-in-out infinite;
+        transition: all 0.3s ease;
+    }
+    .profile-glow:hover {
+        transform: scale(1.05) rotate(2deg);
+    }
+    .profile-glow img {
+        border-radius: 50%;
+        width: 100%; height: 100%;
+        object-fit: cover; object-position: center 20%;
+    }
+
+    @keyframes pulse-avatar {
+        0% { box-shadow: 0 0 15px rgba(14, 165, 233, 0.3), inset 0 0 10px rgba(14, 165, 233, 0.2); }
+        50% { box-shadow: 0 0 30px rgba(14, 165, 233, 0.6), inset 0 0 20px rgba(14, 165, 233, 0.4); border-color: #38bdf8; }
+        100% { box-shadow: 0 0 15px rgba(14, 165, 233, 0.3), inset 0 0 10px rgba(14, 165, 233, 0.2); }
+    }
+
+    /* --- INTERACTIVE CONTACT CARDS --- */
+    .contact-box {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+    }
+    
+    .icon-wrapper {
+        width: 50px; height: 50px;
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    /* Hover Physics & Neon Colors */
+    .contact-box.email-box:hover {
+        background: rgba(14, 165, 233, 0.05);
+        border-color: rgba(14, 165, 233, 0.4);
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 0 15px rgba(14, 165, 233, 0.1);
+    }
+    .contact-box.email-box:hover .icon-wrapper { border-color: #0ea5e9; box-shadow: 0 0 15px rgba(14, 165, 233, 0.4); }
+    .contact-box.email-box:hover .icon-email { color: #0ea5e9 !important; filter: drop-shadow(0 0 5px #0ea5e9); }
+
+    .contact-box.loc-box:hover {
+        background: rgba(239, 68, 68, 0.05);
+        border-color: rgba(239, 68, 68, 0.4);
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 0 15px rgba(239, 68, 68, 0.1);
+    }
+    .contact-box.loc-box:hover .icon-wrapper { border-color: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+    .contact-box.loc-box:hover .icon-loc { color: #ef4444 !important; filter: drop-shadow(0 0 5px #ef4444); }
+
+    /* --- BUTTONS --- */
+    .btn-cyber {
+        font-family: 'JetBrains Mono', monospace;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        font-size: 13px;
+    }
+    .btn-cyber-primary { background: rgba(14, 165, 233, 0.1); color: #0ea5e9; border: 1px solid #0ea5e9; }
+    .btn-cyber-primary:hover { background: #0ea5e9; color: #020617; box-shadow: 0 0 20px rgba(14, 165, 233, 0.5); transform: translateY(-2px); }
+
+    .btn-cyber-outline { background: transparent; color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); }
+    .btn-cyber-outline:hover { background: rgba(148, 163, 184, 0.1); border-color: #94a3b8; color: white; transform: translateY(-2px); }
+
+    .text-break { word-wrap: break-word !important; word-break: break-all !important; }
+</style>
+
 <nav aria-label="breadcrumb" class="d-flex justify-content-center">
     <ol class="breadcrumb mb-4" style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">
         <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">root@system</a></li>
@@ -12,84 +112,76 @@
     </ol>
 </nav>
 
-<div class="row justify-content-center">
-    <div class="col-lg-6 col-md-8 col-sm-11">
+<div class="row justify-content-center pb-5">
+    <div class="col-lg-5 col-md-7 col-sm-10">
         
-        <!-- CARD KONTAK UTAMA -->
-        <div class="card-custom p-4 p-md-5 shadow-sm mb-4 border-top border-primary border-4 text-center">
+        <div class="glass-panel p-4 p-md-5 text-center">
             
-            <!-- Foto Profil Bulat: Ukuran Tetap -->
-            <div class="rounded-circle border border-3 border-primary-subtle shadow-sm overflow-hidden d-inline-block mb-4"
-                 style="width: 130px; height: 130px;">
-                <img src="{% static 'img/kristian.jpg' %}" 
-                     alt="Kristian Dwi Putra"
-                     class="w-100 h-100"
-                     style="object-fit: cover; object-position: center 20%;">
+            <div class="position-absolute top-0 start-0 w-100 p-3 d-flex justify-content-between align-items-center opacity-50" style="pointer-events: none;">
+                <div class="d-flex gap-2">
+                    <div style="width: 10px; height: 10px; background: #ff5f56; border-radius: 50%;"></div>
+                    <div style="width: 10px; height: 10px; background: #ffbd2e; border-radius: 50%;"></div>
+                    <div style="width: 10px; height: 10px; background: #27c93f; border-radius: 50%;"></div>
+                </div>
+                <div style="font-family: 'JetBrains Mono'; font-size: 10px; color: #94a3b8;">ID: ROOT_ADMIN</div>
             </div>
 
-            <h3 class="fw-bold text-dark mb-1" style="font-family: 'JetBrains Mono', monospace;">HUBUNGI_SAYA</h3>
-            <p class="text-muted small mb-4 px-2">Silakan hubungi saya melalui jalur komunikasi berikut untuk kolaborasi.</p>
+            <div class="rounded-circle profile-glow d-inline-block mt-3 mb-4" style="width: 140px; height: 140px;">
+                <img src="{% static 'img/kristian.jpg' %}" alt="Kristian Dwi Putra">
+            </div>
 
-            <div class="row g-3 justify-content-center">
-                <!-- Card Email: Perbaikan Layout Flex -->
+            <h3 class="fw-bold text-white mb-1" style="font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 10px rgba(255,255,255,0.2);">
+                KRISTIAN_DWI_PUTRA
+            </h3>
+            <p class="text-info small mb-4 px-2" style="font-family: 'JetBrains Mono'; letter-spacing: 1px;">
+                [ SYS_ADMINISTRATOR // DEVELOPER ]
+            </p>
+
+            <div class="row g-3 justify-content-center mb-4">
                 <div class="col-12">
-                    <div class="p-3 bg-light rounded-3 border d-flex align-items-center text-start">
-                        <!-- Ikon dengan ukuran tetap agar tidak gepeng -->
-                        <div class="flex-shrink-0 bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center border" 
-                             style="width: 48px; height: 48px;">
-                            <i class="bi bi-envelope-at-fill text-primary fs-5"></i>
+                    <a href="mailto:kristianpemula2026@gmail.com" class="contact-box email-box p-3 d-flex align-items-center text-start text-decoration-none">
+                        <div class="icon-wrapper flex-shrink-0">
+                            <i class="bi bi-envelope-at-fill text-muted fs-4 icon-email transition-all"></i>
                         </div>
-                        <!-- Kontainer Teks dengan margin -->
                         <div class="ms-3 overflow-hidden">
-                            <div class="text-muted fw-bold" style="font-family: 'JetBrains Mono', monospace; font-size: 10px;">EMAIL_ADDRESS</div>
-                            <div class="fw-bold text-dark text-break" style="font-size: 13px;">kristianpemula2026@gmail.com</div>
+                            <div class="text-muted fw-bold mb-1" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px;">COMM_CHANNEL: EMAIL</div>
+                            <div class="fw-bold text-white text-break" style="font-size: 13px;">kristianpemula2026@gmail.com</div>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
-                <!-- Card Lokasi: Perbaikan Layout Flex -->
                 <div class="col-12">
-                    <div class="p-3 bg-light rounded-3 border d-flex align-items-center text-start">
-                        <div class="flex-shrink-0 bg-white shadow-sm rounded-circle d-flex align-items-center justify-content-center border" 
-                             style="width: 48px; height: 48px;">
-                            <i class="bi bi-geo-alt-fill text-danger fs-5"></i>
+                    <div class="contact-box loc-box p-3 d-flex align-items-center text-start">
+                        <div class="icon-wrapper flex-shrink-0">
+                            <i class="bi bi-geo-alt-fill text-muted fs-4 icon-loc transition-all"></i>
                         </div>
                         <div class="ms-3">
-                            <div class="text-muted fw-bold" style="font-family: 'JetBrains Mono', monospace; font-size: 10px;">LOCATION_CORE</div>
-                            <div class="fw-bold text-dark" style="font-size: 13px;">Bandar Lampung, Indonesia</div>
+                            <div class="text-muted fw-bold mb-1" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px;">SERVER_LOCATION</div>
+                            <div class="fw-bold text-white" style="font-size: 13px;">Bandar Lampung, Indonesia</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <hr class="my-4 opacity-25">
-
-            <p class="text-muted small px-2 mb-0" style="font-style: italic;">
-                "Burung Merpati Burung Cendrawasih, Cukup Sekian Terima Kasih."
-            </p>
+            <div class="p-3 bg-dark bg-opacity-50 rounded-3 border border-secondary border-opacity-25 text-start mt-2">
+                <span class="text-warning small d-block mb-1" style="font-family: 'JetBrains Mono'; font-size: 10px;">> execution_log.txt</span>
+                <p class="text-light small mb-0" style="font-family: 'JetBrains Mono', monospace; font-style: italic;">
+                    "Burung Merpati Burung Cendrawasih, <br>
+                    <span class="text-info">Cukup Sekian Terima Kasih.</span>"
+                </p>
+            </div>
+            
         </div>
 
-        <!-- Navigasi Bawah -->
-        <div class="d-flex justify-content-center gap-2">
-            <a href="/" class="btn btn-primary px-4 shadow-sm btn-sm">
-                <i class="bi bi-house-door-fill"></i> Home
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <a href="/" class="btn btn-cyber btn-cyber-primary px-4 py-2 w-50">
+                <i class="bi bi-house-door-fill me-1"></i> HOME
             </a>
-            <a href="{% url 'report_list' %}" class="btn btn-outline-primary px-4 btn-sm">
-                <i class="bi bi-clipboard-data-fill"></i> Reports
+            <a href="{% url 'report_list' %}" class="btn btn-cyber btn-cyber-outline px-4 py-2 w-50">
+                <i class="bi bi-database-fill me-1"></i> DATABASE
             </a>
         </div>
 
     </div>
 </div>
-
-<style>
-    .card-custom { 
-        background: #ffffff; 
-        border-radius: 20px; 
-        border: 1px solid #e2e8f0; 
-    }
-    .btn { border-radius: 10px; font-weight: 600; }
-    /* Memastikan teks email panjang tidak merusak layout */
-    .text-break { word-wrap: break-word !important; word-break: break-all !important; }
-</style>
 {% endblock %}
