@@ -17,9 +17,9 @@
 
     /* MEMBUNUH WARNA PUTIH PADA INPUT BROWSER */
     .auth-input {
-        background-color: rgba(2, 6, 23, 0.6) !important; /* Warna dasar navy sangat gelap */
+        background-color: rgba(2, 6, 23, 0.6) !important;
         border: 1px solid rgba(56, 189, 248, 0.3) !important;
-        color: #38bdf8 !important; /* Teks yang diketik berwarna cyan */
+        color: #38bdf8 !important;
         padding: 14px 16px !important;
         min-height: 52px;
         font-size: 1rem;
@@ -27,19 +27,43 @@
         border-left: none !important; /* Agar menyatu dengan kotak icon */
         border-top-right-radius: 8px !important;
         border-bottom-right-radius: 8px !important;
+        box-shadow: none !important;
     }
 
+    /* FIX BUG TULISAN: Placeholder dibuat lebih terang (opacity 0.6) */
     .auth-input::placeholder {
-        color: rgba(56, 189, 248, 0.3) !important; /* Placeholder redup */
+        color: rgba(56, 189, 248, 0.6) !important; 
     }
 
-    .auth-input:focus {
-        background-color: rgba(2, 6, 23, 0.95) !important;
+    /* Box Icon di sebelah kiri Input */
+    .auth-icon-box {
+        background-color: rgba(2, 6, 23, 0.6) !important;
+        border: 1px solid rgba(56, 189, 248, 0.3) !important;
+        border-right: none !important; /* Menghilangkan garis tengah */
+        color: rgba(56, 189, 248, 0.8) !important;
+        min-height: 52px;
+        border-top-left-radius: 8px !important;
+        border-bottom-left-radius: 8px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px; /* Diperlebar agar icon tidak sesak */
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+    }
+
+    /* FIX BUG BENTUK (SEAMLESS INPUT): Efek menyala bersamaan saat kotak di-klik */
+    .input-group:focus-within .auth-icon-box,
+    .input-group:focus-within .auth-input {
         border-color: #38bdf8 !important;
-        box-shadow: none !important; /* Menghilangkan shadow bawaan bootstrap */
-        border-right: 1px solid #38bdf8 !important;
-        border-top: 1px solid #38bdf8 !important;
-        border-bottom: 1px solid #38bdf8 !important;
+        background-color: rgba(2, 6, 23, 0.95) !important;
+        color: #38bdf8 !important;
+    }
+    
+    /* Tambahan efek glow tipis saat focus */
+    .input-group:focus-within {
+        box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
+        border-radius: 8px;
     }
 
     /* Fix autofill browser (Mencegah Chrome mengubah form jadi putih/kuning) */
@@ -50,21 +74,6 @@
         -webkit-box-shadow: 0 0 0 30px #020617 inset !important;
         -webkit-text-fill-color: #38bdf8 !important;
         transition: background-color 5000s ease-in-out 0s;
-    }
-
-    /* Box Icon di sebelah kiri Input */
-    .auth-icon-box {
-        background-color: rgba(2, 6, 23, 0.6) !important;
-        border: 1px solid rgba(56, 189, 248, 0.3) !important;
-        border-right: none !important;
-        color: #38bdf8 !important;
-        min-height: 52px;
-        border-top-left-radius: 8px !important;
-        border-bottom-left-radius: 8px !important;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 45px;
     }
 
     /* Tombol Eksekusi bergaya Cyber */
@@ -96,8 +105,8 @@
             
             <div class="p-4 text-center border-bottom" style="border-color: rgba(255,255,255,0.05) !important;">
                 <div class="mb-3">
-                    <div class="d-inline-flex p-3 rounded-circle" style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.4);">
-                        <i class="bi bi-shield-lock-fill text-info" style="font-size: 2.2rem; filter: drop-shadow(0 0 10px #38bdf8);"></i>
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 85px; height: 85px; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.4);">
+                        <i class="bi bi-shield-lock-fill text-info" style="font-size: 2.5rem; filter: drop-shadow(0 0 10px #38bdf8);"></i>
                     </div>
                 </div>
                 <h3 class="text-white fw-bold mb-1" style="font-family: 'JetBrains Mono', monospace; letter-spacing: 1px;">SYSTEM_AUTH</h3>
@@ -135,7 +144,7 @@
                     </button>
 
                     <div class="text-center">
-                        <p class="text-muted small">
+                        <p class="small" style="color: #cbd5e1;">
                             Belum memiliki akses? <br>
                             <a href="{% url 'register' %}" class="text-warning fw-bold text-decoration-none mt-1 d-inline-block" style="letter-spacing: 0.5px; transition: color 0.2s;">
                                 Registrasi Citizen Baru

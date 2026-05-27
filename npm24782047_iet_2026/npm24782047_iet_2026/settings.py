@@ -34,9 +34,11 @@ INSTALLED_APPS = [
     # Third Party Packages
     'rest_framework',
     'rest_framework_simplejwt', # Core JWT Authentication Engine
+    'corsheaders', # <-- DITAMBAHKAN UNTUK LAB 11 [cite: 28]
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', # <-- DITAMBAHKAN PALING ATAS (Lab 11) 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -125,3 +127,8 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
+# ==========================================
+# CORS Configuration (Lab 11)
+# ==========================================
+CORS_ALLOW_ALL_ORIGINS = True # Mengizinkan semua domain untuk mengakses API
