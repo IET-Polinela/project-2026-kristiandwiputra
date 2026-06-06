@@ -1,148 +1,385 @@
 {% extends 'base.html' %}
 
-{% block title %}ADD_ENTRY - Smart City{% endblock %}
+{% block title %}Tambah Laporan - Smart City Lampung{% endblock %}
 
 {% block content %}
 <style>
-    /* --- GLASS PANEL CONTAINER --- */
-    .glass-panel {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-        overflow: hidden;
+    /* =========================================
+       1. CSS VARIABLES (TEMA TERANG & GELAP)
+       ========================================= */
+    :root {
+        --primary: #0d6efd;
+        --primary-soft: rgba(13, 110, 253, 0.1);
+        --success: #198754;
+        --warning: #f59e0b;
+        --info: #0dcaf0;
+        --danger: #dc3545;
+        --card-bg: #ffffff;
+        --card-bg-soft: #f8f9fa;
+        --input-bg: #ffffff;
+        --border-color: #e5e7eb;
+        --text-main: #2b3440;
+        --text-muted: #6b7280;
+        --text-soft: #9ca3af;
+        --radius-lg: 16px;
+        --shadow: 0 4px 6px -1px rgba(0,0,0, 0.05);
     }
 
-    /* --- FORM INPUTS STYLING --- */
-    .form-wrapper input, .form-wrapper select, .form-wrapper textarea {
-        width: 100%;
-        background-color: rgba(0, 0, 0, 0.4);
-        border: 1px solid rgba(14, 165, 233, 0.2);
-        color: #f8fafc;
-        border-radius: 12px;
-        padding: 14px 18px;
-        font-family: 'Inter', sans-serif;
-        font-size: 14px;
-        transition: all 0.3s ease;
+    [data-theme="dark"] {
+        --primary: #38bdf8;
+        --primary-soft: rgba(56, 189, 248, 0.1);
+        --success: #4ade80;
+        --warning: #fbbf24;
+        --info: #22d3ee;
+        --danger: #ef4444;
+        --card-bg: #1e293b;
+        --card-bg-soft: #0f172a;
+        --input-bg: #0f172a;
+        --border-color: #334155;
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --text-soft: #64748b;
+        --shadow: 0 4px 10px rgba(0,0,0, 0.3);
     }
 
-    .form-wrapper input:focus, .form-wrapper select:focus, .form-wrapper textarea:focus {
-        outline: none;
-        background-color: rgba(0, 0, 0, 0.7);
-        border-color: #0ea5e9;
-        box-shadow: 0 0 20px rgba(14, 165, 233, 0.3), inset 0 0 10px rgba(14, 165, 233, 0.1);
+    /* =========================================
+       2. ANIMASI & LAYOUT DASAR
+       ========================================= */
+    .form-page {
+        max-width: 920px;
+        margin: 0 auto;
     }
 
-    .form-wrapper select option {
-        background-color: #0f172a;
-        color: #f8fafc;
-    }
-
-    .form-wrapper textarea::-webkit-scrollbar { width: 6px; }
-    .form-wrapper textarea::-webkit-scrollbar-thumb { background: #0ea5e9; border-radius: 10px; }
-
-    /* --- BUTTONS --- */
-    .btn-cyber {
-        font-family: 'JetBrains Mono', monospace;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        border-radius: 12px;
-        transition: all 0.3s ease;
+    .animate-enter {
+        opacity: 0;
+        animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     
-    .btn-cyber-primary {
-        background: rgba(14, 165, 233, 0.1);
-        color: #0ea5e9;
-        border: 1px solid #0ea5e9;
+    @keyframes fadeInUp {
+        0% { opacity: 0; transform: translateY(15px); }
+        100% { opacity: 1; transform: translateY(0); }
     }
-    .btn-cyber-primary:hover {
-        background: #0ea5e9;
-        color: #020617;
-        box-shadow: 0 0 20px rgba(14, 165, 233, 0.5);
-        transform: translateY(-2px);
+    
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+
+    /* =========================================
+       3. STYLING BREADCRUMB & FORM CARD
+       ========================================= */
+    .breadcrumb-clean {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        color: var(--text-soft);
+        font-size: 0.86rem;
+        font-weight: 700;
+        margin-bottom: 1.25rem;
     }
 
-    .btn-cyber-danger {
-        background: rgba(239, 68, 68, 0.05);
-        color: #ef4444;
-        border: 1px solid rgba(239, 68, 68, 0.5);
+    .breadcrumb-clean a {
+        color: var(--text-soft);
+        text-decoration: none;
+        transition: color 0.2s;
     }
-    .btn-cyber-danger:hover {
-        background: #ef4444;
-        color: white;
-        box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+
+    .breadcrumb-clean a:hover {
+        color: var(--primary);
+    }
+
+    .form-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        transition: background 0.3s, border-color 0.3s;
+    }
+
+    .form-head {
+        background: var(--card-bg-soft);
+        border-bottom: 1px solid var(--border-color);
+        padding: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .form-kicker {
+        color: var(--primary);
+        font-size: 0.85rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-title {
+        color: var(--text-main);
+        font-size: clamp(1.4rem, 2.6vw, 1.85rem);
+        font-weight: 850;
+        margin-bottom: 0.35rem;
+        line-height: 1.2;
+    }
+
+    .form-subtitle {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 0;
+    }
+
+    .form-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        flex-shrink: 0;
+    }
+
+    .form-body {
+        padding: 1.5rem;
+    }
+
+    /* =========================================
+       4. STYLING INPUT FIELDS MENDUKUNG TEMA
+       ========================================= */
+    .form-wrapper input,
+    .form-wrapper select,
+    .form-wrapper textarea {
+        width: 100%;
+        background: var(--input-bg) !important;
+        border: 1px solid var(--border-color) !important;
+        color: var(--text-main) !important;
+        border-radius: 12px;
+        padding: 14px 16px;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+    }
+
+    .form-wrapper textarea {
+        min-height: 140px;
+        resize: vertical;
+        line-height: 1.7;
+    }
+
+    .form-wrapper input:focus,
+    .form-wrapper select:focus,
+    .form-wrapper textarea:focus {
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 4px var(--primary-soft) !important;
+        background: var(--card-bg) !important;
+    }
+
+    /* Memperbaiki warna opsi dropdown pada mode gelap */
+    .form-wrapper select option {
+        color: var(--text-main);
+        background: var(--card-bg);
+    }
+
+    .field-block {
+        margin-bottom: 1.25rem;
+    }
+
+    .field-label {
+        color: var(--text-main);
+        font-size: 0.9rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 0.6rem;
+    }
+
+    .field-label i {
+        color: var(--primary);
+    }
+
+    .field-error {
+        color: var(--danger);
+        background: rgba(220, 38, 38, 0.1);
+        border: 1px solid rgba(220, 38, 38, 0.2);
+        border-radius: 10px;
+        padding: 0.7rem 0.9rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-top: 0.6rem;
+    }
+
+    .field-help {
+        color: var(--text-soft);
+        font-size: 0.85rem;
+        margin-top: 0.6rem;
+        line-height: 1.5;
+    }
+
+    .alert-clean {
+        background: rgba(220, 38, 38, 0.1);
+        color: var(--danger);
+        border: 1px solid rgba(220, 38, 38, 0.2);
+        border-left: 4px solid var(--danger);
+        border-radius: 12px;
+        padding: 1rem 1.15rem;
+        font-weight: 750;
+        margin-bottom: 1.25rem;
+    }
+
+    /* =========================================
+       5. STYLING TOMBOL AKSI
+       ========================================= */
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-color);
+        margin-top: 1.5rem;
+    }
+
+    .btn-form {
+        border-radius: 12px;
+        padding: 14px 20px;
+        font-weight: 800;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg-soft);
+        color: var(--text-main);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        flex: 1;
+        transition: transform 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .btn-form:hover {
         transform: translateY(-2px);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .btn-submit {
+        background: var(--primary);
+        color: #ffffff !important;
+        border-color: var(--primary);
+    }
+
+    .btn-submit:hover {
+        color: #ffffff;
+        filter: brightness(1.1);
+    }
+
+    .btn-cancel:hover {
+        border-color: var(--danger);
+        color: var(--danger);
+    }
+
+    @media (max-width: 768px) {
+        .form-head { flex-direction: column; }
+        .form-actions { flex-direction: column; }
+        .btn-form { width: 100%; }
     }
 </style>
 
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb mb-4" style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">
-        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">root@system</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'report_list' %}" class="text-decoration-none text-muted">./reports</a></li>
-        <li class="breadcrumb-item active text-info" aria-current="page">add_new_entry</li>
-    </ol>
-</nav>
+<div class="form-page">
+    <div class="breadcrumb-clean animate-enter delay-1">
+        <a href="/"><i class="bi bi-house-door me-1"></i>Beranda</a>
+        <span>/</span>
+        <a href="{% url 'report_list' %}">Data Laporan</a>
+        <span>/</span>
+        <span style="color: var(--text-main);">Tambah Laporan</span>
+    </div>
 
-<div class="row justify-content-center pb-5">
-    <div class="col-md-8 col-lg-7">
-        <div class="glass-panel border-start border-4 border-info">
-            
-            <div class="bg-dark bg-opacity-50 d-flex justify-content-between align-items-center p-3" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                <div class="d-flex gap-2">
-                    <div style="width: 12px; height: 12px; background: #ff5f56; border-radius: 50%; box-shadow: 0 0 8px rgba(255,95,86,0.5);"></div>
-                    <div style="width: 12px; height: 12px; background: #ffbd2e; border-radius: 50%; box-shadow: 0 0 8px rgba(255,189,46,0.5);"></div>
-                    <div style="width: 12px; height: 12px; background: #27c93f; border-radius: 50%; box-shadow: 0 0 8px rgba(39,201,63,0.5);"></div>
+    <div class="form-card animate-enter delay-2">
+        <div class="form-head">
+            <div>
+                <div class="form-kicker">
+                    <i class="bi bi-plus-square-fill"></i> Registrasi Laporan
                 </div>
-                <span class="text-info fw-bold" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 1px;">
-                    <i class="bi bi-plus-square-fill me-2"></i>INITIATE_NEW_REPORT
-                </span>
-                <div style="width: 44px;"></div> </div>
+                <h1 class="form-title">Tambah Laporan Baru</h1>
+                <p class="form-subtitle">
+                    Isi data infrastruktur atau kejadian dengan lengkap agar proses pemeriksaan lapangan dan tindak lanjut dapat dieksekusi dengan tepat.
+                </p>
+            </div>
+            <div class="form-icon">
+                <i class="bi bi-clipboard2-plus"></i>
+            </div>
+        </div>
 
-            <div class="card-body p-4 p-md-5 form-wrapper">
-                <form method="post" id="reportForm">
-                    {% csrf_token %}
+        <div class="form-body form-wrapper">
+            <form method="post" id="reportForm">
+                {% csrf_token %}
 
-                    {% if form.errors %}
-                        <div class="alert bg-danger bg-opacity-10 border border-danger text-danger rounded-3 mb-4" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">
-                            <i class="bi bi-exclamation-octagon-fill me-2"></i> [SYS_ERROR]: Validasi gagal. Periksa input di bawah.
-                        </div>
-                    {% endif %}
+                {% if form.errors %}
+                    <div class="alert-clean">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Validasi gagal! Terdapat kesalahan pada data yang dimasukkan. Silakan periksa kembali kolom di bawah.
+                    </div>
+                {% endif %}
 
-                    {% for field in form %}
-                    <div class="mb-4 position-relative">
-                        <label for="{{ field.id_for_label }}" class="form-label fw-bold text-muted small mb-2" style="font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em;">
-                            <i class="bi bi-terminal text-info me-1"></i> {{ field.label|upper }}
+                {% for field in form %}
+                    <div class="field-block">
+                        <label for="{{ field.id_for_label }}" class="field-label">
+                            <i class="bi bi-caret-right-fill"></i>
+                            {{ field.label }}
                         </label>
-                        
+
                         {{ field }}
 
                         {% if field.errors %}
-                            <div class="text-danger small mt-2 fw-medium" style="font-family: 'JetBrains Mono', monospace;">
-                                <i class="bi bi-exclamation-triangle-fill"></i> [ERR]: {{ field.errors.0 }}
+                            <div class="field-error">
+                                <i class="bi bi-info-circle-fill me-1"></i>
+                                {{ field.errors.0 }}
                             </div>
                         {% endif %}
 
                         {% if field.name == 'status' %}
-                            <div class="text-info small opacity-75 mt-2" style="font-family: 'JetBrains Mono', monospace; font-size: 11px;">
-                                > [SYS_MSG]: Set status awal pelaporan (Default: DRAFT).
+                            <div class="field-help">
+                                <i class="bi bi-lightbulb text-warning me-1"></i>
+                                Status awal biasanya dibiarkan default <b>(DRAFT/REPORTED)</b> kecuali jika kamu adalah Admin.
                             </div>
                         {% endif %}
                     </div>
-                    {% endfor %}
+                {% endfor %}
 
-                    <div class="d-flex flex-column flex-md-row gap-3 mt-5 pt-3 border-top border-secondary border-opacity-25">
-                        <button type="submit" id="submitBtn" class="btn btn-cyber btn-cyber-primary w-100 py-3 fw-bold">
-                            <i class="bi bi-cloud-arrow-up-fill me-2"></i> EXECUTE_QUERY
-                        </button>
-                        <a href="{% url 'report_list' %}" class="btn btn-cyber btn-cyber-danger w-100 py-3 fw-bold text-center text-decoration-none d-flex align-items-center justify-content-center">
-                            <i class="bi bi-x-circle me-2"></i> ABORT_OPERATION
-                        </a>
-                    </div>
-                </form>
-            </div>
+                <div class="form-actions">
+                    <button type="submit" id="submitBtn" class="btn-form btn-submit">
+                        <i class="bi bi-cloud-arrow-up-fill"></i>
+                        Simpan Laporan
+                    </button>
+                    <a href="{% url 'report_list' %}" class="btn-form btn-cancel">
+                        <i class="bi bi-x-circle-fill"></i>
+                        Batalkan
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("reportForm");
+        const submitBtn = document.getElementById("submitBtn");
+
+        // Fitur Mencegah Double Submit (Klik 2x berturut-turut)
+        if (form && submitBtn) {
+            form.addEventListener("submit", function () {
+                submitBtn.style.pointerEvents = "none";
+                submitBtn.style.opacity = "0.7";
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Memproses...';
+            });
+        }
+    });
+</script>
 {% endblock %}

@@ -1,280 +1,805 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}DATABASE_REPORT_QUERY - Smart City Lampung{% endblock %}
+{% block title %}Data Laporan - Smart City Lampung{% endblock %}
 
 {% block content %}
 <style>
-    /* --- CORE VARIABLES --- */
     :root {
-        --primary-cyan: #0ea5e9;
-        --cyan-glow: rgba(14, 165, 233, 0.4);
-        --bg-deep: #020617;
-        --card-glass: rgba(15, 23, 42, 0.6);
-        --text-muted: #94a3b8;
+        --primary: #059669;
+        --primary-2: #0891b2;
+        --primary-soft: rgba(5, 150, 105, 0.10);
+        --success: #198754;
+        --danger: #dc3545;
+        --warning: #f59e0b;
+        --info: #0dcaf0;
+        --card-bg: rgba(255, 255, 255, 0.88);
+        --card-bg-soft: rgba(255, 255, 255, 0.74);
+        --input-bg: rgba(255, 255, 255, 0.88);
+        --border-color: rgba(15, 23, 42, 0.10);
+        --text-main: #0f172a;
+        --text-muted: #475569;
+        --text-soft: #64748b;
+        --radius-lg: 18px;
+        --shadow: 0 18px 38px rgba(15, 23, 42, 0.10);
+        --shadow-hover: 0 22px 50px rgba(15, 23, 42, 0.14);
+        --gradient-main: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+        --gradient-soft: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(6, 182, 212, 0.12) 100%);
+        --glass-blur: blur(18px) saturate(145%);
     }
 
-    /* --- BACKGROUND & CONTAINER --- */
-    .glass-panel {
-        background: var(--card-glass);
+    [data-theme="dark"] {
+        --primary: #10b981;
+        --primary-2: #06b6d4;
+        --primary-soft: rgba(16, 185, 129, 0.14);
+        --success: #22c55e;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --info: #14b8a6;
+        --card-bg: rgba(18, 32, 27, 0.72);
+        --card-bg-soft: rgba(23, 40, 34, 0.58);
+        --input-bg: rgba(9, 20, 17, 0.76);
+        --border-color: rgba(148, 163, 184, 0.18);
+        --text-main: #f8fafc;
+        --text-muted: #cbd5e1;
+        --text-soft: #94a3b8;
+        --shadow: 0 22px 55px rgba(0, 0, 0, 0.34);
+        --shadow-hover: 0 26px 70px rgba(0, 0, 0, 0.42);
+    }
+
+    .report-page {
+        max-width: 1400px;
+        margin: 0 auto;
+        animation: fadeInUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fadeInUp {
+        0% { opacity: 0; transform: translateY(16px) scale(0.988); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes tableRowIn {
+        0% { opacity: 0; transform: translateY(8px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shineLine {
+        0% { transform: translateX(-140%); opacity: 0; }
+        35% { opacity: 1; }
+        100% { transform: translateX(140%); opacity: 0; }
+    }
+
+    .report-header,
+    .table-wrap,
+    .detail-dialog,
+    .dialog-box {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+    }
+
+    .report-header,
+    .table-wrap {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .report-header::before,
+    .table-wrap::before,
+    .detail-dialog::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.09), transparent 42%, rgba(16, 185, 129, 0.06));
+        pointer-events: none;
+    }
+
+    .report-header::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -70%;
+        width: 55%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+        transform: skewX(-18deg);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .report-header:hover::after {
+        animation: shineLine 0.9s ease;
+    }
+
+    .report-header {
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .report-header:hover {
+        transform: translateY(-2px);
+        border-color: rgba(94, 234, 212, 0.30);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .report-header > .row,
+    .table-wrap > *,
+    .detail-dialog > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    .report-label {
+        color: var(--primary);
+        font-size: 0.85rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .report-label i {
+        background: var(--gradient-main);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .report-title {
+        color: var(--text-main);
+        font-size: clamp(1.5rem, 3vw, 2.2rem);
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+        background: var(--gradient-main);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        width: fit-content;
+    }
+
+    .report-desc {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 0;
+        max-width: 700px;
+    }
+
+    .report-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .search-box {
+        position: relative;
+        width: min(100%, 320px);
+    }
+
+    .search-box i {
+        position: absolute;
+        top: 50%;
+        left: 16px;
+        transform: translateY(-50%);
+        color: var(--primary);
+        z-index: 1;
+    }
+
+    .search-box input {
+        width: 100%;
+        min-height: 48px;
+        border-radius: 13px;
+        border: 1px solid var(--border-color);
+        background: var(--input-bg);
+        color: var(--text-main);
+        padding: 12px 16px 12px 45px;
+        outline: none;
+        transition: all 0.25s ease;
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 20px;
-        padding: 25px;
-        margin-bottom: 25px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.4);
     }
 
-    /* --- TERMINAL SEARCH BAR --- */
-    .search-terminal {
-        background: rgba(0, 0, 0, 0.5);
-        border: 1px solid rgba(14, 165, 233, 0.3);
-        border-radius: 12px;
-        color: #fff;
-        font-family: 'JetBrains Mono', monospace;
-        transition: all 0.3s ease;
-    }
-    .search-terminal:focus {
-        background: rgba(0, 0, 0, 0.8);
-        border-color: var(--primary-cyan);
-        box-shadow: 0 0 15px var(--cyan-glow);
-        color: var(--primary-cyan);
+    .search-box input:focus {
+        border-color: rgba(94, 234, 212, 0.42);
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12), 0 15px 30px rgba(16, 185, 129, 0.08);
     }
 
-    /* --- MODERN TABLE (FLOATING ROWS) --- */
-    .table-modern {
-        border-collapse: separate !important;
-        border-spacing: 0 12px !important; /* Jarak antar baris */
-        width: 100%;
+    .summary-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 1.5rem;
     }
 
-    .table-modern thead th {
-        font-family: 'JetBrains Mono', monospace;
-        color: var(--text-muted);
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        border: none !important;
-        padding: 0 20px 10px 20px !important;
+    .summary-box {
+        background: var(--card-bg-soft);
+        border: 1px solid var(--border-color);
+        border-radius: 13px;
+        padding: 1rem 1.2rem;
+        min-width: 140px;
+        transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
     }
 
-    .table-modern tbody tr {
-        background: rgba(30, 41, 59, 0.5);
-        backdrop-filter: blur(8px);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        cursor: default;
+    .summary-box:hover {
+        transform: translateY(-3px);
+        border-color: rgba(94, 234, 212, 0.30);
+        background: var(--gradient-soft);
     }
 
-    /* Efek Anti-Kaku: Hover Physics */
-    .table-modern tbody tr:hover {
-        transform: translateY(-4px) scale(1.01);
-        background: rgba(30, 41, 59, 0.9);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(14, 165, 233, 0.2);
-    }
-
-    /* Membulatkan sudut baris tabel */
-    .table-modern td {
-        padding: 18px 20px !important;
-        border: none !important;
-        vertical-align: middle;
-    }
-    .table-modern td:first-child { border-top-left-radius: 16px; border-bottom-left-radius: 16px; }
-    .table-modern td:last-child { border-top-right-radius: 16px; border-bottom-right-radius: 16px; }
-
-    /* --- TYPOGRAPHY --- */
-    .report-title-text {
-        color: #f8fafc;
+    .summary-label {
+        color: var(--text-soft);
+        font-size: 0.75rem;
         font-weight: 700;
-        font-size: 15px;
+        margin-bottom: 0.4rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .summary-value {
+        color: var(--text-main);
+        font-size: 1.25rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .summary-value.active {
+        color: var(--success);
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+        border-radius: var(--radius-lg);
+        padding: 1rem;
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .table-wrap:hover {
+        border-color: rgba(94, 234, 212, 0.24);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .report-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+        min-width: 900px;
+    }
+
+    .report-table th {
+        color: var(--text-soft);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+        padding: 0 16px 12px 16px;
+        border: none;
+    }
+
+    .report-table tbody tr {
+        animation: tableRowIn 0.35s ease both;
+    }
+
+    .report-table td {
+        background: var(--card-bg-soft);
+        color: var(--text-muted);
+        padding: 16px;
+        border: none;
+        vertical-align: middle;
+        transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .report-table tr:hover td {
+        background: var(--gradient-soft);
+        color: var(--text-main);
+    }
+
+    .report-table td:first-child {
+        border-top-left-radius: 12px;
+        border-bottom-left-radius: 12px;
+    }
+
+    .report-table td:last-child {
+        border-top-right-radius: 12px;
+        border-bottom-right-radius: 12px;
+    }
+
+    .id-text {
+        color: var(--primary);
+        font-weight: 700;
+        white-space: nowrap;
+        font-family: monospace;
+        font-size: 1rem;
+    }
+
+    .title-text {
+        color: var(--text-main);
+        font-weight: 700;
+        font-size: 1rem;
         display: block;
         margin-bottom: 6px;
-        letter-spacing: 0.3px;
     }
-    .metadata-small {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 11px;
+
+    .meta-text {
+        color: var(--text-soft);
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .category-text {
         color: var(--text-muted);
+        font-size: 0.9rem;
+        font-weight: 600;
+        white-space: nowrap;
     }
 
-    /* --- BUTTONS & STATUS --- */
-    .btn-status-pill {
-        min-width: 100px;
-        padding: 6px 14px;
-        font-size: 10px;
-        font-weight: 800;
-        border-radius: 8px;
+    .status-pill {
+        min-width: 110px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        border: 1px solid transparent;
+        white-space: nowrap;
         text-transform: uppercase;
-        font-family: 'JetBrains Mono', monospace;
-        letter-spacing: 1px;
-        display: inline-block;
-        text-align: center;
+        letter-spacing: 0.5px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
     }
 
-    .st-draft { background: rgba(51, 65, 85, 0.4); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2); }
-    .st-verified { background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); box-shadow: 0 0 10px rgba(99, 102, 241, 0.2); }
-    .st-progress { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-    .st-resolved { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-pill::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: currentColor;
+        box-shadow: 0 0 12px currentColor;
+    }
 
-    .btn-action-sys {
-        width: 36px; height: 36px;
-        display: inline-flex; align-items: center; justify-content: center;
-        border-radius: 10px; border: none; color: white;
-        transition: all 0.2s ease;
+    .st-draft { background: rgba(100, 116, 139, 0.15); color: #94a3b8; border-color: rgba(148, 163, 184, 0.2); }
+    .st-reported { background: rgba(16, 185, 129, 0.14); color: #34d399; border-color: rgba(52, 211, 153, 0.24); }
+    .st-verified { background: rgba(6, 182, 212, 0.14); color: #22d3ee; border-color: rgba(34, 211, 238, 0.24); }
+    .st-progress { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: rgba(251, 191, 36, 0.2); }
+    .st-resolved { background: rgba(34, 197, 94, 0.15); color: #4ade80; border-color: rgba(74, 222, 128, 0.2); }
+
+    .action-wrap {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+        color: var(--text-muted);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         text-decoration: none;
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
     }
-    .btn-action-sys:hover { transform: scale(1.15) rotate(3deg); color: white;}
 
-    /* Modifikasi scrollbar modal */
-    .modal-content {
-        background: rgba(15, 23, 42, 0.95);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(14, 165, 233, 0.3);
-        box-shadow: 0 0 40px rgba(14, 165, 233, 0.2);
+    .btn-view { color: #22d3ee; background: rgba(6, 182, 212, 0.10); border-color: rgba(34, 211, 238, 0.22); }
+    .btn-edit { color: #f59e0b; background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.2); }
+    .btn-status { color: #34d399; background: rgba(16, 185, 129, 0.12); border-color: rgba(52, 211, 153, 0.24); }
+    .btn-delete { color: #ef4444; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); }
+
+    .btn-action:hover {
+        transform: translateY(-3px) scale(1.04);
+        border-color: rgba(94, 234, 212, 0.36);
+        box-shadow: 0 12px 24px rgba(16, 185, 129, 0.12);
+    }
+
+    .detail-dialog {
+        width: min(700px, calc(100% - 2rem));
+        border-radius: var(--radius-lg);
+        color: var(--text-main);
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .detail-dialog::backdrop {
+        background: rgba(3, 7, 18, 0.68);
+        backdrop-filter: blur(8px);
+    }
+
+    .dialog-head {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 182, 212, 0.06));
+        border-bottom: 1px solid var(--border-color);
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .dialog-title {
+        color: var(--text-main);
+        font-size: 1.35rem;
+        font-weight: 800;
+        margin-bottom: 0;
+    }
+
+    .dialog-body {
+        padding: 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .dialog-box {
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: none;
+    }
+
+    .dialog-close {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+        color: var(--text-main);
+        transition: all 0.2s ease;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    .dialog-close:hover {
+        color: #ef4444;
+        border-color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+        transform: rotate(90deg);
+    }
+
+    .btn-close-bottom {
+        width: 100%;
+        border-radius: 12px;
+        padding: 14px;
+        border: 1px solid var(--border-color);
+        background: var(--gradient-soft);
+        color: var(--text-main);
+        font-weight: 700;
+        transition: all 0.2s ease;
+    }
+
+    .btn-close-bottom:hover {
+        background: var(--gradient-main);
+        color: #ffffff;
+        border-color: transparent;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 992px) {
+        .report-actions {
+            justify-content: flex-start;
+            margin-top: 1rem;
+        }
+
+        .search-box {
+            width: 100%;
+        }
     }
 </style>
 
-<div class="glass-panel border-start border-4 border-info">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
-        <div>
-            <h2 class="fw-bold text-white mb-1" style="font-family: 'JetBrains Mono';">
-                <i class="bi bi-hdd-network text-info me-2" style="filter: drop-shadow(0 0 8px #0ea5e9);"></i>DATABASE_LOG
-            </h2>
-            <p class="metadata-small mb-0">TOTAL_ENTRIES: <span class="text-info">{{ reports.count }}</span> // SYNC_STATUS: <span class="text-success">OK</span></p>
-        </div>
-        <div class="d-flex gap-3 w-100 w-md-auto">
-            <div class="input-group" style="width: 250px;">
-                <span class="input-group-text bg-transparent border-0 position-absolute" style="z-index: 5; color: #0ea5e9;"><i class="bi bi-search"></i></span>
-                <input type="text" id="liveSearchInput" class="form-control search-terminal ps-5" placeholder="Search CID...">
-            </div>
-            {% if user.is_superuser %}
-            <a href="{% url 'add_report' %}" class="btn btn-info fw-bold d-flex align-items-center gap-2" style="border-radius: 12px; box-shadow: 0 0 15px rgba(14,165,233,0.3);">
-                <i class="bi bi-plus-lg"></i> ADD_NEW
-            </a>
-            {% endif %}
-        </div>
-    </div>
-</div>
-
-<div class="table-responsive" style="overflow-x: visible;">
-    <table class="table-modern">
-        <thead>
-            <tr>
-                <th width="15%">CID_UID</th>
-                <th width="35%">LOG_DESCRIPTION</th>
-                <th width="15%">CATEGORY</th>
-                <th width="15%">STATE</th>
-                <th width="20%" class="text-center">EXECUTE</th>
-            </tr>
-        </thead>
-        <tbody id="reportTableBody">
-            {% for report in reports %}
-            <tr>
-                <td class="fw-bold text-info" style="font-family: 'JetBrains Mono';">#{{ report.id }}</td>
-                <td>
-                    <span class="report-title-text">{{ report.title }}</span>
-                    <span class="metadata-small"><i class="bi bi-clock-history me-1"></i>{{ report.created_at|date:"Y.m.d // H:i" }}</span>
-                </td>
-                <td><span class="text-light small fw-medium"><i class="bi bi-folder2 me-2 text-muted"></i>{{ report.category|upper }}</span></td>
-                <td>
-                    <span class="btn-status-pill st-{% if report.status == 'VERIFIED' %}verified{% elif report.status == 'IN_PROGRESS' %}progress{% elif report.status == 'RESOLVED' %}resolved{% else %}draft{% endif %}">
-                        {{ report.status|default:"DRAFT" }}
-                    </span>
-                </td>
-                <td class="text-center">
-                    <div class="d-flex justify-content-center gap-2">
-                        <button class="btn-action-sys bg-info detail-btn shadow-sm" data-id="{{ report.id }}" title="View Detail"><i class="bi bi-eye-fill"></i></button>
-                        {% if user.is_superuser %}
-                            <a href="{% url 'edit_report' report.pk %}" class="btn-action-sys bg-warning text-dark shadow-sm" title="Edit"><i class="bi bi-pencil-square"></i></a>
-                            <a href="{% url 'verify_report' report.pk %}" class="btn-action-sys {% if report.status == 'IN_PROGRESS' %}bg-primary{% elif report.status == 'VERIFIED' %}bg-secondary{% else %}bg-success{% endif %} shadow-sm" title="Change Status"><i class="bi bi-arrow-right-short fs-4"></i></a>
-                            <a href="{% url 'delete_report' report.pk %}" class="btn-action-sys bg-danger shadow-sm" onclick="return confirm('Wipe Record #{{ report.id }}?')" title="Delete"><i class="bi bi-trash3-fill"></i></a>
-                        {% endif %}
+<div class="report-page">
+    <div class="report-header">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <div class="report-label">
+                    <i class="bi bi-hdd-network fs-6"></i> Manajemen Data Terpusat
+                </div>
+                <h1 class="report-title">Database Laporan Kota</h1>
+                <p class="report-desc">
+                    Kelola laporan infrastruktur masyarakat, pantau status penanganan teknis, dan telusuri arsip data secara efisien.
+                </p>
+                <div class="summary-row">
+                    <div class="summary-box">
+                        <div class="summary-label">Total Laporan</div>
+                        <div class="summary-value">{{ reports.count|default:0 }}</div>
                     </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+                    <div class="summary-box">
+                        <div class="summary-label">Status Database</div>
+                        <div class="summary-value active"><i class="bi bi-cloud-check-fill me-2"></i>Online</div>
+                    </div>
+                </div>
+            </div>
 
-<div class="modal fade" id="detailModal" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content rounded-4 border-0">
-            <div id="modalContentTarget"></div>
+            <div class="col-lg-5">
+                <div class="report-actions">
+                    <div class="search-box">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="liveSearchInput" placeholder="Telusuri ID, Judul, atau Lokasi...">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <div class="table-wrap">
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th width="12%">ID</th>
+                    <th width="35%">Judul & Waktu Laporan</th>
+                    <th width="18%">Kategori</th>
+                    <th width="15%">Status</th>
+                    <th width="20%" class="text-center">Aksi Lanjutan</th>
+                </tr>
+            </thead>
+            <tbody id="reportTableBody">
+                {% for report in reports %}
+                <tr>
+                    <td><span class="id-text">#{{ report.id }}</span></td>
+                    <td>
+                        <span class="title-text">{{ report.title }}</span>
+                        <span class="meta-text">
+                            <i class="bi bi-clock-history me-1"></i>
+                            {{ report.created_at|date:"d M Y, H:i" }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="category-text">
+                            <i class="bi bi-folder2-open me-2 text-primary"></i>{{ report.category }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-pill st-{% if report.status == 'VERIFIED' %}verified{% elif report.status == 'IN_PROGRESS' %}progress{% elif report.status == 'RESOLVED' %}resolved{% elif report.status == 'REPORTED' %}reported{% else %}draft{% endif %}">
+                            {{ report.status|default:"DRAFT" }}
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <div class="action-wrap">
+                            <button type="button" class="btn-action btn-view detail-btn" data-id="{{ report.id }}" title="Lihat Detail">
+                                <i class="bi bi-eye-fill"></i>
+                            </button>
+
+                            {% if user.is_superuser or user.is_admin %}
+                            <a href="{% url 'edit_report' report.pk %}" class="btn-action btn-edit" title="Edit Data">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a href="{% url 'verify_report' report.pk %}" class="btn-action btn-status" title="Update Status">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </a>
+                            <a href="{% url 'delete_report' report.pk %}" class="btn-action btn-delete" onclick="return confirm('PERINGATAN: Hapus permanen data laporan #{{ report.id }}?')" title="Hapus Data">
+                                <i class="bi bi-trash3-fill"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-5">
+                        <div class="text-muted mb-2"><i class="bi bi-inbox fs-1"></i></div>
+                        <div class="fw-bold" style="color: var(--text-main);">Database Kosong</div>
+                        <div class="text-soft font-size-sm">Belum ada laporan yang tercatat dalam sistem.</div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<dialog class="detail-dialog" id="detailDialog">
+    <div id="dialogContent"></div>
+</dialog>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const isSuperUser = {% if user.is_superuser %}true{% else %}false{% endif %};
+        const isAdminUser = {% if user.is_superuser or user.is_admin %}true{% else %}false{% endif %};
         const tableBody = document.getElementById('reportTableBody');
         const searchInput = document.getElementById('liveSearchInput');
-        const detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
+        const detailDialog = document.getElementById('detailDialog');
+        const dialogContent = document.getElementById('dialogContent');
+
+        function closeDialog() {
+            if (detailDialog.open) detailDialog.close();
+            dialogContent.innerHTML = '';
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function getStatusClass(status) {
+            const value = status || 'DRAFT';
+            if (value === 'VERIFIED') return 'st-verified';
+            if (value === 'IN_PROGRESS') return 'st-progress';
+            if (value === 'RESOLVED') return 'st-resolved';
+            if (value === 'REPORTED') return 'st-reported';
+            return 'st-draft';
+        }
 
         function getBadgeHtml(status) {
-            const s = status || 'DRAFT';
-            const classes = { 'VERIFIED': 'st-verified', 'IN_PROGRESS': 'st-progress', 'RESOLVED': 'st-resolved', 'REPORTED': 'st-reported', 'DRAFT': 'st-draft' };
-            return `<span class="btn-status-pill ${classes[s]}">${s}</span>`;
+            const value = status || 'DRAFT';
+            return `<span class="status-pill ${getStatusClass(value)}">${escapeHtml(value)}</span>`;
         }
 
-        // FUNGSI RENDER ROW AJAX (Sudah disesuaikan dengan desain HTML baru)
+        function renderDialogLoading() {
+            dialogContent.innerHTML = `
+                <div class="dialog-body text-center py-5">
+                    <div class="spinner-border text-primary mb-3" role="status"></div>
+                    <div style="color: var(--text-main); font-weight: 700;">Menarik data dari server...</div>
+                </div>
+            `;
+        }
+
+        function renderDialogError() {
+            dialogContent.innerHTML = `
+                <div class="dialog-head">
+                    <div>
+                        <h3 class="dialog-title text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Akses Gagal</h3>
+                    </div>
+                    <button type="button" class="dialog-close close-dialog"><i class="bi bi-x-lg"></i></button>
+                </div>
+                <div class="dialog-body">
+                    <p style="color: var(--text-muted);">Data detail laporan gagal ditarik dari API. Silakan periksa koneksi atau coba klik ulang.</p>
+                    <button type="button" class="btn-close-bottom close-dialog mt-3">Tutup Jendela</button>
+                </div>
+            `;
+        }
+
+        function renderDialogDetail(data) {
+            dialogContent.innerHTML = `
+                <div class="dialog-head">
+                    <div>
+                        <div class="meta-text mb-1"><i class="bi bi-hash"></i> Laporan ID: ${escapeHtml(data.id)}</div>
+                        <h3 class="dialog-title">${escapeHtml(data.title)}</h3>
+                    </div>
+                    <button type="button" class="dialog-close close-dialog" title="Tutup (Esc)"><i class="bi bi-x-lg"></i></button>
+                </div>
+
+                <div class="dialog-body">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="dialog-box h-100">
+                                <div class="meta-text mb-2 text-uppercase">Kategori</div>
+                                <div style="color: var(--text-main); font-weight: 700; font-size: 1.05rem;">
+                                    <i class="bi bi-folder2-open me-2 text-primary"></i>${escapeHtml(data.category || '-')}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="dialog-box h-100">
+                                <div class="meta-text mb-2 text-uppercase">Lokasi Insiden</div>
+                                <div style="color: var(--text-main); font-weight: 700; font-size: 1.05rem;">
+                                    <i class="bi bi-geo-alt-fill me-2 text-danger"></i>${escapeHtml(data.location || '-')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dialog-box mb-4">
+                        <div class="meta-text mb-3 text-uppercase">Status Saat Ini</div>
+                        ${getBadgeHtml(data.status)}
+                    </div>
+
+                    <div class="dialog-box mb-4">
+                        <div class="meta-text mb-3 text-uppercase">Deskripsi Laporan</div>
+                        <div style="color: var(--text-main); line-height: 1.8; white-space: pre-wrap; font-size: 0.95rem;">${escapeHtml(data.description || 'Tidak ada deskripsi.')}</div>
+                    </div>
+
+                    <button type="button" class="btn-close-bottom close-dialog">Tutup Jendela</button>
+                </div>
+            `;
+        }
+
         function renderRow(report) {
-            const statusClass = (report.status || 'DRAFT').toLowerCase().replace(' ', '');
-            let adminBtns = isSuperUser ? `<a href="/reports/${report.id}/edit/" class="btn-action-sys bg-warning text-dark"><i class="bi bi-pencil-square"></i></a><a href="/reports/${report.id}/verify/" class="btn-action-sys bg-primary"><i class="bi bi-arrow-right-short fs-4"></i></a><a href="/reports/${report.id}/delete/" class="btn-action-sys bg-danger"><i class="bi bi-trash3-fill"></i></a>` : '';
-            return `<tr>
-                <td class="fw-bold text-info" style="font-family: 'JetBrains Mono';">#${report.id}</td>
-                <td>
-                    <span class="report-title-text">${report.title}</span>
-                    <span class="metadata-small"><i class="bi bi-clock-history me-1"></i>TS: ${report.created_at || ''}</span>
-                </td>
-                <td><span class="text-light small fw-medium"><i class="bi bi-folder2 me-2 text-muted"></i>${report.category.toUpperCase()}</span></td>
-                <td><span class="btn-status-pill st-${statusClass}">${report.status || 'DRAFT'}</span></td>
-                <td class="text-center"><div class="d-flex justify-content-center gap-2"><button class="btn-action-sys bg-info detail-btn" data-id="${report.id}"><i class="bi bi-eye-fill"></i></button>${adminBtns}</div></td>
-            </tr>`;
+            const id = escapeHtml(report.id);
+            const title = escapeHtml(report.title);
+            const category = escapeHtml(report.category || '-');
+            const createdAt = escapeHtml(report.created_at || '-');
+            const status = escapeHtml(report.status || 'DRAFT');
+
+            const adminBtns = isAdminUser ? `
+                <a href="/reports/${id}/edit/" class="btn-action btn-edit" title="Edit Data"><i class="bi bi-pencil-square"></i></a>
+                <a href="/reports/${id}/verify/" class="btn-action btn-status" title="Update Status"><i class="bi bi-arrow-repeat"></i></a>
+                <a href="/reports/${id}/delete/" class="btn-action btn-delete" onclick="return confirm('PERINGATAN: Hapus permanen data laporan #${id}?')" title="Hapus Data"><i class="bi bi-trash3-fill"></i></a>
+            ` : '';
+
+            return `
+                <tr>
+                    <td><span class="id-text">#${id}</span></td>
+                    <td>
+                        <span class="title-text">${title}</span>
+                        <span class="meta-text"><i class="bi bi-clock-history me-1"></i>${createdAt}</span>
+                    </td>
+                    <td><span class="category-text"><i class="bi bi-folder2-open me-2 text-primary"></i>${category}</span></td>
+                    <td>${getBadgeHtml(status)}</td>
+                    <td class="text-center">
+                        <div class="action-wrap">
+                            <button type="button" class="btn-action btn-view detail-btn" data-id="${id}" title="Lihat Detail"><i class="bi bi-eye-fill"></i></button>
+                            ${adminBtns}
+                        </div>
+                    </td>
+                </tr>
+            `;
         }
 
-        searchInput.addEventListener('input', function() {
-            fetch(`/reports/api/search/?q=${encodeURIComponent(this.value)}`)
-            .then(res => res.json())
-            .then(data => { tableBody.innerHTML = data.reports.map(renderRow).join(''); });
-        });
+        if (tableBody) {
+            tableBody.addEventListener('click', function (event) {
+                const btn = event.target.closest('.detail-btn');
+                if (!btn) return;
 
-        tableBody.addEventListener('click', function(e) {
-            const btn = e.target.closest('.detail-btn');
-            if (btn) {
-                fetch(`/reports/api/${btn.dataset.id}/detail/`)
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById('modalContentTarget').innerHTML = `
-                        <div class="p-5">
-                            <div class="d-flex justify-content-between align-items-start mb-4">
-                                <div>
-                                    <h3 class="text-white fw-bold mb-1">${data.title}</h3>
-                                    <span class="text-info" style="font-family: 'JetBrains Mono';">UID: #${data.id}</span>
-                                </div>
-                                ${getBadgeHtml(data.status)}
-                            </div>
-                            <div class="row g-4 mb-4">
-                                <div class="col-6">
-                                    <small class="text-muted d-block fw-bold mb-1">CATEGORY</small>
-                                    <span class="text-white bg-dark px-3 py-2 rounded-3 d-inline-block border border-secondary">${data.category.toUpperCase()}</span>
-                                </div>
-                                <div class="col-6">
-                                    <small class="text-muted d-block fw-bold mb-1">LOCATION</small>
-                                    <span class="text-white bg-dark px-3 py-2 rounded-3 d-inline-block border border-secondary"><i class="bi bi-geo-alt-fill text-danger me-2"></i>${data.location}</span>
-                                </div>
-                            </div>
-                            <small class="text-info d-block fw-bold mb-2">LOG_DESCRIPTION_DATA</small>
-                            <div class="p-4 bg-dark rounded-4 border border-info border-opacity-25 text-light" style="line-height: 1.8;">
-                                ${data.description}
-                            </div>
-                            <button class="btn btn-outline-info mt-4 w-100 fw-bold py-3" style="border-radius: 12px; font-family: 'JetBrains Mono';" data-bs-dismiss="modal">CLOSE_CONNECTION</button>
-                        </div>`;
-                    detailModal.show();
-                });
-            }
-        });
+                renderDialogLoading();
+                if (!detailDialog.open) detailDialog.showModal();
+
+                fetch(`/reports/api/${encodeURIComponent(btn.dataset.id)}/detail/`)
+                    .then(res => {
+                        if (!res.ok) throw new Error('API Error');
+                        return res.json();
+                    })
+                    .then(renderDialogDetail)
+                    .catch(renderDialogError);
+            });
+        }
+
+        if (dialogContent) {
+            dialogContent.addEventListener('click', function (event) {
+                if (event.target.closest('.close-dialog')) closeDialog();
+            });
+        }
+
+        if (detailDialog) {
+            detailDialog.addEventListener('click', function (event) {
+                const rect = detailDialog.getBoundingClientRect();
+                const clickedOutside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
+                if (clickedOutside) closeDialog();
+            });
+        }
+
+        if (searchInput && tableBody) {
+            let searchTimer = null;
+            searchInput.addEventListener('input', function () {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(function () {
+                    fetch(`/reports/api/search/?q=${encodeURIComponent(searchInput.value)}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            const reports = Array.isArray(data.reports) ? data.reports : [];
+
+                            if (reports.length === 0) {
+                                tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-5"><div class="text-muted mb-2"><i class="bi bi-search fs-2"></i></div><div style="color: var(--text-main); font-weight: 700;">Data tidak ditemukan</div><div class="text-soft">Kata kunci tidak cocok dengan ID atau Judul manapun.</div></td></tr>`;
+                                return;
+                            }
+
+                            tableBody.innerHTML = reports.map(renderRow).join('');
+                        })
+                        .catch(() => {
+                            tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Gagal menarik data pencarian dari server API.</td></tr>`;
+                        });
+                }, 400);
+            });
+        }
     });
 </script>
 {% endblock %}

@@ -1,187 +1,424 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}CONTACT_CORE - Smart City Lampung{% endblock %}
+{% block title %}Kontak - Smart City Lampung{% endblock %}
 
 {% block content %}
 <style>
-    /* --- GLASS PANEL CONTAINER --- */
-    .glass-panel {
-        background: rgba(15, 23, 42, 0.65);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(14, 165, 233, 0.2);
-        border-radius: 24px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(14, 165, 233, 0.05);
-        overflow: hidden;
-        position: relative;
+    .contact-wrap {
+        max-width: 1180px;
+        margin: 0 auto;
     }
 
-    /* Efek cahaya ambient di belakang kartu */
-    .glass-panel::before {
-        content: '';
-        position: absolute;
-        top: -50%; left: -50%; width: 200%; height: 200%;
-        background: radial-gradient(circle, rgba(14,165,233,0.05) 0%, transparent 60%);
-        z-index: -1; pointer-events: none;
+    .contact-hero {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        padding: 1.5rem;
+        margin-bottom: 1.25rem;
     }
 
-    /* --- HOLOGRAPHIC AVATAR --- */
-    .profile-glow {
-        border: 2px solid var(--primary-cyan, #0ea5e9);
-        padding: 4px; /* Memberi jarak antara gambar dan border neon */
-        background: rgba(0,0,0,0.5);
-        animation: pulse-avatar 3s ease-in-out infinite;
-        transition: all 0.3s ease;
+    .contact-label {
+        color: var(--primary);
+        font-size: 0.84rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 0.55rem;
     }
-    .profile-glow:hover {
-        transform: scale(1.05) rotate(2deg);
+
+    .contact-title {
+        color: var(--text-main);
+        font-size: clamp(1.6rem, 3vw, 2.2rem);
+        font-weight: 850;
+        line-height: 1.15;
+        margin-bottom: 0.65rem;
     }
-    .profile-glow img {
+
+    .contact-desc {
+        color: var(--text-muted);
+        font-size: 0.98rem;
+        max-width: 760px;
+        margin-bottom: 0;
+    }
+
+    .profile-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        padding: 1.4rem;
+        height: 100%;
+    }
+
+    .profile-photo {
+        width: 138px;
+        height: 138px;
         border-radius: 50%;
-        width: 100%; height: 100%;
-        object-fit: cover; object-position: center 20%;
+        border: 4px solid var(--primary-soft);
+        padding: 4px;
+        background: var(--card-bg-soft);
+        margin: 0 auto 1rem auto;
+        overflow: hidden;
     }
 
-    @keyframes pulse-avatar {
-        0% { box-shadow: 0 0 15px rgba(14, 165, 233, 0.3), inset 0 0 10px rgba(14, 165, 233, 0.2); }
-        50% { box-shadow: 0 0 30px rgba(14, 165, 233, 0.6), inset 0 0 20px rgba(14, 165, 233, 0.4); border-color: #38bdf8; }
-        100% { box-shadow: 0 0 15px rgba(14, 165, 233, 0.3), inset 0 0 10px rgba(14, 165, 233, 0.2); }
+    .profile-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 20%;
+        border-radius: 50%;
+        display: block;
     }
 
-    /* --- INTERACTIVE CONTACT CARDS --- */
+    .profile-name {
+        color: var(--text-main);
+        font-size: 1.35rem;
+        font-weight: 850;
+        margin-bottom: 0.3rem;
+        text-align: center;
+    }
+
+    .profile-role {
+        color: var(--primary);
+        font-size: 0.86rem;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 1.25rem;
+    }
+
     .contact-box {
-        background: rgba(0, 0, 0, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: var(--card-bg-soft);
+        border: 1px solid var(--border-color);
         border-radius: 16px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 14px;
         text-decoration: none;
-    }
-    
-    .icon-wrapper {
-        width: 50px; height: 50px;
-        background: rgba(15, 23, 42, 0.8);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 12px;
-        display: flex; align-items: center; justify-content: center;
-        transition: all 0.3s ease;
+        transition: transform 0.25s ease, border-color 0.25s ease;
+        margin-bottom: 0.9rem;
     }
 
-    /* Hover Physics & Neon Colors */
-    .contact-box.email-box:hover {
-        background: rgba(14, 165, 233, 0.05);
-        border-color: rgba(14, 165, 233, 0.4);
-        transform: translateY(-4px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 0 15px rgba(14, 165, 233, 0.1);
+    .contact-box:hover {
+        transform: translateY(-3px);
+        border-color: rgba(37, 99, 235, 0.35);
     }
-    .contact-box.email-box:hover .icon-wrapper { border-color: #0ea5e9; box-shadow: 0 0 15px rgba(14, 165, 233, 0.4); }
-    .contact-box.email-box:hover .icon-email { color: #0ea5e9 !important; filter: drop-shadow(0 0 5px #0ea5e9); }
 
-    .contact-box.loc-box:hover {
-        background: rgba(239, 68, 68, 0.05);
-        border-color: rgba(239, 68, 68, 0.4);
-        transform: translateY(-4px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 0 15px rgba(239, 68, 68, 0.1);
+    .contact-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        flex-shrink: 0;
     }
-    .contact-box.loc-box:hover .icon-wrapper { border-color: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
-    .contact-box.loc-box:hover .icon-loc { color: #ef4444 !important; filter: drop-shadow(0 0 5px #ef4444); }
 
-    /* --- BUTTONS --- */
-    .btn-cyber {
-        font-family: 'JetBrains Mono', monospace;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+    .contact-small {
+        color: var(--text-soft);
+        font-size: 0.78rem;
+        font-weight: 800;
+        margin-bottom: 0.25rem;
+    }
+
+    .contact-value {
+        color: var(--text-main);
+        font-size: 0.96rem;
+        font-weight: 750;
+        word-break: break-word;
+    }
+
+    .quote-box {
+        background: var(--card-bg-soft);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+
+    .quote-label {
+        color: var(--primary);
+        font-size: 0.8rem;
+        font-weight: 800;
+        margin-bottom: 0.45rem;
+    }
+
+    .quote-text {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        margin-bottom: 0;
+        line-height: 1.6;
+    }
+
+    .info-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        padding: 1.25rem;
+        height: 100%;
+    }
+
+    .info-title {
+        color: var(--text-main);
+        font-size: 1.05rem;
+        font-weight: 850;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 0.75rem;
+    }
+
+    .info-title i {
+        color: var(--primary);
+    }
+
+    .info-text {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        line-height: 1.65;
+        margin-bottom: 1rem;
+    }
+
+    .contact-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 1rem;
+        border-radius: 15px;
+        background: var(--card-bg-soft);
+        border: 1px solid var(--border-color);
+    }
+
+    .contact-item-icon {
+        width: 34px;
+        height: 34px;
         border-radius: 10px;
-        transition: all 0.3s ease;
-        font-weight: bold;
-        font-size: 13px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
     }
-    .btn-cyber-primary { background: rgba(14, 165, 233, 0.1); color: #0ea5e9; border: 1px solid #0ea5e9; }
-    .btn-cyber-primary:hover { background: #0ea5e9; color: #020617; box-shadow: 0 0 20px rgba(14, 165, 233, 0.5); transform: translateY(-2px); }
 
-    .btn-cyber-outline { background: transparent; color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); }
-    .btn-cyber-outline:hover { background: rgba(148, 163, 184, 0.1); border-color: #94a3b8; color: white; transform: translateY(-2px); }
+    .contact-item-title {
+        color: var(--text-main);
+        font-weight: 800;
+        margin-bottom: 0.2rem;
+    }
 
-    .text-break { word-wrap: break-word !important; word-break: break-all !important; }
+    .contact-item-desc {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 0;
+    }
+
+    .action-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 1.25rem;
+    }
+
+    .btn-contact {
+        border-radius: 12px;
+        padding: 10px 15px;
+        font-weight: 800;
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        background: var(--card-bg-soft);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.25s ease;
+    }
+
+    .btn-contact:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .btn-contact-primary {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #ffffff;
+    }
+
+    .btn-contact-primary:hover {
+        color: #ffffff;
+        opacity: 0.92;
+    }
+
+    @media (max-width: 768px) {
+        .contact-hero,
+        .profile-card,
+        .info-card {
+            padding: 1.1rem;
+        }
+
+        .profile-photo {
+            width: 118px;
+            height: 118px;
+        }
+
+        .action-row {
+            flex-direction: column;
+        }
+
+        .btn-contact {
+            width: 100%;
+        }
+    }
 </style>
 
-<nav aria-label="breadcrumb" class="d-flex justify-content-center">
-    <ol class="breadcrumb mb-4" style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">
-        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">root@system</a></li>
-        <li class="breadcrumb-item active text-info" aria-current="page">./contacts</li>
-    </ol>
-</nav>
+<div class="contact-wrap">
+    <section class="contact-hero">
+        <div class="contact-label">
+            <i class="bi bi-person-lines-fill"></i>
+            Kontak Pengelola
+        </div>
+        <h1 class="contact-title">Informasi Kontak Sistem Smart City Lampung</h1>
+        <p class="contact-desc">
+            Halaman ini menampilkan informasi pengelola sistem, kontak utama, dan lokasi layanan yang berkaitan dengan portal laporan Kota Bandar Lampung.
+        </p>
+    </section>
 
-<div class="row justify-content-center pb-5">
-    <div class="col-lg-5 col-md-7 col-sm-10">
-        
-        <div class="glass-panel p-4 p-md-5 text-center">
-            
-            <div class="position-absolute top-0 start-0 w-100 p-3 d-flex justify-content-between align-items-center opacity-50" style="pointer-events: none;">
-                <div class="d-flex gap-2">
-                    <div style="width: 10px; height: 10px; background: #ff5f56; border-radius: 50%;"></div>
-                    <div style="width: 10px; height: 10px; background: #ffbd2e; border-radius: 50%;"></div>
-                    <div style="width: 10px; height: 10px; background: #27c93f; border-radius: 50%;"></div>
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="profile-card">
+                <div class="profile-photo">
+                    <img src="{% static 'img/kristian.jpg' %}" alt="Kristian Dwi Putra">
                 </div>
-                <div style="font-family: 'JetBrains Mono'; font-size: 10px; color: #94a3b8;">ID: ROOT_ADMIN</div>
-            </div>
 
-            <div class="rounded-circle profile-glow d-inline-block mt-3 mb-4" style="width: 140px; height: 140px;">
-                <img src="{% static 'img/kristian.jpg' %}" alt="Kristian Dwi Putra">
-            </div>
+                <h2 class="profile-name">Kristian Dwi Putra</h2>
+                <div class="profile-role">Administrator Sistem / Developer</div>
 
-            <h3 class="fw-bold text-white mb-1" style="font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 10px rgba(255,255,255,0.2);">
-                KRISTIAN_DWI_PUTRA
-            </h3>
-            <p class="text-info small mb-4 px-2" style="font-family: 'JetBrains Mono'; letter-spacing: 1px;">
-                [ SYS_ADMINISTRATOR // DEVELOPER ]
-            </p>
+                <a href="mailto:kristianpemula2026@gmail.com" class="contact-box">
+                    <div class="contact-icon">
+                        <i class="bi bi-envelope-at"></i>
+                    </div>
+                    <div>
+                        <div class="contact-small">Email</div>
+                        <div class="contact-value">kristianpemula2026@gmail.com</div>
+                    </div>
+                </a>
 
-            <div class="row g-3 justify-content-center mb-4">
-                <div class="col-12">
-                    <a href="mailto:kristianpemula2026@gmail.com" class="contact-box email-box p-3 d-flex align-items-center text-start text-decoration-none">
-                        <div class="icon-wrapper flex-shrink-0">
-                            <i class="bi bi-envelope-at-fill text-muted fs-4 icon-email transition-all"></i>
-                        </div>
-                        <div class="ms-3 overflow-hidden">
-                            <div class="text-muted fw-bold mb-1" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px;">COMM_CHANNEL: EMAIL</div>
-                            <div class="fw-bold text-white text-break" style="font-size: 13px;">kristianpemula2026@gmail.com</div>
-                        </div>
+                <div class="contact-box">
+                    <div class="contact-icon">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <div>
+                        <div class="contact-small">Lokasi</div>
+                        <div class="contact-value">Bandar Lampung, Indonesia</div>
+                    </div>
+                </div>
+
+                <div class="quote-box">
+                    <div class="quote-label">Catatan Penutup</div>
+                    <p class="quote-text">
+                        “Burung merpati burung cendrawasih, cukup sekian terima kasih.”
+                    </p>
+                </div>
+
+                <div class="action-row">
+                    <a href="/" class="btn-contact btn-contact-primary">
+                        <i class="bi bi-house-door"></i>
+                        Beranda
+                    </a>
+                    <a href="/reports/" class="btn-contact">
+                        <i class="bi bi-clipboard-data"></i>
+                        Data Laporan
                     </a>
                 </div>
+            </div>
+        </div>
 
-                <div class="col-12">
-                    <div class="contact-box loc-box p-3 d-flex align-items-center text-start">
-                        <div class="icon-wrapper flex-shrink-0">
-                            <i class="bi bi-geo-alt-fill text-muted fs-4 icon-loc transition-all"></i>
+        <div class="col-lg-7">
+            <div class="info-card">
+                <h2 class="info-title">
+                    <i class="bi bi-info-circle"></i>
+                    Informasi Layanan
+                </h2>
+                <p class="info-text">
+                    Kontak ini digunakan sebagai informasi pengelola sistem pada aplikasi Smart City Lampung. Pengguna dapat mengakses menu laporan untuk melihat data yang tersedia atau masuk ke dashboard untuk memantau ringkasan statistik.
+                </p>
+
+                <div class="contact-list">
+                    <div class="contact-item">
+                        <div class="contact-item-icon">
+                            <i class="bi bi-shield-check"></i>
                         </div>
-                        <div class="ms-3">
-                            <div class="text-muted fw-bold mb-1" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px;">SERVER_LOCATION</div>
-                            <div class="fw-bold text-white" style="font-size: 13px;">Bandar Lampung, Indonesia</div>
+                        <div>
+                            <div class="contact-item-title">Pengelolaan Sistem</div>
+                            <p class="contact-item-desc">
+                                Admin bertugas menjaga data laporan, melakukan pengecekan, dan memperbarui status laporan sesuai proses penanganan.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-item-icon">
+                            <i class="bi bi-clipboard-check"></i>
+                        </div>
+                        <div>
+                            <div class="contact-item-title">Data Laporan</div>
+                            <p class="contact-item-desc">
+                                Menu Data Laporan digunakan untuk melihat informasi laporan yang sudah masuk ke dalam sistem.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-item-icon">
+                            <i class="bi bi-speedometer2"></i>
+                        </div>
+                        <div>
+                            <div class="contact-item-title">Dashboard Statistik</div>
+                            <p class="contact-item-desc">
+                                Dashboard menampilkan ringkasan jumlah laporan, distribusi status, kategori, dan laporan terbaru.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-item-icon">
+                            <i class="bi bi-brightness-high"></i>
+                        </div>
+                        <div>
+                            <div class="contact-item-title">Mode Tampilan</div>
+                            <p class="contact-item-desc">
+                                Tampilan halaman ini sudah menyesuaikan mode terang dan mode gelap dari tombol tema di sidebar.
+                            </p>
                         </div>
                     </div>
                 </div>
+
+                <div class="action-row">
+                    <a href="/dashboard/" class="btn-contact btn-contact-primary">
+                        <i class="bi bi-bar-chart"></i>
+                        Buka Dashboard
+                    </a>
+                    <a href="/about/" class="btn-contact">
+                        <i class="bi bi-info-circle"></i>
+                        Tentang Sistem
+                    </a>
+                </div>
             </div>
-
-            <div class="p-3 bg-dark bg-opacity-50 rounded-3 border border-secondary border-opacity-25 text-start mt-2">
-                <span class="text-warning small d-block mb-1" style="font-family: 'JetBrains Mono'; font-size: 10px;">> execution_log.txt</span>
-                <p class="text-light small mb-0" style="font-family: 'JetBrains Mono', monospace; font-style: italic;">
-                    "Burung Merpati Burung Cendrawasih, <br>
-                    <span class="text-info">Cukup Sekian Terima Kasih.</span>"
-                </p>
-            </div>
-            
         </div>
-
-        <div class="d-flex justify-content-center gap-3 mt-4">
-            <a href="/" class="btn btn-cyber btn-cyber-primary px-4 py-2 w-50">
-                <i class="bi bi-house-door-fill me-1"></i> HOME
-            </a>
-            <a href="{% url 'report_list' %}" class="btn btn-cyber btn-cyber-outline px-4 py-2 w-50">
-                <i class="bi bi-database-fill me-1"></i> DATABASE
-            </a>
-        </div>
-
     </div>
 </div>
 {% endblock %}

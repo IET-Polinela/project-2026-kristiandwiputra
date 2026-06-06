@@ -1,186 +1,506 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ABOUT_ME - Smart City Lampung{% endblock %}
+{% block title %}Tentang Sistem - Smart City Lampung{% endblock %}
 
 {% block content %}
 <style>
-    /* --- GLASS PANEL CONTAINER --- */
-    .glass-panel {
-        background: rgba(15, 23, 42, 0.65);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(14, 165, 233, 0.2);
-        border-radius: 24px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(14, 165, 233, 0.05);
-        overflow: hidden;
-        position: relative;
+    .about-wrap {
+        max-width: 1180px;
+        margin: 0 auto;
     }
 
-    /* Efek cahaya ambient */
-    .glass-panel::before {
-        content: '';
-        position: absolute;
-        top: -50%; left: -50%; width: 200%; height: 200%;
-        background: radial-gradient(circle, rgba(14,165,233,0.05) 0%, transparent 60%);
-        z-index: -1; pointer-events: none;
+    .about-hero {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        padding: 1.5rem;
+        margin-bottom: 1.25rem;
     }
 
-    /* --- HOLOGRAPHIC AVATAR --- */
-    .profile-glow {
-        border: 2px solid var(--primary-cyan, #0ea5e9);
+    .about-label {
+        color: var(--primary);
+        font-size: 0.84rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 0.55rem;
+    }
+
+    .about-title {
+        color: var(--text-main);
+        font-size: clamp(1.6rem, 3vw, 2.25rem);
+        font-weight: 850;
+        line-height: 1.15;
+        margin-bottom: 0.65rem;
+    }
+
+    .about-desc {
+        color: var(--text-muted);
+        font-size: 0.98rem;
+        max-width: 800px;
+        margin-bottom: 0;
+        line-height: 1.65;
+    }
+
+    .profile-card,
+    .family-card,
+    .info-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        padding: 1.4rem;
+        height: 100%;
+    }
+
+    .profile-photo {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 4px solid var(--primary-soft);
         padding: 4px;
-        background: rgba(0,0,0,0.5);
-        animation: pulse-avatar 3s ease-in-out infinite;
-        transition: all 0.3s ease;
-    }
-    .profile-glow:hover { transform: scale(1.05); }
-    .profile-glow img {
-        border-radius: 50%; width: 100%; height: 100%;
-        object-fit: cover; object-position: center 20%;
+        background: var(--card-bg-soft);
+        margin: 0 auto 1rem auto;
+        overflow: hidden;
     }
 
-    @keyframes pulse-avatar {
-        0% { box-shadow: 0 0 15px rgba(14, 165, 233, 0.3), inset 0 0 10px rgba(14, 165, 233, 0.2); }
-        50% { box-shadow: 0 0 30px rgba(14, 165, 233, 0.6), inset 0 0 20px rgba(14, 165, 233, 0.4); border-color: #38bdf8; }
-        100% { box-shadow: 0 0 15px rgba(14, 165, 233, 0.3), inset 0 0 10px rgba(14, 165, 233, 0.2); }
+    .profile-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 20%;
+        border-radius: 50%;
+        display: block;
     }
 
-    /* --- TECH BADGES --- */
-    .badge-sys {
-        font-family: 'JetBrains Mono', monospace;
-        letter-spacing: 1px;
-        border: 1px solid rgba(255,255,255,0.1);
+    .profile-name {
+        color: var(--text-main);
+        font-size: 1.45rem;
+        font-weight: 850;
+        margin-bottom: 0.35rem;
+        text-align: center;
     }
-    .badge-primary-sys { background: rgba(14, 165, 233, 0.2); color: #38bdf8; border-color: #0ea5e9; }
-    .badge-dark-sys { background: rgba(0, 0, 0, 0.6); color: #94a3b8; }
 
-    /* --- FAMILY FRAME (HOLOGRAPHIC) --- */
-    .family-frame {
-        background: rgba(0, 0, 0, 0.4);
-        border: 1px solid rgba(14, 165, 233, 0.3);
+    .profile-role {
+        color: var(--primary);
+        font-size: 0.88rem;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 1.15rem;
+    }
+
+    .badge-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 1.15rem;
+    }
+
+    .about-badge {
+        background: var(--primary-soft);
+        color: var(--primary);
+        border: 1px solid rgba(37, 99, 235, 0.18);
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-size: 0.78rem;
+        font-weight: 800;
+    }
+
+    .about-badge-muted {
+        background: var(--card-bg-soft);
+        color: var(--text-muted);
+        border-color: var(--border-color);
+    }
+
+    .bio-box {
+        background: var(--card-bg-soft);
+        border: 1px solid var(--border-color);
         border-radius: 16px;
+        padding: 1rem;
+    }
+
+    .bio-title {
+        color: var(--primary);
+        font-size: 0.82rem;
+        font-weight: 850;
+        margin-bottom: 0.45rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .bio-text {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        line-height: 1.75;
+        margin-bottom: 0;
+    }
+
+    .bio-text strong {
+        color: var(--text-main);
+    }
+
+    .info-title {
+        color: var(--text-main);
+        font-size: 1.05rem;
+        font-weight: 850;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 0.75rem;
+    }
+
+    .info-title i {
+        color: var(--primary);
+    }
+
+    .info-text {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 1rem;
+    }
+
+    .skill-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .skill-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 1rem;
+        border-radius: 15px;
+        background: var(--card-bg-soft);
+        border: 1px solid var(--border-color);
+    }
+
+    .skill-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 11px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .skill-title {
+        color: var(--text-main);
+        font-weight: 800;
+        margin-bottom: 0.2rem;
+    }
+
+    .skill-desc {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 0;
+        line-height: 1.6;
+    }
+
+    .family-photo {
+        background: var(--card-bg-soft);
+        border: 1px solid var(--border-color);
+        border-radius: 18px;
         padding: 8px;
-        position: relative;
-        transition: all 0.3s ease;
-    }
-    .family-frame::after {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        border: 1px solid rgba(14, 165, 233, 0.5);
-        border-radius: 16px;
-        box-shadow: inset 0 0 20px rgba(14, 165, 233, 0.2);
-        pointer-events: none;
-    }
-    .family-frame:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 20px rgba(14, 165, 233, 0.3);
+        overflow: hidden;
+        margin-bottom: 1rem;
     }
 
-    /* --- DATA LIST --- */
-    .data-list-box {
-        background: rgba(0,0,0,0.4);
-        border: 1px solid rgba(255,255,255,0.05);
+    .family-photo img {
+        width: 100%;
+        border-radius: 14px;
+        display: block;
+        object-fit: cover;
+    }
+
+    .support-list {
+        display: grid;
+        gap: 12px;
+        margin-top: 1rem;
+    }
+
+    .support-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 1rem;
+        border-radius: 15px;
+        background: var(--card-bg-soft);
+        border: 1px solid var(--border-color);
+    }
+
+    .support-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 11px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .support-parent {
+        background: rgba(220, 38, 38, 0.12);
+        color: var(--danger);
+    }
+
+    .support-family {
+        background: rgba(217, 119, 6, 0.12);
+        color: var(--warning);
+    }
+
+    .support-title {
+        color: var(--text-main);
+        font-weight: 800;
+        margin-bottom: 0.2rem;
+    }
+
+    .support-desc {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 0;
+        line-height: 1.6;
+    }
+
+    .action-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 1.25rem;
+        justify-content: center;
+    }
+
+    .btn-about {
         border-radius: 12px;
+        padding: 10px 15px;
+        font-weight: 800;
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        background: var(--card-bg-soft);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.25s ease;
     }
 
-    /* --- BUTTONS --- */
-    .btn-cyber {
-        font-family: 'JetBrains Mono', monospace;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        border-radius: 10px;
-        transition: all 0.3s ease;
-        font-weight: bold;
-        font-size: 13px;
+    .btn-about:hover {
+        border-color: var(--primary);
+        color: var(--primary);
     }
-    .btn-cyber-primary { background: rgba(14, 165, 233, 0.1); color: #0ea5e9; border: 1px solid #0ea5e9; }
-    .btn-cyber-primary:hover { background: #0ea5e9; color: #020617; box-shadow: 0 0 20px rgba(14, 165, 233, 0.5); transform: translateY(-2px); }
 
-    .btn-cyber-outline { background: transparent; color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); }
-    .btn-cyber-outline:hover { background: rgba(148, 163, 184, 0.1); border-color: #94a3b8; color: white; transform: translateY(-2px); }
+    .btn-about-primary {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #ffffff;
+    }
 
-    .leading-relaxed { line-height: 1.8; }
+    .btn-about-primary:hover {
+        color: #ffffff;
+        opacity: 0.92;
+    }
+
+    @media (max-width: 768px) {
+        .about-hero,
+        .profile-card,
+        .family-card,
+        .info-card {
+            padding: 1.1rem;
+        }
+
+        .profile-photo {
+            width: 125px;
+            height: 125px;
+        }
+
+        .action-row {
+            flex-direction: column;
+        }
+
+        .btn-about {
+            width: 100%;
+        }
+    }
 </style>
 
-<nav aria-label="breadcrumb" class="d-flex justify-content-center">
-    <ol class="breadcrumb mb-4" style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">
-        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">root@system</a></li>
-        <li class="breadcrumb-item active text-info" aria-current="page">./about</li>
-    </ol>
-</nav>
+<div class="about-wrap">
+    <section class="about-hero">
+        <div class="about-label">
+            <i class="bi bi-info-circle"></i>
+            Tentang Sistem
+        </div>
+        <h1 class="about-title">Profil Pengembang dan Informasi Sistem</h1>
+        <p class="about-desc">
+            Halaman ini berisi informasi singkat mengenai pengembang, latar belakang, serta dukungan yang menjadi bagian dari proses pengembangan sistem Smart City Lampung.
+        </p>
+    </section>
 
-<div class="row justify-content-center pb-5">
-    <div class="col-lg-8">
-        
-        <div class="glass-panel p-4 p-md-5 mb-5 text-center">
-            <div class="position-absolute top-0 start-0 w-100 p-3 d-flex justify-content-between align-items-center opacity-50" style="pointer-events: none;">
-                <div class="d-flex gap-2">
-                    <div style="width: 10px; height: 10px; background: #ff5f56; border-radius: 50%;"></div>
-                    <div style="width: 10px; height: 10px; background: #ffbd2e; border-radius: 50%;"></div>
-                    <div style="width: 10px; height: 10px; background: #27c93f; border-radius: 50%;"></div>
+    <div class="row g-4 mb-4">
+        <div class="col-lg-5">
+            <div class="profile-card">
+                <div class="profile-photo">
+                    <img src="{% static 'img/kristian.jpg' %}" alt="Kristian Dwi Putra">
                 </div>
-                <div style="font-family: 'JetBrains Mono'; font-size: 10px; color: #94a3b8;">SYS_PROFILE_DATA</div>
-            </div>
 
-            <div class="rounded-circle profile-glow d-inline-block mt-3 mb-4" style="width: 160px; height: 160px;">
-                <img src="{% static 'img/kristian.jpg' %}" alt="Kristian Dwi Putra">
-            </div>
+                <h2 class="profile-name">Kristian Dwi Putra</h2>
+                <div class="profile-role">Mahasiswa Teknologi Rekayasa Internet</div>
 
-            <h2 class="fw-bold text-white mb-2" style="font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 10px rgba(255,255,255,0.2);">KRISTIAN_DWI_PUTRA</h2>
-            <div class="mb-4 d-flex justify-content-center gap-2">
-                <span class="badge badge-sys badge-primary-sys px-3 py-2">IT_STUDENT</span>
-                <span class="badge badge-sys badge-dark-sys px-3 py-2">VER: 2.0.26</span>
-            </div>
+                <div class="badge-row">
+                    <span class="about-badge">IT Student</span>
+                    <span class="about-badge about-badge-muted">Web Development</span>
+                    <span class="about-badge about-badge-muted">Networking</span>
+                </div>
 
-            <div class="bg-dark bg-opacity-50 border border-secondary border-opacity-25 rounded-3 p-4 mx-md-4 text-start">
-                 <span class="text-warning small d-block mb-2" style="font-family: 'JetBrains Mono'; font-size: 11px;">> whoami</span>
-                 <p class="text-light leading-relaxed mb-0" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">
-                    Halo, nama saya <span class="text-info fw-bold">Kristian Dwi Putra</span>. Saya berasal dari <span class="text-info fw-bold">Lampung</span> dan saat ini menetap di kota tersebut untuk menempuh pendidikan di bidang <span class="text-info fw-bold">Teknologi Rekayasa Internet</span>. Di usia <span class="text-warning fw-bold">20 tahun</span> ini, saya memfokuskan diri pada pengembangan infrastruktur jaringan dan rekayasa perangkat lunak berbasis web.
+                <div class="bio-box">
+                    <div class="bio-title">
+                        <i class="bi bi-person"></i>
+                        Ringkasan Profil
+                    </div>
+                    <p class="bio-text">
+                        Halo, nama saya <strong>Kristian Dwi Putra</strong>. Saya berasal dari <strong>Lampung</strong> dan sedang menempuh pendidikan di bidang <strong>Teknologi Rekayasa Internet</strong>. Fokus saya berada pada pengembangan sistem berbasis web, jaringan komputer, dan penerapan teknologi untuk kebutuhan layanan digital.
+                    </p>
+                </div>
+
+                <div class="action-row">
+                    <a href="/" class="btn-about btn-about-primary">
+                        <i class="bi bi-house-door"></i>
+                        Beranda
+                    </a>
+                    <a href="/contacts/" class="btn-about">
+                        <i class="bi bi-person-lines-fill"></i>
+                        Kontak
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="info-card">
+                <h2 class="info-title">
+                    <i class="bi bi-laptop"></i>
+                    Fokus Pengembangan
+                </h2>
+                <p class="info-text">
+                    Sistem ini dikembangkan sebagai portal informasi dan pengelolaan laporan yang menampilkan data secara lebih terstruktur, mudah dibaca, dan mendukung tampilan mode terang maupun mode gelap.
                 </p>
+
+                <div class="skill-list">
+                    <div class="skill-item">
+                        <div class="skill-icon">
+                            <i class="bi bi-code-slash"></i>
+                        </div>
+                        <div>
+                            <div class="skill-title">Pengembangan Web</div>
+                            <p class="skill-desc">
+                                Membuat antarmuka halaman, struktur navigasi, dan fitur sistem agar dapat digunakan dengan rapi serta responsif.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="skill-item">
+                        <div class="skill-icon">
+                            <i class="bi bi-diagram-3"></i>
+                        </div>
+                        <div>
+                            <div class="skill-title">Jaringan dan Infrastruktur</div>
+                            <p class="skill-desc">
+                                Memahami konsep konektivitas, layanan jaringan, dan kebutuhan infrastruktur pada sistem berbasis internet.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="skill-item">
+                        <div class="skill-icon">
+                            <i class="bi bi-database"></i>
+                        </div>
+                        <div>
+                            <div class="skill-title">Pengelolaan Data</div>
+                            <p class="skill-desc">
+                                Menyusun data laporan agar dapat ditampilkan melalui halaman dashboard dan menu data laporan.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="skill-item">
+                        <div class="skill-icon">
+                            <i class="bi bi-palette"></i>
+                        </div>
+                        <div>
+                            <div class="skill-title">Tampilan Responsif</div>
+                            <p class="skill-desc">
+                                Menyesuaikan tampilan agar tetap nyaman dibuka pada layar laptop maupun perangkat mobile.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <a href="/dashboard/" class="btn-about btn-about-primary">
+                        <i class="bi bi-speedometer2"></i>
+                        Buka Dashboard
+                    </a>
+                    <a href="/reports/" class="btn-about">
+                        <i class="bi bi-clipboard-data"></i>
+                        Data Laporan
+                    </a>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div class="glass-panel p-4 p-md-5 text-center border-top border-4 border-info">
-            <h5 class="fw-bold text-white mb-4" style="font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 10px rgba(14, 165, 233, 0.5);">
-                <i class="bi bi-diagram-3-fill text-info me-2"></i>MY_SUPPORT_SYSTEM
-            </h5>
-            
-            <div class="family-frame mx-auto mb-4" style="max-width: 500px;">
-                <img src="{% static 'img/family.jpeg' %}" 
-                     class="img-fluid rounded-3 w-100" 
-                     alt="Keluarga Kristian"
-                     style="object-fit: cover;">
+    <div class="family-card">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-5">
+                <div class="family-photo">
+                    <img src="{% static 'img/family.jpeg' %}" alt="Keluarga Kristian">
+                </div>
             </div>
 
-            <p class="text-light mb-4 px-md-5 leading-relaxed" style="font-size: 14px;">
-                Dibalik setiap baris kode yang berhasil dieksekusi, terdapat <em>core power source</em> yang tidak pernah padam: keluarga kecil saya. Dukungan dan doa mereka adalah arsitektur dasar yang memotivasi saya untuk terus berinovasi.
-            </p>
-            
-            <div class="data-list-box p-3 p-md-4 d-inline-block text-start">
-                <ul class="list-unstyled mb-0 small text-light" style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">
-                    <li class="mb-3 d-flex align-items-center">
-                        <i class="bi bi-shield-fill-check text-danger me-3 fs-5" style="filter: drop-shadow(0 0 5px #ef4444);"></i>
-                        <span><span class="text-danger fw-bold">ORANG_TUA:</span> Firewall utama dan sumber inspirasi kehidupan.</span>
-                    </li>
-                    <li class="d-flex align-items-center">
-                        <i class="bi bi-hdd-network-fill text-warning me-3 fs-5" style="filter: drop-shadow(0 0 5px #fbbf24);"></i>
-                        <span><span class="text-warning fw-bold">KELUARGA:</span> Jaringan pendukung yang menjaga integritas sistem.</span>
-                    </li>
-                </ul>
+            <div class="col-lg-7">
+                <h2 class="info-title">
+                    <i class="bi bi-people"></i>
+                    Dukungan Keluarga
+                </h2>
+                <p class="info-text">
+                    Di balik proses belajar dan pengembangan sistem, keluarga menjadi salah satu sumber dukungan yang penting. Doa, semangat, dan motivasi dari keluarga membantu proses belajar tetap berjalan dengan baik.
+                </p>
+
+                <div class="support-list">
+                    <div class="support-item">
+                        <div class="support-icon support-parent">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <div>
+                            <div class="support-title">Orang Tua</div>
+                            <p class="support-desc">
+                                Menjadi sumber doa, dukungan, dan motivasi utama dalam proses pendidikan.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="support-item">
+                        <div class="support-icon support-family">
+                            <i class="bi bi-heart"></i>
+                        </div>
+                        <div>
+                            <div class="support-title">Keluarga</div>
+                            <p class="support-desc">
+                                Memberikan semangat dan lingkungan yang mendukung untuk terus belajar dan berkembang.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <div class="d-flex flex-wrap gap-3 mt-5 justify-content-center">
-            <a href="/" class="btn btn-cyber btn-cyber-primary px-5 py-3">
-                <i class="bi bi-house-door-fill me-2"></i> RETURN_HOME
-            </a>
-            <a href="/contacts/" class="btn btn-cyber btn-cyber-outline px-4 py-3">
-                <i class="bi bi-terminal me-2"></i> INITIATE_CONTACT
-            </a>
-        </div>
-
     </div>
 </div>
 {% endblock %}

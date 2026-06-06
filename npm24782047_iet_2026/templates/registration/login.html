@@ -1,159 +1,264 @@
 {% extends 'base.html' %}
 
-{% block title %}LOGIN - Smart City Lampung{% endblock %}
+{% block title %}Masuk - Smart City Lampung{% endblock %}
 
 {% block content %}
 <style>
-    /* Mengamankan Card agar benar-benar Glassmorphism tingkat tinggi */
-    .auth-card {
-        background: rgba(15, 23, 42, 0.7);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(56, 189, 248, 0.2);
-        border-top: 3px solid #38bdf8; /* Aksen neon cyan di atas */
-        border-radius: 16px;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(56, 189, 248, 0.05);
-    }
-
-    /* MEMBUNUH WARNA PUTIH PADA INPUT BROWSER */
-    .auth-input {
-        background-color: rgba(2, 6, 23, 0.6) !important;
-        border: 1px solid rgba(56, 189, 248, 0.3) !important;
-        color: #38bdf8 !important;
-        padding: 14px 16px !important;
-        min-height: 52px;
-        font-size: 1rem;
-        font-family: 'JetBrains Mono', monospace;
-        border-left: none !important; /* Agar menyatu dengan kotak icon */
-        border-top-right-radius: 8px !important;
-        border-bottom-right-radius: 8px !important;
-        box-shadow: none !important;
-    }
-
-    /* FIX BUG TULISAN: Placeholder dibuat lebih terang (opacity 0.6) */
-    .auth-input::placeholder {
-        color: rgba(56, 189, 248, 0.6) !important; 
-    }
-
-    /* Box Icon di sebelah kiri Input */
-    .auth-icon-box {
-        background-color: rgba(2, 6, 23, 0.6) !important;
-        border: 1px solid rgba(56, 189, 248, 0.3) !important;
-        border-right: none !important; /* Menghilangkan garis tengah */
-        color: rgba(56, 189, 248, 0.8) !important;
-        min-height: 52px;
-        border-top-left-radius: 8px !important;
-        border-bottom-left-radius: 8px !important;
+    .auth-wrap {
+        max-width: 560px;
+        margin: 0 auto;
+        min-height: calc(100vh - 5rem);
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 50px; /* Diperlebar agar icon tidak sesak */
-        font-size: 1.2rem;
-        transition: all 0.3s ease;
+        padding: 1.5rem 0;
     }
 
-    /* FIX BUG BENTUK (SEAMLESS INPUT): Efek menyala bersamaan saat kotak di-klik */
-    .input-group:focus-within .auth-icon-box,
-    .input-group:focus-within .auth-input {
-        border-color: #38bdf8 !important;
-        background-color: rgba(2, 6, 23, 0.95) !important;
-        color: #38bdf8 !important;
-    }
-    
-    /* Tambahan efek glow tipis saat focus */
-    .input-group:focus-within {
-        box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
-        border-radius: 8px;
-    }
-
-    /* Fix autofill browser (Mencegah Chrome mengubah form jadi putih/kuning) */
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover, 
-    input:-webkit-autofill:focus, 
-    input:-webkit-autofill:active {
-        -webkit-box-shadow: 0 0 0 30px #020617 inset !important;
-        -webkit-text-fill-color: #38bdf8 !important;
-        transition: background-color 5000s ease-in-out 0s;
-    }
-
-    /* Tombol Eksekusi bergaya Cyber */
-    .btn-cyber {
-        background: rgba(56, 189, 248, 0.1);
-        color: #38bdf8;
-        border: 1px solid #38bdf8;
-        border-radius: 8px;
-        font-family: 'JetBrains Mono', monospace;
-        font-weight: 700;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        transition: all 0.3s ease;
-        position: relative;
+    .auth-card {
+        width: 100%;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
         overflow: hidden;
     }
 
-    .btn-cyber:hover {
-        box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
-        color: #020617;
-        background: #38bdf8;
+    .auth-header {
+        padding: 1.5rem;
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+        background: var(--card-bg-soft);
+    }
+
+    .auth-icon {
+        width: 76px;
+        height: 76px;
+        border-radius: 22px;
+        background: var(--primary-soft);
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .auth-title {
+        color: var(--text-main);
+        font-size: 1.45rem;
+        font-weight: 850;
+        margin-bottom: 0.35rem;
+    }
+
+    .auth-subtitle {
+        color: var(--text-muted);
+        font-size: 0.92rem;
+        margin-bottom: 0;
+        line-height: 1.5;
+    }
+
+    .auth-body {
+        padding: 1.5rem;
+    }
+
+    .form-label {
+        color: var(--text-main);
+        font-size: 0.88rem;
+        font-weight: 800;
+        margin-bottom: 0.45rem;
+    }
+
+    .auth-input-group {
+        display: flex;
+        align-items: stretch;
+        border-radius: 12px;
+        transition: box-shadow 0.25s ease;
+    }
+
+    .auth-input-group:focus-within {
+        box-shadow: 0 0 0 4px var(--primary-soft);
+    }
+
+    .auth-icon-box {
+        width: 52px;
+        min-height: 50px;
+        background: var(--card-bg-soft);
+        border: 1px solid var(--border-color);
+        border-right: 0;
+        color: var(--primary);
+        border-top-left-radius: 12px;
+        border-bottom-left-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        flex-shrink: 0;
+    }
+
+    .auth-input {
+        width: 100%;
+        background: var(--input-bg) !important;
+        border: 1px solid var(--border-color) !important;
+        color: var(--text-main) !important;
+        border-top-right-radius: 12px !important;
+        border-bottom-right-radius: 12px !important;
+        padding: 13px 14px !important;
+        min-height: 50px;
+        font-size: 0.96rem;
+        outline: none;
+        box-shadow: none !important;
+        transition: border-color 0.25s ease, background 0.25s ease;
+    }
+
+    .auth-input-group:focus-within .auth-icon-box,
+    .auth-input-group:focus-within .auth-input {
+        border-color: var(--primary) !important;
+    }
+
+    .auth-input::placeholder {
+        color: var(--text-soft);
+    }
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-text-fill-color: var(--text-main) !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
+    html[data-theme="dark"] input:-webkit-autofill,
+    html[data-theme="dark"] input:-webkit-autofill:hover,
+    html[data-theme="dark"] input:-webkit-autofill:focus,
+    html[data-theme="dark"] input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px #111827 inset !important;
+    }
+
+    html[data-theme="light"] input:-webkit-autofill,
+    html[data-theme="light"] input:-webkit-autofill:hover,
+    html[data-theme="light"] input:-webkit-autofill:focus,
+    html[data-theme="light"] input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+    }
+
+    .auth-alert {
+        background: rgba(220, 38, 38, 0.10);
+        color: var(--danger);
+        border: 1px solid rgba(220, 38, 38, 0.18);
+        border-left: 4px solid var(--danger);
+        border-radius: 12px;
+        padding: 0.85rem 1rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+
+    .btn-auth {
+        width: 100%;
+        border: 1px solid var(--primary);
+        background: var(--primary);
+        color: #ffffff;
+        border-radius: 12px;
+        padding: 13px 16px;
+        font-weight: 850;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .btn-auth:hover {
+        color: #ffffff;
+        opacity: 0.92;
         transform: translateY(-2px);
+    }
+
+    .auth-footer {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-top: 1.25rem;
+        margin-bottom: 0;
+    }
+
+    .auth-footer a {
+        color: var(--primary);
+        font-weight: 850;
+        text-decoration: none;
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 576px) {
+        .auth-wrap {
+            min-height: auto;
+            padding: 0.75rem 0;
+        }
+
+        .auth-header,
+        .auth-body {
+            padding: 1.15rem;
+        }
     }
 </style>
 
-<div class="row justify-content-center align-items-center" style="min-height: 75vh;">
-    <div class="col-12 col-md-6 col-lg-5 animate-enter">
-        <div class="auth-card overflow-hidden">
-            
-            <div class="p-4 text-center border-bottom" style="border-color: rgba(255,255,255,0.05) !important;">
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon">
+                <i class="bi bi-shield-lock"></i>
+            </div>
+            <h1 class="auth-title">Masuk ke Sistem</h1>
+            <p class="auth-subtitle">Gunakan akun terdaftar untuk mengakses layanan Smart City Lampung.</p>
+        </div>
+
+        <div class="auth-body">
+            {% if form.non_field_errors %}
+                <div class="auth-alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Username atau password tidak sesuai.
+                </div>
+            {% endif %}
+
+            <form method="post" autocomplete="off">
+                {% csrf_token %}
+
+                {% if next %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                {% endif %}
+
                 <div class="mb-3">
-                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 85px; height: 85px; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.4);">
-                        <i class="bi bi-shield-lock-fill text-info" style="font-size: 2.5rem; filter: drop-shadow(0 0 10px #38bdf8);"></i>
+                    <label for="id_username" class="form-label">Username</label>
+                    <div class="auth-input-group">
+                        <span class="auth-icon-box">
+                            <i class="bi bi-person"></i>
+                        </span>
+                        <input type="text" name="username" id="id_username" class="form-control auth-input" placeholder="Masukkan username" required autocomplete="username">
                     </div>
                 </div>
-                <h3 class="text-white fw-bold mb-1" style="font-family: 'JetBrains Mono', monospace; letter-spacing: 1px;">SYSTEM_AUTH</h3>
-                <p class="small mb-0" style="color: #94a3b8; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px;">
-                    NODE: <span class="text-info">SMART_CITY_LP_2.0</span>
+
+                <div class="mb-4">
+                    <label for="id_password" class="form-label">Password</label>
+                    <div class="auth-input-group">
+                        <span class="auth-icon-box">
+                            <i class="bi bi-key"></i>
+                        </span>
+                        <input type="password" name="password" id="id_password" class="form-control auth-input" placeholder="Masukkan password" required autocomplete="current-password">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-auth">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    Masuk
+                </button>
+
+                <p class="auth-footer">
+                    Belum punya akun?
+                    <a href="{% url 'register' %}">Daftar akun baru</a>
                 </p>
-            </div>
-
-            <div class="card-body p-4 p-md-5">
-                <form method="post" autocomplete="off">
-                    {% csrf_token %}
-
-                    <div class="mb-4">
-                        <label for="id_username" class="form-label text-info small fw-bold" style="font-family: 'JetBrains Mono', monospace; letter-spacing: 1px;">
-                            USERNAME
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text auth-icon-box"><i class="bi bi-person"></i></span>
-                            <input type="text" name="username" id="id_username" class="form-control auth-input" placeholder="Masukkan ID akses..." required autocomplete="off">
-                        </div>
-                    </div>
-
-                    <div class="mb-5">
-                        <label for="id_password" class="form-label text-info small fw-bold" style="font-family: 'JetBrains Mono', monospace; letter-spacing: 1px;">
-                            PASSWORD
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text auth-icon-box"><i class="bi bi-key"></i></span>
-                            <input type="password" name="password" id="id_password" class="form-control auth-input" placeholder="••••••••" required autocomplete="new-password">
-                        </div>
-                    </div>
-
-                    <button type="submit" id="submitBtn" class="btn btn-cyber w-100 py-3 mb-4">
-                        <i class="bi bi-box-arrow-in-right me-2"></i> EXECUTE_LOGIN
-                    </button>
-
-                    <div class="text-center">
-                        <p class="small" style="color: #cbd5e1;">
-                            Belum memiliki akses? <br>
-                            <a href="{% url 'register' %}" class="text-warning fw-bold text-decoration-none mt-1 d-inline-block" style="letter-spacing: 0.5px; transition: color 0.2s;">
-                                Registrasi Citizen Baru
-                            </a>
-                        </p>
-                    </div>
-                </form>
-            </div>
-            
+            </form>
         </div>
     </div>
 </div>

@@ -1,309 +1,659 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}DASHBOARD_CORE - Smart City Lampung{% endblock %}
+{% block title %}Dashboard - Smart City Lampung{% endblock %}
 
 {% block content %}
 <style>
-    /* =========================================
-       1. ANIMASI MASUK (ENTRANCE) & DELAY
-       ========================================= */
-    .animate-enter {
-        opacity: 0;
-        animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    @keyframes fadeInUp {
-        0% { opacity: 0; transform: translateY(30px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-    .delay-1 { animation-delay: 0.1s; }
-    .delay-2 { animation-delay: 0.2s; }
-    .delay-3 { animation-delay: 0.3s; }
-    .delay-4 { animation-delay: 0.4s; }
-    .delay-5 { animation-delay: 0.5s; }
-
-    /* =========================================
-       2. EFEK KACA (GLASSMORPHISM) TINGKAT LANJUT
-       ========================================= */
-    .card-custom { 
-        background: rgba(15, 23, 42, 0.4); 
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border-radius: 16px; 
-        border: 1px solid rgba(255, 255, 255, 0.05); 
-        overflow: hidden; 
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), inset 0 0 15px rgba(255,255,255,0.02);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .card-custom:hover {
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(56, 189, 248, 0.05);
-        border-color: rgba(56, 189, 248, 0.3);
-        transform: translateY(-5px);
+    .dashboard-page {
+        max-width: 1400px;
+        margin: 0 auto;
+        animation: dashboardEnter 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    /* Efek Khusus Hero Dashboard */
-    .hero-box {
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%) !important;
-        border-left: 4px solid #ffc107 !important; 
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 30px rgba(255, 193, 7, 0.05);
+    @keyframes dashboardEnter {
+        0% { opacity: 0; transform: translateY(18px) scale(0.988); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes shimmerLine {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    @keyframes floatCard {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-3px); }
+    }
+
+    .dashboard-hero,
+    .dashboard-card,
+    .chart-panel,
+    .activity-panel {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
         position: relative;
-    }
-    .hero-box::after {
-        content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-        background: linear-gradient(to right, transparent, rgba(255, 193, 7, 0.1), transparent);
-        transform: skewX(-20deg); animation: shineDash 6s infinite; pointer-events: none;
-    }
-    @keyframes shineDash { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
-
-    .soft-header { 
-        font-size: 13px; letter-spacing: 1px; 
-        background: rgba(0, 0, 0, 0.3) !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-        color: #f8fafc; text-transform: uppercase;
+        overflow: hidden;
     }
 
-    /* =========================================
-       3. TABEL & PROGRESS BAR GLOWING
-       ========================================= */
-    .table-glass { color: #f8fafc; }
-    .table-glass th, .table-glass td { 
-        background: transparent !important; 
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
-        color: #cbd5e1; transition: all 0.3s ease;
+    .dashboard-hero::before,
+    .dashboard-card::before,
+    .chart-panel::before,
+    .activity-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.10), rgba(6, 182, 212, 0.06), transparent 58%);
+        pointer-events: none;
     }
-    .table-glass thead th { color: #94a3b8; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
-    .table-glass tbody tr:hover td { background: rgba(56, 189, 248, 0.05) !important; color: #fff;}
-    
-    .progress-dark { background: rgba(0, 0, 0, 0.4) !important; border-radius: 10px; overflow: hidden; }
-    
-    .progress-bar { transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
-    .bg-siger-gold { background-color: #ffc107 !important; box-shadow: 0 0 15px rgba(255, 193, 7, 0.6); }
-    .text-siger-gold { color: #ffc107 !important; text-shadow: 0 0 10px rgba(255, 193, 7, 0.3); }
+
+    .dashboard-hero {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .dashboard-label {
+        color: var(--primary);
+        font-size: 0.82rem;
+        font-weight: 850;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.75rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .dashboard-title {
+        color: var(--text-main);
+        font-size: clamp(1.45rem, 3vw, 2.15rem);
+        font-weight: 850;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .dashboard-title span {
+        background: var(--gradient-main);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .dashboard-desc {
+        color: var(--text-muted);
+        font-size: 0.96rem;
+        margin-bottom: 0;
+        max-width: 760px;
+        line-height: 1.65;
+        position: relative;
+        z-index: 1;
+    }
+
+    .system-pill {
+        border: 1px solid rgba(16, 185, 129, 0.24);
+        background: rgba(16, 185, 129, 0.12);
+        color: var(--success);
+        border-radius: 999px;
+        padding: 0.72rem 1rem;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .system-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: currentColor;
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.12);
+    }
+
+    .dashboard-card {
+        padding: 1.2rem;
+        min-height: 140px;
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(16, 185, 129, 0.28);
+        box-shadow: var(--shadow), 0 18px 42px rgba(16, 185, 129, 0.10);
+    }
+
+    .metric-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .metric-title {
+        color: var(--text-main);
+        font-weight: 850;
+        font-size: 0.96rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .metric-desc {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-bottom: 0;
+    }
+
+    .metric-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--gradient-soft);
+        color: var(--primary);
+        flex-shrink: 0;
+        animation: floatCard 3.8s ease-in-out infinite;
+    }
+
+    .metric-value {
+        color: var(--text-main);
+        font-size: 2rem;
+        font-weight: 900;
+        line-height: 1;
+        margin-top: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .metric-line {
+        height: 5px;
+        background: var(--gradient-main);
+        border-radius: 999px;
+        margin-top: 1rem;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .metric-line::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.72), transparent);
+        animation: shimmerLine 2.6s ease-in-out infinite;
+    }
+
+    .operation-panel {
+        padding: 1.4rem;
+    }
+
+    .operation-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.85rem;
+        margin-top: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .operation-mini {
+        background: var(--card-bg-soft);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        padding: 0.9rem;
+    }
+
+    .operation-mini-label {
+        color: var(--text-soft);
+        font-size: 0.76rem;
+        font-weight: 800;
+        margin-bottom: 0.4rem;
+    }
+
+    .operation-mini-value {
+        color: var(--text-main);
+        font-size: 1.35rem;
+        font-weight: 900;
+        line-height: 1;
+    }
+
+    .operation-flow {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.65rem;
+        margin-top: 1rem;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        font-weight: 750;
+        position: relative;
+        z-index: 1;
+    }
+
+    .flow-chip {
+        border: 1px solid var(--border-color);
+        background: var(--card-bg-soft);
+        border-radius: 999px;
+        padding: 0.55rem 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.42rem;
+    }
+
+    .chart-panel,
+    .activity-panel {
+        min-height: 430px;
+    }
+
+    .panel-head {
+        padding: 1.1rem 1.25rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .panel-title {
+        color: var(--text-main);
+        font-size: 1rem;
+        font-weight: 850;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin: 0;
+    }
+
+    .panel-subtitle {
+        color: var(--text-soft);
+        font-size: 0.84rem;
+        font-weight: 750;
+    }
+
+    .chart-body {
+        position: relative;
+        z-index: 1;
+        height: 350px;
+        padding: 1.25rem;
+    }
+
+    .chart-body canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .activity-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .activity-table th {
+        color: var(--text-soft);
+        font-size: 0.76rem;
+        font-weight: 850;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        padding: 0 1rem 0.4rem;
+    }
+
+    .activity-table td {
+        background: var(--card-bg-soft);
+        border: 0;
+        color: var(--text-muted);
+        padding: 0.85rem 1rem;
+        vertical-align: middle;
+    }
+
+    .activity-table td:first-child {
+        border-top-left-radius: 12px;
+        border-bottom-left-radius: 12px;
+    }
+
+    .activity-table td:last-child {
+        border-top-right-radius: 12px;
+        border-bottom-right-radius: 12px;
+    }
+
+    .activity-title {
+        color: var(--text-main);
+        font-weight: 750;
+    }
+
+    .empty-row {
+        text-align: center;
+        color: var(--text-soft) !important;
+        padding: 2rem !important;
+    }
+
+    @media (max-width: 992px) {
+        .operation-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 576px) {
+        .dashboard-hero {
+            padding: 1.15rem;
+        }
+
+        .operation-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
-<nav aria-label="breadcrumb" class="animate-enter">
-    <ol class="breadcrumb mb-3" style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">
-        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-light opacity-50">root@system</a></li>
-        <li class="breadcrumb-item active text-info" aria-current="page">./dashboard</li>
-    </ol>
-</nav>
-
-<div class="hero-box mb-4 card-custom p-4 animate-enter delay-1">
-    <div class="d-flex justify-content-between align-items-center">
-        <div>
-            <h2 class="page-title mb-1 text-white" style="font-family: 'JetBrains Mono', monospace; letter-spacing: -1px;">
-                <i class="bi bi-cpu-fill me-2 text-siger-gold"></i>SYSTEM_DASHBOARD
-            </h2>
-            <p class="subtitle text-light opacity-75 small mb-0">Visualisasi data real-time infrastruktur Kota Bandar Lampung.</p>
+<div class="dashboard-page">
+    <section class="dashboard-hero">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+                <div class="dashboard-label">
+                    <i class="bi bi-speedometer2"></i> Ringkasan Operasional
+                </div>
+                <h1 class="dashboard-title">Dashboard <span>Smart City Lampung</span></h1>
+                <p class="dashboard-desc">
+                    Pantau jumlah laporan, distribusi status, kategori laporan, dan aktivitas terbaru dari satu halaman administrasi.
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <div class="system-pill">
+                    <span class="system-dot"></span>
+                    Sistem Aktif
+                </div>
+            </div>
         </div>
-        <div class="text-end d-none d-md-block">
-            <span class="badge border border-info text-info p-2" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; background: rgba(13, 202, 240, 0.1); box-shadow: 0 0 10px rgba(13, 202, 240, 0.2);">
-                <span class="spinner-grow spinner-grow-sm me-1 text-info" style="width: 8px; height: 8px;"></span>
-                STATUS: STABLE // UPTIME: 99.9%
-            </span>
-        </div>
-    </div>
-</div>
+    </section>
 
-<div class="row g-3 mb-3">
-    <div class="col-12 col-md-6 animate-enter delay-2">
-        <div class="card-custom p-4 text-center border-bottom border-primary border-3 h-100">
-            <div class="text-light opacity-75 fw-bold mb-2 small" style="font-family: 'JetBrains Mono', monospace;">TOTAL_REPORTS</div>
-            <h2 class="fw-bold text-white mb-0" style="text-shadow: 0 0 15px rgba(255,255,255,0.3);">{{ total_reports|default:0 }}</h2>
-            <div class="progress mt-3 progress-dark" style="height: 4px;">
-                <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: 100%; box-shadow: 0 0 10px #0d6efd;"></div>
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="dashboard-card">
+                <div class="metric-head">
+                    <div>
+                        <div class="metric-title">Total Laporan</div>
+                        <p class="metric-desc">Semua laporan yang tercatat.</p>
+                    </div>
+                    <div class="metric-icon"><i class="bi bi-database"></i></div>
+                </div>
+                <div class="metric-value">{{ total_reports|default:0 }}</div>
+                <div class="metric-line"></div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="dashboard-card">
+                <div class="metric-head">
+                    <div>
+                        <div class="metric-title">Dilaporkan</div>
+                        <p class="metric-desc">Laporan baru masuk.</p>
+                    </div>
+                    <div class="metric-icon"><i class="bi bi-inbox"></i></div>
+                </div>
+                <div class="metric-value">{{ reported_count|default:0 }}</div>
+                <div class="metric-line"></div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="dashboard-card">
+                <div class="metric-head">
+                    <div>
+                        <div class="metric-title">Diproses</div>
+                        <p class="metric-desc">Sedang diverifikasi/ditangani.</p>
+                    </div>
+                    <div class="metric-icon"><i class="bi bi-hourglass-split"></i></div>
+                </div>
+                <div class="metric-value">{{ in_progress_count|default:0 }}</div>
+                <div class="metric-line"></div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="dashboard-card">
+                <div class="metric-head">
+                    <div>
+                        <div class="metric-title">Selesai</div>
+                        <p class="metric-desc">Laporan sudah ditutup.</p>
+                    </div>
+                    <div class="metric-icon"><i class="bi bi-check2-circle"></i></div>
+                </div>
+                <div class="metric-value">{{ resolved_count|default:0 }}</div>
+                <div class="metric-line"></div>
             </div>
         </div>
     </div>
 
-    <div class="col-12 col-md-6 animate-enter delay-2">
-        <div class="card-custom p-4 text-center border-bottom border-warning border-3 h-100" style="border-bottom-color: #ffc107 !important;">
-            <div class="text-light opacity-75 fw-bold mb-2 small" style="font-family: 'JetBrains Mono', monospace;">IN_PROGRESS</div>
-            <h2 class="fw-bold text-siger-gold mb-0">{{ in_progress_count|default:0 }}</h2>
-            <div class="progress mt-3 progress-dark" style="height: 4px;">
-                <div class="progress-bar progress-bar-striped progress-bar-animated bg-siger-gold" style="width: 100%;"></div>
+    <section class="dashboard-card operation-panel mb-4">
+        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 position-relative" style="z-index: 1;">
+            <div>
+                <div class="dashboard-label mb-2"><i class="bi bi-activity"></i> Ringkasan Operasional</div>
+                <h2 class="panel-title fs-4 mb-2">Status penanganan laporan kota</h2>
+                <p class="dashboard-desc">Panel ini merangkum alur laporan dari data masuk, verifikasi, proses tindak lanjut, sampai laporan selesai.</p>
             </div>
         </div>
-    </div>
-</div>
-
-<div class="row g-3 mb-4">
-    <div class="col-12 col-md-4 animate-enter delay-3">
-        <div class="card-custom p-4 text-center border-bottom border-secondary border-3 h-100">
-            <div class="text-light opacity-75 fw-bold mb-2 small" style="font-family: 'JetBrains Mono', monospace;">REPORTED</div>
-            <h2 class="fw-bold text-light mb-0">{{ reported_count|default:0 }}</h2>
-            <div class="progress mt-3 progress-dark" style="height: 4px;">
-                <div class="progress-bar bg-secondary" style="width: 100%"></div>
-            </div>
+        <div class="operation-grid">
+            <div class="operation-mini"><div class="operation-mini-label">Baru Masuk</div><div class="operation-mini-value">{{ reported_count|default:0 }}</div></div>
+            <div class="operation-mini"><div class="operation-mini-label">Dicek Admin</div><div class="operation-mini-value">{{ verified_count|default:0 }}</div></div>
+            <div class="operation-mini"><div class="operation-mini-label">Diproses</div><div class="operation-mini-value">{{ in_progress_count|default:0 }}</div></div>
+            <div class="operation-mini"><div class="operation-mini-label">Selesai</div><div class="operation-mini-value">{{ resolved_count|default:0 }}</div></div>
         </div>
-    </div>
-
-    <div class="col-12 col-md-4 animate-enter delay-3">
-        <div class="card-custom p-4 text-center border-bottom border-info border-3 h-100">
-            <div class="text-light opacity-75 fw-bold mb-2 small" style="font-family: 'JetBrains Mono', monospace;">VERIFIED</div>
-            <h2 class="fw-bold text-info mb-0" style="text-shadow: 0 0 10px rgba(13,202,240,0.5);">{{ verified_count|default:0 }}</h2>
-            <div class="progress mt-3 progress-dark" style="height: 4px;">
-                <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: 100%; box-shadow: 0 0 10px #0dcaf0;"></div>
-            </div>
+        <div class="operation-flow">
+            <span class="flow-chip"><i class="bi bi-inbox"></i>Dilaporkan</span>
+            <span>→</span>
+            <span class="flow-chip"><i class="bi bi-patch-check"></i>Verifikasi</span>
+            <span>→</span>
+            <span class="flow-chip"><i class="bi bi-hourglass-split"></i>Diproses</span>
+            <span>→</span>
+            <span class="flow-chip"><i class="bi bi-check2-circle"></i>Selesai</span>
         </div>
-    </div>
+    </section>
 
-    <div class="col-12 col-md-4 animate-enter delay-3">
-        <div class="card-custom p-4 text-center border-bottom border-success border-3 h-100">
-            <div class="text-light opacity-75 fw-bold mb-2 small" style="font-family: 'JetBrains Mono', monospace;">RESOLVED</div>
-            <h2 class="fw-bold text-success mb-0" style="text-shadow: 0 0 10px rgba(25,135,84,0.5);">{{ resolved_count|default:0 }}</h2>
-            <div class="progress mt-3 progress-dark" style="height: 4px;">
-                <div class="progress-bar bg-success" style="width: 100%; box-shadow: 0 0 10px #198754;"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row g-4 mb-4">
-    <div class="col-lg-5 animate-enter delay-4">
-        <div class="card-custom h-100">
-            <div class="soft-header p-3 fw-bold" style="font-family: 'JetBrains Mono', monospace;">
-                <i class="bi bi-pie-chart-fill me-2 text-info"></i>STATUS_CORE_LOGIC
-            </div>
-            <div class="card-body d-flex justify-content-center align-items-center" style="min-height: 300px;">
-                <div style="height: 250px; width: 100%;">
+    <div class="row g-4 mb-4">
+        <div class="col-lg-5">
+            <div class="chart-panel h-100">
+                <div class="panel-head">
+                    <h2 class="panel-title"><i class="bi bi-pie-chart"></i> Distribusi Status</h2>
+                    <div class="panel-subtitle">Per status laporan</div>
+                </div>
+                <div class="chart-body">
                     <canvas id="statusChart"></canvas>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-lg-7 animate-enter delay-4">
-        <div class="card-custom h-100">
-            <div class="soft-header p-3 fw-bold" style="font-family: 'JetBrains Mono', monospace;">
-                <i class="bi bi-bar-chart-line-fill me-2 text-siger-gold"></i>CATEGORY_ANALYTICS
+        <div class="col-lg-7">
+            <div class="chart-panel h-100">
+                <div class="panel-head">
+                    <h2 class="panel-title"><i class="bi bi-bar-chart"></i> Analisis Kategori</h2>
+                    <div class="panel-subtitle">Jumlah laporan per kategori</div>
+                </div>
+                <div class="chart-body">
+                    <canvas id="categoryChart"></canvas>
+                </div>
             </div>
-            <div class="card-body" style="min-height: 300px;">
-                <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="activity-panel">
+                <div class="panel-head">
+                    <h2 class="panel-title"><i class="bi bi-clock-history"></i> Laporan Baru</h2>
+                    <div class="panel-subtitle">5 terbaru</div>
+                </div>
+                <div class="table-responsive p-3">
+                    <table class="activity-table">
+                        <thead><tr><th>ID</th><th>Judul</th><th>Lokasi</th></tr></thead>
+                        <tbody>
+                            {% for report in latest_reported %}
+                            <tr>
+                                <td class="fw-bold" style="color: var(--primary);">#{{ report.id }}</td>
+                                <td class="activity-title">{{ report.title|truncatechars:28 }}</td>
+                                <td><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ report.location|truncatechars:20 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="3" class="empty-row">Belum ada laporan baru.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="activity-panel">
+                <div class="panel-head">
+                    <h2 class="panel-title"><i class="bi bi-check2-circle"></i> Laporan Selesai</h2>
+                    <div class="panel-subtitle">5 terbaru</div>
+                </div>
+                <div class="table-responsive p-3">
+                    <table class="activity-table">
+                        <thead><tr><th>ID</th><th>Judul</th><th>Lokasi</th></tr></thead>
+                        <tbody>
+                            {% for report in latest_resolved %}
+                            <tr>
+                                <td class="fw-bold" style="color: var(--success);">#{{ report.id }}</td>
+                                <td class="activity-title">{{ report.title|truncatechars:28 }}</td>
+                                <td><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ report.location|truncatechars:20 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="3" class="empty-row">Belum ada laporan selesai.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row g-4">
-    <div class="col-lg-6 animate-enter delay-5">
-        <div class="card-custom">
-            <div class="soft-header p-3 fw-bold" style="font-family: 'JetBrains Mono', monospace;">
-                <i class="bi bi-clock-history me-2 text-warning"></i>5_LATEST_REPORTED
-            </div>
-            <div class="table-responsive">
-                <table class="table table-glass align-middle mb-0 small">
-                    <thead>
-                        <tr><th class="ps-4">UID</th><th>TITLE</th><th>LOCATION</th></tr>
-                    </thead>
-                    <tbody>
-                        {% for report in latest_reported %}
-                        <tr>
-                            <td class="ps-4 fw-bold text-info">#{{ report.id }}</td>
-                            <td class="text-white">{{ report.title|truncatechars:20 }}</td>
-                            <td><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ report.location|truncatechars:15 }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr><td colspan="3" class="text-center py-4 text-light opacity-50">No data available in core memory.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-6 animate-enter delay-5">
-        <div class="card-custom">
-            <div class="soft-header p-3 fw-bold" style="font-family: 'JetBrains Mono', monospace;">
-                <i class="bi bi-check2-circle me-2 text-success"></i>5_LATEST_RESOLVED
-            </div>
-            <div class="table-responsive">
-                <table class="table table-glass align-middle mb-0 small">
-                    <thead>
-                        <tr><th class="ps-4">UID</th><th>TITLE</th><th>LOCATION</th></tr>
-                    </thead>
-                    <tbody>
-                        {% for report in latest_resolved %}
-                        <tr>
-                            <td class="ps-4 fw-bold text-success">#{{ report.id }}</td>
-                            <td class="text-white">{{ report.title|truncatechars:20 }}</td>
-                            <td><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ report.location|truncatechars:15 }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr><td colspan="3" class="text-center py-4 text-light opacity-50">No data available in core memory.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    function initCharts() {
-        Chart.defaults.color = '#cbd5e1'; 
-        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.05)';
+    const statusLabels = {{ status_labels|safe|default:"[]" }};
+    const statusData = {{ status_data|safe|default:"[]" }};
+    const categoryLabels = {{ category_labels|safe|default:"[]" }};
+    const categoryData = {{ category_data|safe|default:"[]" }};
+
+    function getDashboardChartColors() {
+        const theme = document.documentElement.getAttribute('data-theme');
+        if (theme === 'light') {
+            return {
+                text: '#0f172a',
+                muted: '#475569',
+                grid: 'rgba(15, 23, 42, 0.10)',
+                border: 'rgba(255, 255, 255, 0.95)',
+                bar: 'rgba(16, 185, 129, 0.72)',
+                barBorder: '#10b981'
+            };
+        }
+        return {
+            text: '#f8fafc',
+            muted: '#cbd5e1',
+            grid: 'rgba(148, 163, 184, 0.16)',
+            border: 'rgba(7, 17, 15, 0.94)',
+            bar: 'rgba(6, 182, 212, 0.64)',
+            barBorder: '#06b6d4'
+        };
+    }
+
+    function destroyDashboardCharts() {
+        if (window.statusChartInstance) window.statusChartInstance.destroy();
+        if (window.categoryChartInstance) window.categoryChartInstance.destroy();
+    }
+
+    function buildDashboardCharts() {
+        if (!window.Chart) return;
+
+        const colors = getDashboardChartColors();
+        Chart.defaults.color = colors.muted;
+        Chart.defaults.borderColor = colors.grid;
         Chart.defaults.font.family = "'Inter', sans-serif";
+        destroyDashboardCharts();
 
-        const statusLabels = {{ status_labels|safe|default:"[]" }};
-        const statusData = {{ status_data|safe|default:"[]" }};
-        const categoryLabels = {{ category_labels|safe|default:"[]" }};
-        const categoryData = {{ category_data|safe|default:"[]" }};
+        const statusCanvas = document.getElementById('statusChart');
+        const categoryCanvas = document.getElementById('categoryChart');
+        const safeStatusData = statusData.length ? statusData : [0, 0, 0, 0];
+        const safeStatusLabels = statusLabels.length ? statusLabels : ['Reported', 'Verified', 'In Progress', 'Resolved'];
+        const safeCategoryData = categoryData.length ? categoryData : [0];
+        const safeCategoryLabels = categoryLabels.length ? categoryLabels : ['Belum ada data'];
 
-        if (window.statusChartInstance) { window.statusChartInstance.destroy(); }
-        if (window.categoryChartInstance) { window.categoryChartInstance.destroy(); }
-
-        const ctxStatus = document.getElementById('statusChart');
-        if (ctxStatus && statusLabels.length > 0) {
-            window.statusChartInstance = new Chart(ctxStatus, {
+        if (statusCanvas) {
+            window.statusChartInstance = new Chart(statusCanvas, {
                 type: 'doughnut',
                 data: {
-                    labels: statusLabels,
+                    labels: safeStatusLabels,
                     datasets: [{
-                        data: statusData,
-                        backgroundColor: ['#64748b', '#0ea5e9', '#ffc107', '#10b981'],
-                        borderWidth: 2,
-                        borderColor: '#0f172a',
+                        data: safeStatusData,
+                        backgroundColor: ['#10b981', '#06b6d4', '#f59e0b', '#22c55e'],
+                        borderWidth: 4,
+                        borderColor: colors.border,
                         hoverOffset: 10
                     }]
                 },
-                options: { 
-                    responsive: true, maintainAspectRatio: false, cutout: '75%', 
-                    plugins: { legend: { position: 'bottom', labels: { padding: 20, color: '#94a3b8' } } } 
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '68%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: colors.muted,
+                                padding: 18,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        }
+                    }
                 }
             });
         }
 
-        const ctxCat = document.getElementById('categoryChart');
-        if (ctxCat && categoryLabels.length > 0) {
-            window.categoryChartInstance = new Chart(ctxCat, {
+        if (categoryCanvas) {
+            window.categoryChartInstance = new Chart(categoryCanvas, {
                 type: 'bar',
                 data: {
-                    labels: categoryLabels,
+                    labels: safeCategoryLabels,
                     datasets: [{
                         label: 'Total Laporan',
-                        data: categoryData,
-                        backgroundColor: 'rgba(56, 189, 248, 0.6)',
-                        borderColor: '#38bdf8',
+                        data: safeCategoryData,
+                        backgroundColor: colors.bar,
+                        borderColor: colors.barBorder,
                         borderWidth: 1,
-                        borderRadius: 6,
-                        hoverBackgroundColor: '#ffc107',
-                        hoverBorderColor: '#ffc107'
+                        borderRadius: 8,
+                        maxBarThickness: 52
                     }]
                 },
-                options: { 
-                    responsive: true, maintainAspectRatio: false, 
-                    plugins: { legend: { display: false } },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
                     scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
-                        x: { grid: { display: false } }
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: colors.muted, precision: 0 },
+                            grid: { color: colors.grid }
+                        },
+                        x: {
+                            ticks: { color: colors.muted },
+                            grid: { display: false }
+                        }
                     }
                 }
             });
         }
     }
 
-    initCharts();
+    buildDashboardCharts();
+    document.addEventListener('themechange', buildDashboardCharts);
 </script>
 {% endblock %}

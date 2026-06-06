@@ -1,42 +1,49 @@
 function setupLoginForm() {
     const loginForm = document.getElementById('loginForm');
-    
-    // Pastikan form ada di halaman saat ini
+
     if (!loginForm) return;
 
-    loginForm.addEventListener('submit', async function(event) {
-        // Wajib: Mencegah halaman web reload otomatis
-        event.preventDefault(); 
+    loginForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
 
-        // Ambil nilai dari inputan form
-        const usernameInput = document.getElementById('loginUsername').value;
-        const passwordInput = document.getElementById('loginPassword').value;
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const submitButton = loginForm.querySelector('button[type="submit"]');
 
-        const payload = {
-            username: usernameInput,
-            password: passwordInput
-        };
+        if (!username || !password) {
+            alert('Username dan password harus diisi.');
+            return;
+        }
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Memproses...';
+        }
 
         try {
-            // Gunakan requestAPI dari api.js untuk tembak endpoint login Django
-            const response = await requestAPI('/api/token/', 'POST', payload);
+            const response = await requestAPI('/api/token/', 'POST', {
+                username,
+                password
+            });
 
-            if (response.status === 200) {
+            if (response.ok) {
                 const data = await response.json();
-                
-                // Simpan token JWT ke memori browser (localStorage)
+
                 localStorage.setItem('access_token', data.access);
                 localStorage.setItem('refresh_token', data.refresh);
-                
-                alert('Login Berhasil!');
-                
-                // Pindah halaman ke Dashboard secara instan
+
                 window.location.hash = '#dashboard';
-            } else {
-                alert('Login Gagal! Username atau password salah.');
+                return;
             }
+
+            alert('Login gagal. Periksa kembali username dan password.');
         } catch (error) {
-            alert('Gagal terhubung ke Server Django.');
+            alert('Tidak dapat terhubung ke server Django.');
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.innerHTML = '<i class="bi bi-box-arrow-in-right me-2"></i>Masuk';
+            }
         }
     });
 }

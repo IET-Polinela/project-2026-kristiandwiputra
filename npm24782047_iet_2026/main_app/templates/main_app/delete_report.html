@@ -1,157 +1,378 @@
 {% extends 'base.html' %}
 
-{% block title %}DELETE_ENTRY - Smart City{% endblock %}
+{% block title %}Hapus Laporan - Smart City Lampung{% endblock %}
 
 {% block content %}
 <style>
-    /* --- GLASS PANEL CONTAINER --- */
-    .glass-panel {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    /* =========================================
+       1. CSS VARIABLES (TEMA TERANG & GELAP)
+       ========================================= */
+    :root {
+        --primary: #0d6efd;
+        --success: #198754;
+        --warning: #f59e0b;
+        --info: #0dcaf0;
+        --danger: #dc3545;
+        --danger-soft: rgba(220, 53, 69, 0.1);
+        --card-bg: #ffffff;
+        --card-bg-soft: #f8f9fa;
+        --border-color: #e5e7eb;
+        --text-main: #2b3440;
+        --text-muted: #6b7280;
+        --text-soft: #9ca3af;
+        --radius-lg: 16px;
+        --shadow: 0 4px 6px -1px rgba(0,0,0, 0.05);
+    }
+
+    [data-theme="dark"] {
+        --primary: #38bdf8;
+        --success: #4ade80;
+        --warning: #fbbf24;
+        --info: #22d3ee;
+        --danger: #ef4444;
+        --danger-soft: rgba(239, 68, 68, 0.15);
+        --card-bg: #1e293b;
+        --card-bg-soft: #0f172a;
+        --border-color: #334155;
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --text-soft: #64748b;
+        --shadow: 0 4px 10px rgba(0,0,0, 0.3);
+    }
+
+    /* =========================================
+       2. ANIMASI & LAYOUT DASAR
+       ========================================= */
+    .delete-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .animate-enter {
+        opacity: 0;
+        animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fadeInUp {
+        0% { opacity: 0; transform: translateY(15px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+
+    /* =========================================
+       3. STYLING BREADCRUMB & KARTU HAPUS
+       ========================================= */
+    .breadcrumb-clean {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        color: var(--text-soft);
+        font-size: 0.86rem;
+        font-weight: 700;
+        margin-bottom: 1.25rem;
+    }
+
+    .breadcrumb-clean a {
+        color: var(--text-soft);
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .breadcrumb-clean a:hover { color: var(--primary); }
+
+    .delete-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
         overflow: hidden;
+        transition: background 0.3s, border-color 0.3s;
     }
 
-    /* --- TERMINAL DATA DISPLAY --- */
-    .terminal-data-box {
-        background: rgba(0, 0, 0, 0.6);
-        border: 1px solid rgba(239, 68, 68, 0.3); /* Red border */
-        border-radius: 12px;
-        padding: 20px;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 13px;
-        color: #cbd5e1;
-        box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.05);
+    .delete-head {
+        background: linear-gradient(135deg, var(--danger-soft), var(--card-bg-soft));
+        border-bottom: 1px solid var(--border-color);
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
     }
 
-    .data-label { color: #94a3b8; font-weight: bold; min-width: 100px; display: inline-block; }
-    .data-value { color: #f8fafc; }
-    .data-value.title { color: #38bdf8; } /* Cyan for title */
-
-    /* --- BUTTONS --- */
-    .btn-cyber {
-        font-family: 'JetBrains Mono', monospace;
+    .delete-kicker {
+        color: var(--danger);
+        font-size: 0.85rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 0.5rem;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
+    }
+
+    .delete-title {
+        color: var(--text-main);
+        font-size: clamp(1.4rem, 2.6vw, 1.85rem);
+        font-weight: 850;
+        margin-bottom: 0.35rem;
+        line-height: 1.2;
+    }
+
+    .delete-subtitle {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 0;
+    }
+
+    .delete-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        background: var(--danger-soft);
+        color: var(--danger);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        flex-shrink: 0;
+        animation: warningPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes warningPulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+        50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    }
+
+    .delete-body {
+        padding: 1.5rem;
+    }
+
+    .warning-box {
+        background: var(--danger-soft);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-left: 4px solid var(--danger);
+        color: var(--danger);
         border-radius: 12px;
-        transition: all 0.3s ease;
+        padding: 1rem 1.15rem;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+        font-weight: 700;
     }
-    
-    /* Tombol Batal (Safe) */
-    .btn-cyber-safe {
-        background: rgba(14, 165, 233, 0.1);
-        color: #0ea5e9;
-        border: 1px solid #0ea5e9;
+
+    /* =========================================
+       4. PREVIEW DETAIL LAPORAN
+       ========================================= */
+    .report-preview {
+        background: var(--card-bg-soft);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        padding: 1.25rem;
     }
-    .btn-cyber-safe:hover {
-        background: #0ea5e9;
-        color: #020617;
-        box-shadow: 0 0 20px rgba(14, 165, 233, 0.5);
+
+    .preview-row {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        gap: 1rem;
+        padding: 0.85rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .preview-row:last-child { border-bottom: 0; padding-bottom: 0; }
+    .preview-row:first-child { padding-top: 0; }
+
+    .preview-label {
+        color: var(--text-soft);
+        font-size: 0.85rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .preview-value {
+        color: var(--text-main);
+        font-size: 0.95rem;
+        font-weight: 750;
+        word-break: break-word;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        border: 1px solid transparent;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-pill::before {
+        content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor;
+    }
+
+    .st-draft { color: #94a3b8; background: rgba(100, 116, 139, 0.15); border-color: rgba(148, 163, 184, 0.2); }
+    .st-reported { color: #60a5fa; background: rgba(59, 130, 246, 0.15); border-color: rgba(96, 165, 250, 0.2); }
+    .st-verified { color: #22d3ee; background: rgba(6, 182, 212, 0.15); border-color: rgba(34, 211, 238, 0.2); }
+    .st-progress { color: #fbbf24; background: rgba(245, 158, 11, 0.15); border-color: rgba(251, 191, 36, 0.2); }
+    .st-resolved { color: #4ade80; background: rgba(34, 197, 94, 0.15); border-color: rgba(74, 222, 128, 0.2); }
+
+    /* =========================================
+       5. TOMBOL AKSI
+       ========================================= */
+    .delete-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-color);
+        margin-top: 1.5rem;
+    }
+
+    .btn-action {
+        border-radius: 12px;
+        padding: 14px 20px;
+        font-weight: 800;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg-soft);
+        color: var(--text-main);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        flex: 1;
+        transition: transform 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, background 0.2s;
+    }
+
+    .btn-action:hover {
         transform: translateY(-2px);
     }
 
-    /* Tombol Hapus (Danger) */
-    .btn-cyber-danger {
-        background: rgba(239, 68, 68, 0.1);
-        color: #ef4444;
-        border: 1px solid #ef4444;
+    .btn-danger-action {
+        background: var(--danger);
+        border-color: var(--danger);
+        color: #ffffff !important;
     }
-    .btn-cyber-danger:hover {
-        background: #ef4444;
-        color: white;
-        box-shadow: 0 0 25px rgba(239, 68, 68, 0.6);
-        transform: translateY(-2px);
+
+    .btn-danger-action:hover {
+        filter: brightness(1.1);
+    }
+
+    .btn-safe:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    @media (max-width: 768px) {
+        .delete-head { flex-direction: column; }
+        .preview-row { grid-template-columns: 1fr; gap: 0.4rem; }
+        .delete-actions { flex-direction: column; }
+        .btn-action { width: 100%; }
     }
 </style>
 
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb mb-4" style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">
-        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">root@system</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'report_list' %}" class="text-decoration-none text-muted">./reports</a></li>
-        <li class="breadcrumb-item active text-danger" aria-current="page">delete_object</li>
-    </ol>
-</nav>
+<div class="delete-page">
+    <div class="breadcrumb-clean animate-enter delay-1">
+        <a href="/"><i class="bi bi-house-door me-1"></i>Beranda</a>
+        <span>/</span>
+        <a href="{% url 'report_list' %}">Data Laporan</a>
+        <span>/</span>
+        <span style="color: var(--text-main);">Hapus Laporan</span>
+    </div>
 
-<div class="row justify-content-center pb-5">
-    <div class="col-md-8 col-lg-7">
-        <div class="glass-panel border-start border-4 border-danger">
-            
-            <div class="bg-dark bg-opacity-50 d-flex justify-content-between align-items-center p-3" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                <div class="d-flex gap-2">
-                    <div style="width: 12px; height: 12px; background: #ff5f56; border-radius: 50%; box-shadow: 0 0 10px rgba(255,95,86,0.8);"></div>
-                    <div style="width: 12px; height: 12px; background: #334155; border-radius: 50%;"></div>
-                    <div style="width: 12px; height: 12px; background: #334155; border-radius: 50%;"></div>
+    <div class="delete-card animate-enter delay-2">
+        <div class="delete-head">
+            <div>
+                <div class="delete-kicker">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Konfirmasi Penghapusan
                 </div>
-                <span class="text-danger fw-bold" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 1px; filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.5));">
-                    <i class="bi bi-trash3-fill me-2"></i>DATA_WIPE_PROTOCOL
-                </span>
-                <div style="width: 44px;"></div> </div>
-
-            <div class="card-body p-4 p-md-5">
-                
-                <div class="alert bg-danger bg-opacity-10 border border-danger text-danger rounded-3 mb-4 d-flex align-items-start" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">
-                    <i class="bi bi-exclamation-octagon-fill fs-4 me-3 mt-1" style="filter: drop-shadow(0 0 8px #ef4444);"></i> 
-                    <div>
-                        <strong>[CRITICAL_WARNING]:</strong><br> 
-                        Anda akan menghapus entri data ini secara permanen dari main server. Tindakan ini tidak dapat dibatalkan.
-                    </div>
-                </div>
-
-                <div class="terminal-data-box mb-5">
-                    <div class="mb-2">
-                        <span class="data-label">TARGET_ID</span> 
-                        <span class="data-value text-warning fw-bold">#{{ object.id }}</span>
-                    </div>
-                    <div class="mb-2">
-                        <span class="data-label">TITLE</span> 
-                        <span class="data-value title fw-bold">"{{ object.title }}"</span>
-                    </div>
-                    <div class="mb-2">
-                        <span class="data-label">CATEGORY</span> 
-                        <span class="data-value">[{{ object.category|upper }}]</span>
-                    </div>
-                    <div class="mb-2">
-                        <span class="data-label">LOCATION</span> 
-                        <span class="data-value"><i class="bi bi-geo-alt-fill text-danger"></i> {{ object.location }}</span>
-                    </div>
-                    <div class="mb-0">
-                        <span class="data-label">SYS_STATUS</span> 
-                        <span class="data-value">{{ object.get_status_display|upper|default:"DRAFT" }}</span>
-                    </div>
-                </div>
-
-                <form method="post" id="deleteForm">
-                    {% csrf_token %}
-                    <div class="d-flex flex-column flex-md-row gap-3 border-top border-secondary border-opacity-25 pt-4">
-                        <button type="submit" id="submitBtn" class="btn btn-cyber btn-cyber-danger w-100 py-3 fw-bold">
-                            <i class="bi bi-fire me-2"></i> CONFIRM_WIPE
-                        </button>
-                        <a href="{% url 'report_list' %}" class="btn btn-cyber btn-cyber-safe w-100 py-3 fw-bold text-center text-decoration-none d-flex align-items-center justify-content-center">
-                            <i class="bi bi-shield-check me-2"></i> ABORT_OPERATION
-                        </a>
-                    </div>
-                </form>
-
+                <h1 class="delete-title">Hapus Laporan Ini?</h1>
+                <p class="delete-subtitle">
+                    Data yang dihapus dari database tidak dapat dikembalikan. Pastikan laporan yang dipilih sudah benar.
+                </p>
             </div>
+            <div class="delete-icon">
+                <i class="bi bi-trash3-fill"></i>
+            </div>
+        </div>
+
+        <div class="delete-body">
+            <div class="warning-box">
+                <i class="bi bi-shield-exclamation fs-4"></i>
+                <div>
+                    PERINGATAN: Tindakan ini akan menghapus data laporan beserta seluruh rekam jejak statusnya dari sistem secara permanen.
+                </div>
+            </div>
+
+            <div class="report-preview">
+                <div class="preview-row">
+                    <div class="preview-label">ID Laporan</div>
+                    <div class="preview-value" style="color: var(--primary); font-family: monospace; font-size: 1.1rem;">#{{ object.id }}</div>
+                </div>
+
+                <div class="preview-row">
+                    <div class="preview-label">Judul</div>
+                    <div class="preview-value">{{ object.title }}</div>
+                </div>
+
+                <div class="preview-row">
+                    <div class="preview-label">Kategori</div>
+                    <div class="preview-value"><i class="bi bi-folder2-open me-2 text-primary"></i>{{ object.category|default:"-" }}</div>
+                </div>
+
+                <div class="preview-row">
+                    <div class="preview-label">Lokasi</div>
+                    <div class="preview-value">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ object.location }}
+                    </div>
+                </div>
+
+                <div class="preview-row">
+                    <div class="preview-label">Status Terakhir</div>
+                    <div class="preview-value">
+                        <span class="status-pill st-{% if object.status == 'VERIFIED' %}verified{% elif object.status == 'IN_PROGRESS' %}progress{% elif object.status == 'RESOLVED' %}resolved{% elif object.status == 'REPORTED' %}reported{% else %}draft{% endif %}">
+                            {{ object.get_status_display|default:object.status|default:"Draft" }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <form method="post" id="deleteForm">
+                {% csrf_token %}
+                <div class="delete-actions">
+                    <button type="submit" id="submitBtn" class="btn-action btn-danger-action">
+                        <i class="bi bi-trash3-fill"></i> Ya, Hapus Laporan Permanen
+                    </button>
+                    <a href="{% url 'report_list' %}" class="btn-action btn-safe">
+                        <i class="bi bi-arrow-left-circle-fill"></i> Batalkan & Kembali
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 <script>
-    // Script loading pada tombol submit form
     document.addEventListener("DOMContentLoaded", function () {
         const form = document.getElementById("deleteForm");
         const submitBtn = document.getElementById("submitBtn");
 
+        // Fitur Mencegah Double Submit
         if (form && submitBtn) {
             form.addEventListener("submit", function () {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>WIPING_DATA...';
-                submitBtn.classList.remove('btn-cyber-danger');
-                submitBtn.classList.add('bg-danger', 'text-white');
+                submitBtn.style.pointerEvents = "none";
+                submitBtn.style.opacity = "0.7";
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Menghapus...';
             });
         }
     });
