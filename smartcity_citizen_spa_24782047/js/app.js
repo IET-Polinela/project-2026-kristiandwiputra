@@ -234,6 +234,12 @@ function normalizeApiResponse(data) {
     };
 }
 
+function getOwnedReports(reports) {
+    return reports.filter(function (report) {
+        return report.is_owner !== false;
+    });
+}
+
 async function loadDashboardData(tab = 'my_reports', page = 1) {
     const reportContainer = document.getElementById('reportListContainer');
     const paginationContainer = document.getElementById('paginationContainer');
@@ -265,8 +271,9 @@ async function loadDashboardData(tab = 'my_reports', page = 1) {
 
         const rawData = await response.json();
         const data = normalizeApiResponse(rawData);
+        const reports = tab === 'my_reports' ? getOwnedReports(data.results) : data.results;
 
-        renderList(data.results, tab);
+        renderList(reports, tab);
         renderPagination(data, tab, page);
         loadSummaryStats();
     } catch (error) {
@@ -287,12 +294,24 @@ async function loadSummaryStats() {
 
         const rawData = await response.json();
         const data = normalizeApiResponse(rawData);
-        const reports = data.results;
+        const reports = getOwnedReports(data.results);
 
-        const draftCount = reports.filter(report => report.status === 'DRAFT').length;
-        const reportedCount = reports.filter(report => report.status === 'REPORTED').length;
-        const progressCount = reports.filter(report => report.status === 'VERIFIED' || report.status === 'IN_PROGRESS').length;
-        const resolvedCount = reports.filter(report => report.status === 'RESOLVED').length;
+        const draftCount = reports.filter(function (report) {
+            return report.status === 'DRAFT';
+        }).length;
+
+        const reportedCount = reports.filter(function (report) {
+            return report.status === 'REPORTED';
+        }).length;
+
+        const progressCount = reports.filter(function (report) {
+            return report.status === 'VERIFIED' || report.status === 'IN_PROGRESS';
+        }).length;
+
+        const resolvedCount = reports.filter(function (report) {
+            return report.status === 'RESOLVED';
+        }).length;
+
         const totalCount = draftCount + reportedCount + progressCount + resolvedCount;
 
         setText('summaryTotal', totalCount);
@@ -424,7 +443,7 @@ function getActionButtons(report, tab) {
         return '';
     }
 
-    if (report.status === 'DRAFT' && report.is_owner) {
+    if (report.status === 'DRAFT' && report.is_owner !== false) {
         return `
             <button type="button" class="btn btn-sm btn-soft" onclick="editDraft(${report.id})">
                 <i class="bi bi-pencil-square me-1"></i>
