@@ -240,6 +240,12 @@ function getOwnedReports(reports) {
     });
 }
 
+function getFeedReports(reports) {
+    return reports.filter(function (report) {
+        return report.status !== 'DRAFT';
+    });
+}
+
 async function loadDashboardData(tab = 'my_reports', page = 1) {
     const reportContainer = document.getElementById('reportListContainer');
     const paginationContainer = document.getElementById('paginationContainer');
@@ -271,7 +277,7 @@ async function loadDashboardData(tab = 'my_reports', page = 1) {
 
         const rawData = await response.json();
         const data = normalizeApiResponse(rawData);
-        const reports = tab === 'my_reports' ? getOwnedReports(data.results) : data.results;
+        const reports = tab === 'my_reports' ? getOwnedReports(data.results) : getFeedReports(data.results);
 
         renderList(reports, tab);
         renderPagination(data, tab, page);
