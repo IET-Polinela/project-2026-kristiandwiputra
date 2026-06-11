@@ -3,7 +3,7 @@
 <html lang="id" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Smart City Lampung{% endblock %}</title>
 
     <script>
@@ -454,8 +454,6 @@
             background: var(--primary-2);
         }
 
-
-
         .text-main {
             color: var(--text-main) !important;
         }
@@ -517,10 +515,26 @@
         @media (max-width: 992px) {
             .sidebar {
                 transform: translateX(-100%);
+                height: 100dvh;
+                max-height: 100dvh;
+                overflow-y: auto;
+                overflow-x: hidden;
+                -webkit-overflow-scrolling: touch;
             }
 
             .sidebar.show {
                 transform: translateX(0);
+            }
+
+            .sidebar-nav {
+                flex: 0 0 auto;
+                overflow-y: visible;
+                padding-bottom: 0.75rem;
+            }
+
+            .sidebar-footer {
+                margin-top: auto;
+                padding-bottom: 1.25rem;
             }
 
             .main-content {
@@ -531,6 +545,12 @@
 
             .mobile-toggler {
                 display: block;
+            }
+        }
+
+        @media (max-width: 992px) and (max-height: 720px) {
+            .sidebar-footer {
+                margin-top: 0;
             }
         }
     </style>
@@ -700,10 +720,9 @@
         }
     }
 
-
-
     function getThemeColors() {
         const theme = document.documentElement.getAttribute("data-theme");
+
         if (theme === "light") {
             return {
                 text: "#0f172a",
@@ -714,6 +733,7 @@
                 cyan: "#06b6d4"
             };
         }
+
         return {
             text: "#f8fafc",
             muted: "#cbd5e1",
@@ -726,7 +746,9 @@
 
     function applyChartDefaults() {
         if (!window.Chart) return;
+
         const colors = getThemeColors();
+
         Chart.defaults.color = colors.muted;
         Chart.defaults.borderColor = colors.grid;
         Chart.defaults.font.family = "'Inter', sans-serif";
