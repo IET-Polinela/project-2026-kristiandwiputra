@@ -10,6 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework import viewsets, permissions
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.exceptions import PermissionDenied
+from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from .models import Report
 from .forms import ReportForm, CustomUserCreationForm
@@ -213,6 +214,9 @@ class ReportPagination(PageNumberPagination):
     max_page_size = 1000
 
 
+@extend_schema_view(
+    destroy=extend_schema(exclude=True)
+)
 class ReportViewSet(viewsets.ModelViewSet):
     serializer_class = ReportSerializer
     permission_classes = [permissions.IsAuthenticated]
