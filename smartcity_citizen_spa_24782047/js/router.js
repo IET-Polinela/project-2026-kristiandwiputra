@@ -239,6 +239,7 @@ function isLoggedIn() {
 function logoutCitizen() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('username');
     renderNavMenus();
     window.location.hash = '#login';
 }

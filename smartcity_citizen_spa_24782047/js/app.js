@@ -267,6 +267,7 @@ async function loadDashboardData(tab = 'my_reports', page = 1) {
         if (response.status === 401) {
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
+            localStorage.removeItem('username');
             window.location.hash = '#login';
             return;
         }

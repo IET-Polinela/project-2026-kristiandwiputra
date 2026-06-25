@@ -1,12 +1,27 @@
+from django.contrib import messages
 from django.db.models import Count
 from django.http import JsonResponse
+from django.shortcuts import redirect
 from django.views.generic import TemplateView
 
 from main_app.models import Report
 
 
+def is_admin_dashboard_user(user):
+    return user.is_authenticated and (
+        user.is_superuser or user.is_staff or getattr(user, 'is_admin', False)
+    )
+
+
 class DashboardView(TemplateView):
     template_name = 'dashboard_24782047/dashboard.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not is_admin_dashboard_user(request.user):
+            messages.error(request, 'Akses ditolak.')
+            return redirect('report_list')
+
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -27,6 +42,10 @@ class DashboardView(TemplateView):
 
 
 def dashboard_stats_api(request):
+    if not is_admin_dashboard_user(request.user):
+        messages.error(request, 'Akses ditolak.')
+        return JsonResponse({'detail': 'Akses ditolak.'}, status=403)
+
     status_data = (
         Report.objects.values('status')
         .annotate(total=Count('id'))

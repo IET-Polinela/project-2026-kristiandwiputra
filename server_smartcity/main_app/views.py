@@ -18,7 +18,9 @@ from .serializers import ReportSerializer
 
 
 def is_admin_account(user):
-    return user.is_authenticated and (user.is_superuser or getattr(user, 'is_admin', False))
+    return user.is_authenticated and (
+        user.is_superuser or user.is_staff or getattr(user, 'is_admin', False)
+    )
 
 
 def visible_reports_for(user):
@@ -38,6 +40,10 @@ def home(request):
 
 
 def dashboard(request):
+    if not is_admin_account(request.user):
+        messages.error(request, 'Akses ditolak.')
+        return redirect('report_list')
+
     reports = visible_reports_for(request.user)
 
     total_reports = reports.count()
@@ -154,6 +160,12 @@ class ReportDeleteView(LoginRequiredMixin, DeleteView):
 
 
 class ReportUpdateStatusView(View):
+    allowed_transitions = {
+        'REPORTED': ['VERIFIED'],
+        'VERIFIED': ['IN_PROGRESS'],
+        'IN_PROGRESS': ['RESOLVED'],
+    }
+
     def post(self, request, pk):
         if not is_admin_account(request.user):
             messages.error(request, 'Akses ditolak.')
@@ -162,9 +174,12 @@ class ReportUpdateStatusView(View):
         report = get_object_or_404(Report.objects.exclude(status='DRAFT'), pk=pk)
         new_status = request.POST.get('status')
 
-        if new_status and new_status != 'DRAFT':
+        if new_status in self.allowed_transitions.get(report.status, []):
             report.status = new_status
             report.save()
+            messages.success(request, f'Status laporan #{pk} diperbarui menjadi {new_status}.')
+        else:
+            messages.warning(request, 'Transisi status tidak valid.')
 
         return redirect('report_list')
 
