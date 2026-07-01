@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Q, Count
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
 
 from rest_framework import viewsets, permissions
 from rest_framework.pagination import PageNumberPagination
@@ -13,7 +14,7 @@ from rest_framework.exceptions import PermissionDenied
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from .models import Report
-from .forms import ReportForm, CustomUserCreationForm
+from .forms import ReportForm
 from .serializers import ReportSerializer
 
 
@@ -102,19 +103,39 @@ def verify_report(request, pk):
     return redirect('report_list')
 
 
-class ReportListView(ListView):
+class ReportListView(LoginRequiredMixin, ListView):
     model = Report
     template_name = 'main_app/report_list.html'
     context_object_name = 'reports'
     paginate_by = 25
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+
+        if not is_admin_account(request.user):
+            messages.error(request, 'Akses daftar laporan hanya untuk admin.')
+            return redirect('home')
+
+        return super().dispatch(request, *args, **kwargs)
+
     def get_queryset(self):
         return visible_reports_for(self.request.user).order_by('-created_at')
 
 
-class ReportDetailView(DetailView):
+class ReportDetailView(LoginRequiredMixin, DetailView):
     model = Report
     template_name = 'main_app/report_detail.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+
+        if not is_admin_account(request.user):
+            messages.error(request, 'Akses detail laporan hanya untuk admin.')
+            return redirect('home')
+
+        return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         return visible_reports_for(self.request.user)
@@ -127,12 +148,17 @@ class ReportCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('report_list')
 
     def dispatch(self, request, *args, **kwargs):
-        messages.error(request, 'Penambahan laporan dilakukan melalui web citizen.')
-        return redirect('report_list')
+        if not request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+
+        if not is_admin_account(request.user):
+            messages.error(request, 'Penambahan laporan melalui web admin hanya untuk admin.')
+            return redirect('home')
+
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         form.instance.reporter = self.request.user
-        form.instance.status = 'DRAFT'
         return super().form_valid(form)
 
 
@@ -141,6 +167,16 @@ class ReportUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ReportForm
     template_name = 'main_app/edit_report.html'
     success_url = reverse_lazy('report_list')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+
+        if is_admin_account(request.user):
+            return HttpResponseForbidden('Admin tidak boleh mengedit isi laporan warga.')
+
+        messages.error(request, 'Akses edit laporan ditolak.')
+        return redirect('home')
 
     def get_queryset(self):
         if is_admin_account(self.request.user):
@@ -153,10 +189,23 @@ class ReportDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'main_app/delete_report.html'
     success_url = reverse_lazy('report_list')
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+
+        if is_admin_account(request.user):
+            return HttpResponseForbidden('Admin tidak boleh menghapus laporan warga.')
+
+        messages.error(request, 'Akses hapus laporan ditolak.')
+        return redirect('home')
+
     def get_queryset(self):
         if is_admin_account(self.request.user):
             return Report.objects.exclude(status='DRAFT')
         return Report.objects.none()
+
+    def delete(self, request, *args, **kwargs):
+        raise DjangoPermissionDenied('Admin tidak boleh menghapus laporan warga.')
 
 
 class ReportUpdateStatusView(View):
@@ -185,6 +234,9 @@ class ReportUpdateStatusView(View):
 
 
 def report_search_api(request):
+    if not is_admin_account(request.user):
+        return HttpResponseForbidden('Akses pencarian laporan hanya untuk admin.')
+
     keyword = request.GET.get('q', '').strip()
 
     reports = visible_reports_for(request.user).filter(
